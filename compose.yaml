@@ -1,1 +1,10 @@
 services:
+  mariadb:
+    image: 'mariadb:jammy'
+    environment:
+      - 'MARIADB_DATABASE=711'
+      - 'MARIADB_PASSWORD=fast@711'
+      - 'MARIADB_ROOT_PASSWORD=votmxm!zoavjtm'
+      - 'MARIADB_USER=fast'
+    ports:
+      - '3306'
