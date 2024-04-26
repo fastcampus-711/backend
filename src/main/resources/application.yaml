@@ -1,0 +1,49 @@
+domain:
+    name: http://${711_DOMAIN}:${711_BACKEND_PORT}
+server:
+    port: ${711_BACKEND_PORT}
+    forward-headers-strategy: FRAMEWORK
+
+
+spring:
+    docker:
+        compose:
+            lifecycle-management: start-and-stop
+            start:
+                command: up
+            stop:
+                command: down
+                timeout: 1m
+    datasource:
+        url: jdbc:mysql://${711_DOMAIN}:3306/${711_DATABASE}?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: fast
+        password: ${711_DATABASE_PASSWORD}
+    jpa:
+        hibernate:
+            dialect: org.hibernate.dialect.MySQLDialect
+            ddl-auto: update
+            format_sql: true
+            show_sql: true
+
+## docs
+springdoc:
+    default-produces-media-type: application/json;charset=UTF-8
+    default-consumes-media-type: application/json;charset=UTF-8
+    swagger-ui:
+        path: /api-docs.html
+        operations-sorter: method
+#        disable-swagger-default-url: true
+        display-request-duration: true
+
+    api-docs:
+        path: /api-docs
+
+## log
+logging:
+    level:
+        org:
+            springframework:
+                security: INFO
+---
+

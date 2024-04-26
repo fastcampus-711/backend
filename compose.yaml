@@ -1,10 +1,20 @@
+version: '3.7'
+
+networks:
+  711-network:
+    external: true
+
+volumes:
+  mysql-data:
+
 services:
-  mariadb:
-    image: 'mariadb:jammy'
-    environment:
-      - 'MARIADB_DATABASE=711'
-      - 'MARIADB_PASSWORD=fast@711'
-      - 'MARIADB_ROOT_PASSWORD=votmxm!zoavjtm'
-      - 'MARIADB_USER=fast'
+  mysql:
+    image: bitnami/mysql:8.3
+    container_name: mysql
+    restart: unless-stopped
     ports:
-      - '3306'
+      - 3306:3306
+    env_file:
+      - .env
+    volumes:
+      - mysql-data:/opt/bitnami/mysql

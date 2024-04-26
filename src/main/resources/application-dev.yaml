@@ -1,0 +1,16 @@
+server:
+  port: 8181
+
+spring:
+    datasource:
+      url: jdbc:mysql://localhost:3306/711?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: fast
+      password: 6PnsP6MTIe
+    jpa:
+      hibernate:
+        ddl-auto: create-drop
+
+logging:
+  level:
+    com.aptner.v3: debug
