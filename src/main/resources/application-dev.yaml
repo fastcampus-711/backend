@@ -2,12 +2,6 @@ server:
   port: 8181
 
 spring:
-    datasource:
-      url: jdbc:mysql://${P711_DOMAIN}:3306/${P711_DATABASE}?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      username: fast
-      password: ${P711_DATABASE_PASSWORD}
-
     jpa:
       hibernate:
         ddl-auto: create-drop

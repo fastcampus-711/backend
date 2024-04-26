@@ -19,6 +19,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: make application-hidden.yaml
+        run: |
+          cd ./src/main/resources
+          touch ./application-hidden.yaml
+          
+          echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
+        shell: bash
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2				# Gradle dependency 캐싱 설정(테스트 속도 향상)
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 

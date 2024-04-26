@@ -1,25 +1,11 @@
-#domain:
-#    name: http://${711_DOMAIN}:${711_BACKEND_PORT}
 server:
-    port: ${P711_BACKEND_PORT}
+    port: 80
     forward-headers-strategy: FRAMEWORK
 
-
 spring:
-    docker:
-        compose:
-            lifecycle-management: start-and-stop
-            start:
-                command: up
-            stop:
-                command: down
-                timeout: 1m
+    profiles:
+        include: hidden
 
-    datasource:
-        url: jdbc:h2:mem:local;MODE=MySQL;DATABASE_TO_LOWER=TRUE #mysql ?? ??
-        username: fast
-        password: ${P711_DATABASE_PASSWORD}
-        driver-class-name: org.h2.Driver
     jpa:
         hibernate:
             dialect: org.hibernate.dialect.MySQLDialect
@@ -39,12 +25,5 @@ springdoc:
 
     api-docs:
         path: /api-docs
-
-## log
-logging:
-    level:
-        org:
-            springframework:
-                security: INFO
 ---
 

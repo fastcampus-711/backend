@@ -1,6 +1,5 @@
 package com.aptner.v3.service;
 
-
 import com.aptner.v3.article.Article;
 import com.aptner.v3.article.ArticleComment;
 import com.aptner.v3.article.ArticleCommentDTO;
@@ -18,6 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 public class ArticleServiceTest {
@@ -86,8 +86,8 @@ public class ArticleServiceTest {
         when(articleRepository.findById(1L)).thenReturn(Optional.of(existingArticle));
         when(articleRepository.save(any(Article.class))).thenReturn(existingArticle);
 
+        existingArticle.setTitle("New Title"); // 기존 기사 수정
         Article updatedArticle = articleService.updateArticle(1L, existingArticle);
-        updatedArticle.setTitle("New Title");
 
         assertThat(updatedArticle.getTitle()).isEqualTo("New Title");
         verify(articleRepository, times(1)).save(existingArticle);
