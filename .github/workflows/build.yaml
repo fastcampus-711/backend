@@ -2,7 +2,7 @@ name: Docker Build 🚀
 
 on:
   push:
-    branches: [ "feature*", "master" ]
+    branches: [ "feature/**", "master" ]
   workflow_dispatch:
 
 jobs:
