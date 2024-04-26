@@ -9,8 +9,6 @@ jobs:
   gradle:
     name: Gradle Build
     runs-on: ubuntu-22.04
-    env:
-      APP: coin-community
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,21 +20,19 @@ jobs:
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ${{ env.APP }}/gradlew
+        run: chmod +x gradlew
 
       - name: Test with Gradle
-        working-directory: ${{ env.APP }}
         run: SPRING_PROFILES_ACTIVE=dev ./gradlew test
 
       - name: Build with Gradle
-        working-directory: ${{ env.APP }}
         run: ./gradlew build -x test
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: ${{ env.APP }}/build
+          path: /build
           retention-days: 1
 
   docker:
@@ -45,21 +41,21 @@ jobs:
     needs: gradle
     env:
       REPO: ${{ secrets.DOCKER_REPO }}
+      Lib: $REPO/docker
       APP: 711-community
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Retrieve built artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: build-artifact
-          path: ${{ env.APP }}/build
+          path: /build
 
       - name: Building Docker Image
-        working-directory: ${{ env.APP }}
         run: |
-          docker login harbor.ha-ving.store -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t harbor.ha-ving.store/docker/$REPO:${GITHUB_RUN_ID} -t $REPO:latest .
-          docker push harbor.ha-ving.store/docker/$REPO:${GITHUB_RUN_ID}
-          docker push harbor.ha-ving.store/docker/$REPO:latest
+          docker login $REPO -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t $Lib/$APP:${GITHUB_RUN_ID} -t $Lib/$APP:latest .
+          docker push $Lib/$APP:${GITHUB_RUN_ID}
+          docker push $Lib/$APP:latest
