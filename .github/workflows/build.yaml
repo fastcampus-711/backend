@@ -26,9 +26,9 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application-hidden.yaml
-          
+          echo "${{ secrets.hidden }}"
+          echo "teststesttsetsetsets"
           echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
-          sed -i '/datasource:/a \  test: test' application.yaml
 
           cat ./application-hidden.yaml
         shell: bash
