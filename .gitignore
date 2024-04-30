@@ -38,4 +38,4 @@ out/
 
 ### Secret ###
 .env
-src/main/**/application-hidden.yaml
+src/main/**/application-hidden**.yaml
