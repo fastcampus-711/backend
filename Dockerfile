@@ -6,4 +6,4 @@ COPY src/main/resources /app
 
 EXPOSE 80
 
-CMD ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "spring.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/app/spring.jar"]
