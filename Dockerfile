@@ -1,8 +1,8 @@
 FROM openjdk:17-alpine
 
 WORKDIR /app
-COPY build/libs/*.jar /app/spring.jar
 COPY src/main/resources /app
+COPY build/libs/*.jar /app/spring.jar
 
 EXPOSE 80
 
