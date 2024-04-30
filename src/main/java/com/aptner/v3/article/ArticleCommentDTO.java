@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class ArticleCommentDTO {
     private Long id;  // 댓글 ID
     private String content;  // 내용
-    private LocalDateTime createdDt;  // 생성일
+    private LocalDateTime createdAt;  // 생성일
     private String createdBy;  // 생성자
-    private LocalDateTime updatedDt;  // 수정일
+    private LocalDateTime updatedAt;  // 수정일
     private String updatedBy;  // 수정자
 }

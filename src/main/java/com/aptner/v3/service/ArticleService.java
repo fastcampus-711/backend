@@ -41,7 +41,7 @@ public class ArticleService {
     /* Article 생성 */
     public Article createArticle(Article articleDetails) {
         log.debug("article, {}", articleDetails);
-        articleDetails.setCreatedDt(LocalDateTime.now());
+        articleDetails.setCreatedAt(LocalDateTime.now());
         articleDetails.setCreatedBy("User");                // @todo
         return articleRepository.save(articleDetails);
     }
@@ -54,7 +54,7 @@ public class ArticleService {
                     article.setTitle(articleDetails.getTitle());
                     article.setContent(articleDetails.getContent());
                     article.setHashtag(articleDetails.getHashtag());
-                    article.setUpdatedDt(LocalDateTime.now());
+                    article.setUpdatedAt(LocalDateTime.now());
                     article.setUpdatedBy("User");               // @todo
                     return articleRepository.save(article);
                 })
@@ -76,9 +76,9 @@ public class ArticleService {
                     dto.setId(comment.getId());
                     dto.setContent(comment.getContent());
                     dto.setUpdatedBy(comment.getUpdatedBy());
-                    dto.setUpdatedDt(comment.getUpdatedDt());
+                    dto.setUpdatedAt(comment.getUpdatedAt());
                     dto.setCreatedBy(comment.getCreatedBy());
-                    dto.setCreatedDt(comment.getCreatedDt());
+                    dto.setCreatedAt(comment.getCreatedAt());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -92,7 +92,7 @@ public class ArticleService {
                     ArticleComment comment = new ArticleComment();
                     comment.setContent(commentDetails.getContent());
                     comment.setArticle(article);
-                    comment.setCreatedDt(LocalDateTime.now());
+                    comment.setCreatedAt(LocalDateTime.now());
                     comment.setCreatedBy("User");                    // @todo
                     return articleCommentRepository.save(comment);
                 })
@@ -106,7 +106,7 @@ public class ArticleService {
         return articleCommentRepository.findById(articleId)
                 .map(comment -> {
                     comment.setContent(commentDetails.getContent());
-                    comment.setUpdatedDt(LocalDateTime.now());
+                    comment.setUpdatedAt(LocalDateTime.now());
                     comment.setUpdatedBy("User");                     // @todo
                     return articleCommentRepository.save(comment);
                 })

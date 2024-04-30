@@ -5,6 +5,7 @@ import com.aptner.v3.article.ArticleComment;
 import com.aptner.v3.article.ArticleCommentDTO;
 import com.aptner.v3.repository.ArticleCommentRepository;
 import com.aptner.v3.repository.ArticleRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 
