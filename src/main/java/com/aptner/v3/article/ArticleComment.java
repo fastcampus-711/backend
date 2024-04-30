@@ -53,6 +53,4 @@ public class ArticleComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")  // 외래 키 열 이름
     private Article article;
-
-    private List<ArticleComment> items;
 }

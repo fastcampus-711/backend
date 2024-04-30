@@ -8,6 +8,14 @@ volumes:
   mysql-data:
 
 services:
+  app:
+    container_name: build_test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 81:80
+
   mysql:
     image: bitnami/mysql:8.3
     container_name: mysql
