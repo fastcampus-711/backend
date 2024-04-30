@@ -55,6 +55,7 @@ jobs:
 
       - name: Building Docker Image
         run: |
+          ls -al
           docker login $REPO -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t $Lib/$APP:${GITHUB_RUN_ID} -t $Lib/$APP:latest .
           docker push $Lib/$APP:${GITHUB_RUN_ID}
