@@ -28,6 +28,8 @@ jobs:
           touch ./application-hidden.yaml
           
           echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
+          sed -i '/database:/a \  test: test' application.yaml
+
           cat ./application-hidden.yaml
         shell: bash
 
