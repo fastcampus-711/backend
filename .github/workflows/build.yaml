@@ -28,6 +28,7 @@ jobs:
           touch ./application-hidden.yaml
           
           echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
+          cat ./application-hidden.yaml
         shell: bash
 
       - name: Cache Gradle packages
