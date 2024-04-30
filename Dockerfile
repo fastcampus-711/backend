@@ -1,6 +1,7 @@
 FROM openjdk:17-alpine
 
-COPY build/libs/*.jar spring.jar
+WORKDIR /app
+COPY build/libs/*.jar /app/spring.jar
 
 EXPOSE 80
 
