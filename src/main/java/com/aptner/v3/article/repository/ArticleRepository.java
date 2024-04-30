@@ -1,4 +1,4 @@
-package com.aptner.v3.repository;
+package com.aptner.v3.article.repository;
 
 import com.aptner.v3.article.Article;
 import org.springframework.data.jpa.repository.JpaRepository;

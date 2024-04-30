@@ -1,10 +1,10 @@
-package com.aptner.v3.service;
+package com.aptner.v3.article.service;
 
 import com.aptner.v3.article.Article;
 import com.aptner.v3.article.ArticleComment;
-import com.aptner.v3.article.ArticleCommentDTO;
-import com.aptner.v3.repository.ArticleCommentRepository;
-import com.aptner.v3.repository.ArticleRepository;
+import com.aptner.v3.article.dto.ArticleCommentRequest;
+import com.aptner.v3.article.repository.ArticleCommentRepository;
+import com.aptner.v3.article.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class ArticleService {
     /* Article 생성 */
     public Article createArticle(Article articleDetails) {
         log.debug("article, {}", articleDetails);
-        articleDetails.setCreatedDt(LocalDateTime.now());
+        articleDetails.setCreatedAt(LocalDateTime.now());
         articleDetails.setCreatedBy("User");                // @todo
         return articleRepository.save(articleDetails);
     }
@@ -54,7 +54,7 @@ public class ArticleService {
                     article.setTitle(articleDetails.getTitle());
                     article.setContent(articleDetails.getContent());
                     article.setHashtag(articleDetails.getHashtag());
-                    article.setUpdatedDt(LocalDateTime.now());
+                    article.setUpdatedAt(LocalDateTime.now());
                     article.setUpdatedBy("User");               // @todo
                     return articleRepository.save(article);
                 })
@@ -67,24 +67,24 @@ public class ArticleService {
         articleRepository.findById(articleId).ifPresent(articleRepository::delete);
     }
 
-    public List<ArticleCommentDTO> getComments(Long articleId) {
+    public List<ArticleCommentRequest> getComments(Long articleId) {
         log.debug("articleId, {}", articleId);
         List<ArticleComment> comments  = articleCommentRepository.findByArticleId(articleId);
         return comments.stream()
                 .map(comment -> {
-                    ArticleCommentDTO dto = new ArticleCommentDTO();
+                    ArticleCommentRequest dto = new ArticleCommentRequest();
                     dto.setId(comment.getId());
                     dto.setContent(comment.getContent());
                     dto.setUpdatedBy(comment.getUpdatedBy());
-                    dto.setUpdatedDt(comment.getUpdatedDt());
+                    dto.setUpdatedAt(comment.getUpdatedAt());
                     dto.setCreatedBy(comment.getCreatedBy());
-                    dto.setCreatedDt(comment.getCreatedDt());
+                    dto.setCreatedAt(comment.getCreatedAt());
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
     /* Comment 생성 */
-    public ArticleComment createComment(Long articleId, ArticleCommentDTO commentDetails) {
+    public ArticleComment createComment(Long articleId, ArticleCommentRequest commentDetails) {
         log.debug("articleId, {}", articleId);
         log.debug("commentDetails, {}", commentDetails);
         return articleRepository.findById(articleId)
@@ -92,7 +92,7 @@ public class ArticleService {
                     ArticleComment comment = new ArticleComment();
                     comment.setContent(commentDetails.getContent());
                     comment.setArticle(article);
-                    comment.setCreatedDt(LocalDateTime.now());
+                    comment.setCreatedAt(LocalDateTime.now());
                     comment.setCreatedBy("User");                    // @todo
                     return articleCommentRepository.save(comment);
                 })
@@ -106,7 +106,7 @@ public class ArticleService {
         return articleCommentRepository.findById(articleId)
                 .map(comment -> {
                     comment.setContent(commentDetails.getContent());
-                    comment.setUpdatedDt(LocalDateTime.now());
+                    comment.setUpdatedAt(LocalDateTime.now());
                     comment.setUpdatedBy("User");                     // @todo
                     return articleCommentRepository.save(comment);
                 })
