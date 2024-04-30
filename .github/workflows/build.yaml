@@ -26,9 +26,10 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application-hidden.yaml
-          echo "${{ secrets.hidden }}"
-          echo "teststesttsetsetsets"
           echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
+          
+          modified_secret=$(echo "$secret" | sed 's/./&%/g;s/%$//')
+          echo "$modified_secret"          
 
           cat ./application-hidden.yaml
         shell: bash
