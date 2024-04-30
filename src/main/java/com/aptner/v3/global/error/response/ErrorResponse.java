@@ -1,4 +1,4 @@
-package com.aptner.v3.common.exception.response;
+package com.aptner.v3.global.error.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

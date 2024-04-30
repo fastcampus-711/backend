@@ -2,10 +2,10 @@ package com.aptner.v3.service;
 
 import com.aptner.v3.article.Article;
 import com.aptner.v3.article.ArticleComment;
-import com.aptner.v3.article.ArticleCommentDTO;
-import com.aptner.v3.repository.ArticleCommentRepository;
-import com.aptner.v3.repository.ArticleRepository;
-import org.junit.jupiter.api.DisplayName;
+import com.aptner.v3.article.dto.ArticleCommentRequest;
+import com.aptner.v3.article.repository.ArticleCommentRepository;
+import com.aptner.v3.article.repository.ArticleRepository;
+import com.aptner.v3.article.service.ArticleService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -107,7 +107,7 @@ public class ArticleServiceTest {
 
         when(articleCommentRepository.findByArticleId(1L)).thenReturn(Arrays.asList(comment1, comment2));
 
-        List<ArticleCommentDTO> comments = articleService.getComments(1L);
+        List<ArticleCommentRequest> comments = articleService.getComments(1L);
 
         assertThat(comments).hasSize(2);
         assertThat(comments.get(0).getContent()).isEqualTo("Comment 1");
@@ -125,7 +125,7 @@ public class ArticleServiceTest {
         when(articleRepository.findById(1L)).thenReturn(Optional.of(article));
         when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(comment);
 
-        ArticleComment createdComment = articleService.createComment(1L, new ArticleCommentDTO());
+        ArticleComment createdComment = articleService.createComment(1L, new ArticleCommentRequest());
 
         assertThat(createdComment.getContent()).isEqualTo("New Comment");
         verify(articleCommentRepository, times(1)).save(any(ArticleComment.class));

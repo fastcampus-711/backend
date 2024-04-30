@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -52,4 +53,6 @@ public class ArticleComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")  // 외래 키 열 이름
     private Article article;
+
+    private List<ArticleComment> items;
 }

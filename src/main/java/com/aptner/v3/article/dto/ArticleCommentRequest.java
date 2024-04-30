@@ -1,4 +1,4 @@
-package com.aptner.v3.article;
+package com.aptner.v3.article.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class ArticleCommentDTO {
+public class ArticleCommentRequest {
     private Long id;  // 댓글 ID
     private String content;  // 내용
     private LocalDateTime createdAt;  // 생성일

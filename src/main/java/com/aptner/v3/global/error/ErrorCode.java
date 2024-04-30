@@ -1,4 +1,4 @@
-package com.aptner.v3.common.exception.custom;
+package com.aptner.v3.global.error;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

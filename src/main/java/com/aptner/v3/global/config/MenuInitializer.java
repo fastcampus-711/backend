@@ -1,4 +1,4 @@
-package com.aptner.v3.config;
+package com.aptner.v3.global.config;
 
 import com.aptner.v3.menu.MenuItem;
 import com.aptner.v3.menu.MenuItemRepository;
