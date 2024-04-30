@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashtag"),
-        @Index(columnList = "createdDt"),
+        @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
 public class Article {
@@ -29,19 +29,20 @@ public class Article {
     /* 제목 */
     @Setter private String title;
     /* 내용 */
+    @Column(columnDefinition = "TEXT")
     @Setter private String content;
     /* 태그 */
     @Setter private String hashtag;
 
     /* 생성일 */
     @CreatedDate
-    private LocalDateTime createdDt;
+    private LocalDateTime createdAt;
     /* 생성자 */
     @CreatedBy
     private String createdBy;
     /* 수정일 */
     @LastModifiedDate
-    private LocalDateTime updatedDt;
+    private LocalDateTime updatedAt;
     /* 수정자 */
     @LastModifiedBy
     private String updatedBy;
