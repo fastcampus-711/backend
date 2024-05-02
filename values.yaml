@@ -19,7 +19,7 @@ serviceAccount:
 
 image:
   repository: harbor.ha-ving.store/docker/711-community
-  tag: ""
+  tag: "bf550a98ea804788a54ffc2e35038ff7612935bb"
   pullPolicy: IfNotPresent
 
 podAnnotations: {}
