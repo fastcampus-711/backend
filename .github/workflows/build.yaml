@@ -60,3 +60,8 @@ jobs:
           docker build -t $Lib/$APP:${GITHUB_RUN_ID} -t $Lib/$APP:latest .
           docker push $Lib/$APP:${GITHUB_RUN_ID}
           docker push $Lib/$APP:latest
+
+  update-argocd-metadata:
+    needs: gradle
+    name: Argo Deployment
+    runs-on: ubuntu-22.04    
