@@ -14,9 +14,9 @@ spec:
       targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
-  {{- if .Values.service.nodePort }}
-nodePort: {{ .Values.service.nodePort }}
-  {{- end }}
-selector:
-  app: {{ template "Springboot.name" . }}
-  release: {{ .Release.Name }}
+{{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+{{- end }}      
+  selector:
+    app: {{ template "Springboot.name" . }}
+    release: {{ .Release.Name }}
