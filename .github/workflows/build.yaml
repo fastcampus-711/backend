@@ -2,47 +2,39 @@ name: Docker Build 🚀
 
 on:
   push:
-    branches: [ "feature/**", "master" ]
+    branches: [ "master", "develop" ]
   workflow_dispatch:
 
 jobs:
   gradle:
-    name: Gradle Build
+    name: Image Build
     runs-on: ubuntu-22.04
+    environment: dev
     env:
-      REPO: ${{ secrets.DOCKER_REPO }}
-      Lib: ${{ secrets.DOCKER_REPO }}/docker
-      APP: 711-community
+      image_name: ${{ secrets.DOCKER_REPO }}/docker/711-community
+      image_tag: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: make application-hidden.yaml
+      - name: Set Timezone to Asia/Seoul
         run: |
-          cd ./src/main/resources
-          touch ./application-hidden.yaml
-          echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
-          
-          modified_secret=$(echo "$secret" | sed 's/./&%/g;s/%$//')
-          echo "$modified_secret"          
-
-          cat ./application-hidden.yaml
+          sudo ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+          echo "Asia/Seoul" | sudo tee /etc/timezone
         shell: bash
 
       - name: Cache Gradle packages
-        uses: actions/cache@v2				# Gradle dependency 캐싱 설정(테스트 속도 향상)
+        uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          restore-keys: ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -55,13 +47,35 @@ jobs:
 
       - name: Building Docker Image
         run: |
-          ls -al
-          docker login $REPO -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t $Lib/$APP:${GITHUB_RUN_ID} -t $Lib/$APP:latest .
-          docker push $Lib/$APP:${GITHUB_RUN_ID}
-          docker push $Lib/$APP:latest
+          docker login ${{ secrets.DOCKER_REPO }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ env.image_name }}:${{ env.image_tag }} -t ${{ env.image_name }}:latest .
+          docker push ${{ env.image_name }}:${{ env.image_tag }}
+          docker push ${{ env.image_name }}:latest
 
-  update-argocd-metadata:
-    needs: gradle
+  deployment:
     name: Argo Deployment
-    runs-on: ubuntu-22.04    
+    runs-on: ubuntu-22.04
+    needs: gradle
+    environment: dev
+    env:
+      branch_name: helm
+      image_tag: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.branch_name }}
+          submodules: 'recursive'             # Actions -> General -> Workflow permissions (add write)
+          token: ${{ secrets.GITHUB_TOKEN }}  # Ensure the token is being used
+
+      - name: Change values.yaml
+        run: |
+          sed -i "s/tag: \".*\"/tag: \"${{ env.image_tag }}\"/g" values.yaml
+
+      - name: Git Push
+        run: |
+          git config --global user.email "GitHub Actions Bot@github.com"
+          git config --global user.name "GitHub Actions Bot"
+          git add values.yaml
+          git commit -m "change image tag: ${{ env.image_tag }}"
+          git -c http.extraHeader="AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" pull --rebase origin ${{ env.branch_name }}
+          git -c http.extraHeader="AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" push origin ${{ env.branch_name }}
