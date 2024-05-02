@@ -1,0 +1,70 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+application:
+  port: 80
+  profile: dev
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+  nodePort:
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+image:
+  repository: harbor.ha-ving.store/docker/711-community
+  tag: ""
+  pullPolicy: IfNotPresent
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 60
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "ha-ving.store-issuer"
+  hosts:
+    - host: springboot.ha-ving.store
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: 711-ingress
+      hosts:
+        - 711.ha-ving.store
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
