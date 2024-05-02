@@ -1,8 +1,8 @@
-package com.aptner.v3.common.exception;
+package com.aptner.v3.global.exception;
 
-import com.aptner.v3.common.exception.custom.CustomException;
-import com.aptner.v3.common.exception.custom.ErrorCode;
-import com.aptner.v3.common.exception.response.ErrorResponse;
+import com.aptner.v3.global.exception.custom.CustomException;
+import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.error.response.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;

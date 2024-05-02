@@ -1,12 +1,9 @@
-package com.aptner.v3.controller;
+package com.aptner.v3.article.controller;
 
 import com.aptner.v3.article.Article;
 import com.aptner.v3.article.ArticleComment;
-import com.aptner.v3.article.ArticleCommentDTO;
-import com.aptner.v3.service.ArticleService;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.aptner.v3.article.dto.ArticleCommentRequest;
+import com.aptner.v3.article.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,12 +55,12 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}/comments")
-    public List<ArticleCommentDTO> getComments(@PathVariable Long articleId) {
+    public List<ArticleCommentRequest> getComments(@PathVariable Long articleId) {
         return articleService.getComments(articleId);
     }
 
     @PostMapping("/{articleId}/comments")
-    public ResponseEntity<ArticleComment> createComment(@PathVariable Long articleId, @RequestBody ArticleCommentDTO commentDetails) {
+    public ResponseEntity<ArticleComment> createComment(@PathVariable Long articleId, @RequestBody ArticleCommentRequest commentDetails) {
         ArticleComment createdComment = articleService.createComment(articleId, commentDetails);
         if (createdComment != null) {
             return ResponseEntity.status(201).body(createdComment);

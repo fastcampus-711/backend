@@ -1,4 +1,6 @@
-package com.aptner.v3.common.exception.custom;
+package com.aptner.v3.global.exception.custom;
+
+import com.aptner.v3.global.error.ErrorCode;
 
 public class AlreadyRegisteredUserException extends CustomException {
     public AlreadyRegisteredUserException() {
