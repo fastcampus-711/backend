@@ -40,7 +40,7 @@ ingress:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "ha-ving.store-issuer"
   hosts:
-    - host: springboot.ha-ving.store
+    - host: 711.ha-ving.store
       paths:
         - path: /
           pathType: Prefix
