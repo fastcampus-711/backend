@@ -1,0 +1,40 @@
+package com.aptner.v3.global.config;
+
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){ // 비밀번호 암호화를 위한 Bean 등록
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        // jwt 방식으로 session을 STATELESS 상태로 관리하기 때문에 disable 처리
+        http.csrf(auth->auth.disable());
+
+        // formLogin, httpBasic은 사용하지 않기 때문에 disable 처리
+        http.formLogin(auth->auth.disable());
+        http.httpBasic(auth->auth.disable());
+
+        //인가 설정
+        http.authorizeHttpRequests(auth->auth
+                .requestMatchers("login","/","signUp").permitAll() // login, /, signUp은 누구나 접근 가능
+               // .requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
+                .anyRequest().authenticated()); // 나머지 요청은 인증된 사용자만 접근 가능
+
+        // 세션을 사용하지 않기 때문에 STATELESS로 설정
+        http.sessionManagement(auth->auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
+}
