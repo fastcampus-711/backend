@@ -10,18 +10,23 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@DiscriminatorColumn
 @Getter
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CommonPost {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String content;
     @CreatedBy
     private String createdBy;
     @CreatedDate
     private LocalDateTime createdAt;
-    private int views;
+    private int hits;
+
+    @Column(insertable = false, updatable = false)
+    private String dtype;
     /** TODO
      *
      */

@@ -1,3 +1,25 @@
+insert into menu (id, name)
+values (1, '아파트 소개'),
+       (2, '공지사항'),
+       (3, '의무공개'),
+       (4, '소통공간');
+
+insert into category (category_name, menu_id)
+values ('공지사항', 2),
+('자유게시판', 4);
+
+insert into common_post (id, title, content, created_by, created_at, hits, status, DTYPE)
+values (1, 'title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, 'NoticePost');
+insert into notice_post (id, post_at)
+values (1, '2021-03-10 08:48:50');
+
+insert into common_post (id, title, content, created_by, created_at, hits, status, DTYPE)
+values (2, 'FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, 'FreeBoardPost');
+insert into free_board_post (id, blind_at, blind_by)
+values (2, '2021-03-10 08:48:50', 'blind_by');
+-- insert into free_board_post (id, title, content, created_by, created_at, hits, status)
+-- values (2, 'freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
+
 insert into article (hashtag, title, content, created_by, updated_by, created_at, updated_at)
 
 values ('uno2', 'Quisque ut erat.', 'Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
@@ -10,7 +32,8 @@ Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan fe
 Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
 #purple', 'Arv', 'Keelby', '2021-05-06 11:51:24', '2021-05-23 08:34:54'),
 
-       ('uno2', 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio.', 'Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+       ('uno2',
+        'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio.', 'Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
 #purple', 'Adams', 'Thalia', '2021-08-13 08:32:22', '2021-04-02 02:58:19'),
 
        ('uno', 'Fusce posuere felis sed lacus.', 'Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
@@ -125,7 +148,7 @@ values (19, null,
        (4, null,
         'Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.',
         '2021-11-23 18:29:30', '2021-03-09 00:57:27', 'Kain', 'Bruno'),
-       (5,  null,
+       (5, null,
         'Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.',
         '2021-03-19 18:39:02', '2021-03-16 17:47:17', 'Kippie', 'Alexio'),
        (4, null,
@@ -151,7 +174,7 @@ values (19, null,
         'Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.',
         '2021-12-14 01:55:52', '2021-11-02 15:12:00', 'Ulises', 'Denney'),
        (13, null,
-       'Fusce consequat. Nulla nisl. Nunc nisl.',
-       '2021-04-03 11:44:04', '2022-01-05 21:01:34', 'Kendricks', 'Aubert')
-        ;
+        'Fusce consequat. Nulla nisl. Nunc nisl.',
+        '2021-04-03 11:44:04', '2022-01-05 21:01:34', 'Kendricks', 'Aubert')
+;
 -- article_comment

@@ -1,6 +1,6 @@
-package com.aptner.v3.board.notice_post.controller;
+package com.aptner.v3.board.free_board_post.controller;
 
-import com.aptner.v3.board.notice_post.domain.NoticePost;
+import com.aptner.v3.board.free_board_post.service.FreeBoardPostService;
 import com.aptner.v3.board.notice_post.service.NoticePostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/menus/{menu-id}/categories/1/notices")
-public class NoticePostController {
-    private final NoticePostService noticePostService;
+@RequestMapping("/menus/{menu-id}/categories/2/free-boards")
+public class FreeBoardPostController {
+    private final FreeBoardPostService freeBoardPostService;
 
     @GetMapping
     public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(noticePostService.getPostList(request), HttpStatus.OK);
+        return new ResponseEntity<>(freeBoardPostService.getPostList(request), HttpStatus.OK);
     }
 }
