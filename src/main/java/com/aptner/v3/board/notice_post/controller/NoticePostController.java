@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/menus/{menu-id}/categories/1/notices")
+@RequestMapping("/menus/{menu-id}/categories/2/notices")
 public class NoticePostController {
     private final NoticePostService noticePostService;
 

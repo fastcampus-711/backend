@@ -24,7 +24,6 @@ public class CommonPost {
     @CreatedDate
     private LocalDateTime createdAt;
     private int hits;
-
     @Column(insertable = false, updatable = false)
     private String dtype;
     /** TODO

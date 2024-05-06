@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/menus/{menu-id}/categories/2/free-boards")
+@RequestMapping("/menus/{menu-id}/categories/4/free-boards")
 public class FreeBoardPostController {
     private final FreeBoardPostService freeBoardPostService;
 
