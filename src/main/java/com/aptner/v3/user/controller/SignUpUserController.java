@@ -22,6 +22,6 @@ public class SignUpUserController {
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDto.Request request){
         log.info("signUp request: {}", request);
         signUpUserService.signUp(request);
-        return ResponseEntity.ok(HttpStatus.OK.value()); //응답 양식 미정
+        return new ResponseEntity<>("SIGNUP SUCCESS",HttpStatus.OK); //응답 양식 미정
     }
 }

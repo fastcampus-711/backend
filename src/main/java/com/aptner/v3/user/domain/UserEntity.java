@@ -34,7 +34,7 @@ public class UserEntity {
     @NotNull(message = "필수 입력값입니다.")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role roles;
 
     /*@NotNull(message = "필수 입력값입니다.")
     @Enumerated(EnumType.STRING)
