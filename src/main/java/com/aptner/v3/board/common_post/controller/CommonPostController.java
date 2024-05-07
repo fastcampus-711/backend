@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/categories/{category-id}")
 public class CommonPostController<T extends CommonPost> {
     private final CommonPostService<T> commonPostService;
 
