@@ -5,7 +5,7 @@ import lombok.Getter;
 public class CommentDto {
 
     @Getter
-    public static class AddRequest {
+    public static class Request {
         private String content;
     }
 }

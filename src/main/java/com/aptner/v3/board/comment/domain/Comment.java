@@ -5,6 +5,8 @@ import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.domain.CreatedInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 
 import java.util.List;
 
@@ -30,11 +32,22 @@ public class Comment extends CreatedInfo {
 
     public Comment() {}
 
-    public Comment(long postId, String content) {
-
+    public Comment(CommonPost commonPost, String content) {
+        this.commonPost = commonPost;
+        this.content = content;
     }
 
-    public static Comment of(long postId, CommentDto.AddRequest requestDto) {
-        return null;
+    public static Comment of(CommonPost commonPost, String content) {
+        return new Comment(commonPost, content);
+    }
+
+    public Comment update(CommentDto.Request requestDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true);
+        modelMapper.map(requestDto, this);
+        return this;
     }
 }
