@@ -19,7 +19,7 @@ public class CategoryController {
     @GetMapping("/{category-id}")
     public String getPostList(@PathVariable("menu-id") long menuId, @PathVariable("category-id") long categoryId) {
         Category category = categoryService.getCategory(categoryId);
-        return "redirect:/menus/" + menuId + "/categories/" + categoryId + "/" + category.getCategoryName().getTableName();
+        return "redirect:/menus/" + menuId + "/categories/" + categoryId + "/" + category.getCategoryName().getURI();
     }
 
     @PostMapping

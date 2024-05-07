@@ -1,6 +1,8 @@
 package com.aptner.v3.board.free_board_post.domain;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.free_board_post.dto.FreeBoardPostDto;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 
@@ -11,4 +13,12 @@ import java.time.LocalDateTime;
 public class FreeBoardPost extends CommonPost {
     private LocalDateTime blindAt;
     private String blindBy;
+
+    public FreeBoardPost() {}
+
+    public FreeBoardPost(String title, String content, LocalDateTime blindAt, String blindBy) {
+        super(title, content);
+        this.blindAt = blindAt;
+        this.blindBy = blindBy;
+    }
 }

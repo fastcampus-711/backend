@@ -6,7 +6,6 @@ import com.aptner.v3.board.category.dto.CreateCategoryDto;
 import com.aptner.v3.board.category.dto.DeleteCategoryDto;
 import com.aptner.v3.board.category.dto.UpdateCategoryDto;
 import com.aptner.v3.board.category.repository.CategoryRepository;
-import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.menu.domain.Menu;
 import com.aptner.v3.board.menu.repository.MenuRepository;
 import com.aptner.v3.global.exception.custom.AlreadyExistsCategoryNameException;
@@ -37,7 +36,7 @@ public class CategoryService {
     }
 
     public void updateCategory(UpdateCategoryDto.Request dto) {
-        categoryRepository.updateName(dto.getId(), dto.getCategoryName().getTableName());
+        categoryRepository.updateName(dto.getId(), dto.getCategoryName().getURI());
     }
 
     public void deleteCategory(DeleteCategoryDto.Request dto) {

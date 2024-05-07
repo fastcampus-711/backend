@@ -15,7 +15,7 @@ public class Menu {
     private String name;
     @OneToMany
     @JoinColumn(name = "category_id")
-    List<Category> categories;
+    private List<Category> categories;
 
     public Menu() {}
 
