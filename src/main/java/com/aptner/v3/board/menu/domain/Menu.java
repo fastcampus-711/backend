@@ -14,7 +14,7 @@ public class Menu {
     private long id;
     private String name;
     @OneToMany
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "menu_id")
     private List<Category> categories;
 
     public Menu() {}

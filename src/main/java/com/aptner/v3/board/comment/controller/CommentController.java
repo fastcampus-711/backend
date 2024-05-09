@@ -13,11 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping
-    public ResponseEntity<?> getComments(@PathVariable(name = "post-id") long postId) {
-        return new ResponseEntity<>(commentService.getComments(postId), HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<?> addComment(@PathVariable(name = "post-id") long postId, @RequestBody CommentDto.Request requestDto) {
         commentService.addComment(postId, requestDto);

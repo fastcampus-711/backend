@@ -19,39 +19,10 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
-    private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
 
     public Category getCategory(long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(NotExistsCategoryIdException::new);
-    }
-
-    public void createCategory(long menuId, CreateCategoryDto.Request dto) {
-        Menu menu = getMenu(menuId);
-
-        checkNameIsExistsOrNot(dto.getCategoryName(), menu);
-
-        categoryRepository.save(Category.of(dto.getCategoryName(), menu));
-    }
-
-    public void updateCategory(UpdateCategoryDto.Request dto) {
-        categoryRepository.updateName(dto.getId(), dto.getCategoryName().getURI());
-    }
-
-    public void deleteCategory(DeleteCategoryDto.Request dto) {
-        categoryRepository.deleteById(dto.getId());
-    }
-
-    private Menu getMenu(long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(NotExistsMenuIdException::new);
-    }
-
-    private static void checkNameIsExistsOrNot(CategoryName name, Menu menu) {
-        if (menu.getCategories()
-                .stream().parallel()
-                .anyMatch(caategory -> caategory.getCategoryName().equals(name)))
-            throw new AlreadyExistsCategoryNameException();
     }
 }

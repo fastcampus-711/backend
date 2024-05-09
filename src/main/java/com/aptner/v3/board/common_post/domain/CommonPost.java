@@ -5,6 +5,7 @@ import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.global.domain.CreatedInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.Fetch;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.List;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @DiscriminatorColumn
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -27,8 +27,7 @@ public class CommonPost extends CreatedInfo {
     @Column(insertable = false, updatable = false)
     private String dtype;
 
-    @OneToMany
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "commonPost")
     private List<Comment> comments;
     private Boolean visible = true;
 
