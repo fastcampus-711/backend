@@ -19,10 +19,4 @@ public class MenuController {
     public ResponseEntity<?> getMenuList() {
         return new ResponseEntity<>(menuService.getMenuList(), HttpStatus.OK);
     }
-
-    @GetMapping("/{menu-id}")
-    public ResponseEntity<?> getCategoryList
-            (@PathVariable("menu-id") long menuId) {
-        return new ResponseEntity<>(menuService.getCategoryList(menuId), HttpStatus.OK);
-    }
 }

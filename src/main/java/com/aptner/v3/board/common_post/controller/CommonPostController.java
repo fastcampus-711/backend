@@ -20,9 +20,24 @@ public class CommonPostController<T extends CommonPost> {
     }
 
     @GetMapping
+    public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword, HttpServletRequest request) {
+        if (keyword == null)
+            return getPostList(request);
+        else
+            return searchPost(keyword);
+    }
+
+    //자식 테이블에서만 정상 동작
+
     public ResponseEntity<?> getPostList(HttpServletRequest request) {
         return new ResponseEntity<>(commonPostService.getPost(request), HttpStatus.OK);
     }
+
+    public ResponseEntity<?> searchPost(String keyword) {
+        System.out.println("keyword = " + keyword);
+        return new ResponseEntity<>("search post success", HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody NoticePostDto.CreateRequest requestDto) {
         commonPostService.createPost(requestDto);

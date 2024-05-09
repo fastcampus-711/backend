@@ -22,10 +22,4 @@ public class MenuService {
     public List<Menu> getMenuList() {
         return menuRepository.findAll();
     }
-
-    public List<Category> getCategoryList(long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(NotExistsMenuIdException::new)
-                .getCategories();
-    }
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CategoryName {
+    공통("", ""),
     공지사항("notices","NoticePost"),
     자유게시판("free-boards","FreeBoardPost");
 

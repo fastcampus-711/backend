@@ -7,9 +7,9 @@ import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.global.exception.custom.InvalidURIException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 public class CommonPostService<T extends CommonPost> {
     private final CommonPostRepository<T> commonPostRepository;
 
-    public T getPost(Long postId) {
+    public T getPost(long postId) {
         T domain = commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new);
 
