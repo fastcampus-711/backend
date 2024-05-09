@@ -18,7 +18,7 @@ public class Comment extends CreatedInfo {
     private Long id;
     private String content;
     private boolean visible = true;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private List<Comment> comments;
 

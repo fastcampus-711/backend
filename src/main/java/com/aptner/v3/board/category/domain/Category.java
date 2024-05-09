@@ -2,7 +2,6 @@ package com.aptner.v3.board.category.domain;
 
 import com.aptner.v3.board.category.CategoryName;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.menu.domain.Menu;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -16,9 +15,6 @@ public class Category {
     private long id;
     @Enumerated(EnumType.STRING)
     private CategoryName categoryName;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
 
     @Transient
     private List<CommonPost> commonPost;
@@ -26,12 +22,7 @@ public class Category {
     public Category() {
     }
 
-    private Category(CategoryName categoryName, Menu menu) {
-        this.categoryName = categoryName;
-        this.menu = menu;
-    }
-
-    public static Category of(CategoryName categoryName, Menu menu) {
-        return new Category(categoryName, menu);
-    }
+//    public static Category of(CategoryName categoryName) {
+//        return new Category(categoryName);
+//    }
 }

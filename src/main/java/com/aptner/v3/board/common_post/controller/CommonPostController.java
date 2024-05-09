@@ -16,12 +16,12 @@ public class CommonPostController<T extends CommonPost> {
 
     @GetMapping("/{post-id}")
     public ResponseEntity<?> getPost(@PathVariable(name = "post-id") Long postId) {
-        return new ResponseEntity<>(commonPostService.getPostList(postId), HttpStatus.OK);
+        return new ResponseEntity<>(commonPostService.getPost(postId), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPostList(request), HttpStatus.OK);
+        return new ResponseEntity<>(commonPostService.getPost(request), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody NoticePostDto.CreateRequest requestDto) {

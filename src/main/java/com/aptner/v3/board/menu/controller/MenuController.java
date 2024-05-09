@@ -25,25 +25,4 @@ public class MenuController {
             (@PathVariable("menu-id") long menuId) {
         return new ResponseEntity<>(menuService.getCategoryList(menuId), HttpStatus.OK);
     }
-
-    @PostMapping
-    @Deprecated
-    public ResponseEntity<?> createMenu(@RequestBody CreateMenuDto.Request dto) {
-        menuService.createMenu(dto);
-        return new ResponseEntity<>("add " + dto + " to menu success", HttpStatus.OK);
-    }
-
-    @PutMapping
-    @Deprecated
-    public ResponseEntity<?> updateMenu(@RequestBody UpdateMenuDto.Request dto) {
-        menuService.updateMenu(dto);
-        return new ResponseEntity<>("update " + dto.getTargetId() + " to " + dto.getTo() + " success", HttpStatus.OK);
-    }
-
-    @DeleteMapping
-    @Deprecated
-    public ResponseEntity<?> deleteMenu(@RequestBody DeleteMenuDto.Request dto) {
-        menuService.deleteMenu(dto);
-        return new ResponseEntity<>("delete " + dto.getId() + " from menu success.", HttpStatus.OK);
-    }
 }

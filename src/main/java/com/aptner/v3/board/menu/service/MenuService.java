@@ -28,16 +28,4 @@ public class MenuService {
                 .orElseThrow(NotExistsMenuIdException::new)
                 .getCategories();
     }
-
-    public void createMenu(CreateMenuDto.Request dto) {
-        menuRepository.save(dto.toEntity());
-    }
-
-    public void updateMenu(UpdateMenuDto.Request dto) {
-        menuRepository.updateName(dto.getTargetId(), dto.getTo());
-    }
-
-    public void deleteMenu(DeleteMenuDto.Request dto) {
-        menuRepository.deleteById(dto.getId());
-    }
 }

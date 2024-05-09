@@ -27,7 +27,7 @@ public class CommonPost extends CreatedInfo {
     @Column(insertable = false, updatable = false)
     private String dtype;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private List<Comment> comments;
     private Boolean visible = true;
