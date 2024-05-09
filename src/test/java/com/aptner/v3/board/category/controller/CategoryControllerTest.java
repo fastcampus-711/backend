@@ -1,7 +1,8 @@
 package com.aptner.v3.board.category.controller;
 
-import com.aptner.v3.board.category.dto.CreateCategoryDto;
-import com.aptner.v3.board.category.service.CategoryService;
+import com.aptner.v3.menu.category.CategoryController;
+import com.aptner.v3.menu.category.CategoryService;
+import com.aptner.v3.menu.category.dto.CategoryDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class CategoryControllerTest {
 
     @Test
     void createCategory() throws Exception {
-        CreateCategoryDto.Request dto = new CreateCategoryDto.Request();
+        CategoryDto.Request dto = new CategoryDto.Request();
         dto.setName("test");
         mockMvc.perform(post("/big-category-id=1")
                 .contentType(MediaType.APPLICATION_JSON)
