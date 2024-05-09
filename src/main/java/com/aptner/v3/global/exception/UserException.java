@@ -1,0 +1,14 @@
+package com.aptner.v3.global.exception;
+
+import com.aptner.v3.global.error.ErrorCode;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Getter
+public class UserException extends GlobalException {
+
+    public UserException(ErrorCode responseCode) {
+        super("사용자", responseCode);
+    }
+}
