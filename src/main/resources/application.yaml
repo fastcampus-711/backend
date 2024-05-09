@@ -23,7 +23,6 @@ spring:
     jackson:
         property-naming-strategy: SNAKE_CASE
 
-
 ## docs
 springdoc:
     default-produces-media-type: application/json;charset=UTF-8

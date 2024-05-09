@@ -4,29 +4,31 @@ import com.aptner.v3.board.category.CategoryName;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
-import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.global.exception.custom.InvalidURIException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class CommonPostService<T extends CommonPost> {
     private final CommonPostRepository<T> commonPostRepository;
 
-    public Object getPostList(Long postId) {
-        return commonPostRepository.findById(postId);
+    public T getPost(long postId) {
+        T domain = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
+        return domain;
 
     }
 
-    public List<T> getPostList(HttpServletRequest request) {
+    public List<T> getPost(HttpServletRequest request) {
         CategoryName categoryName = getCategoryName(request);
 
         return commonPostRepository.findByDtype(categoryName.getDtype());
