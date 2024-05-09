@@ -1,8 +1,8 @@
 package com.aptner.v3.global.config;
 
 
+import com.aptner.v3.global.jwt.JwtUtil;
 import com.aptner.v3.global.jwt.LoginFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +19,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
+
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil) {
+        this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -51,15 +56,17 @@ public class SecurityConfig {
 
         //인가 설정
         http.authorizeHttpRequests(auth -> auth
-                // .requestMatchers("/login/**","/","/signUp/**").permitAll() // login, /, signUp은 누구나 접근 가능
+                 .requestMatchers("/login/**","/","/signUp/**").permitAll() // login, /, signUp은 누구나 접근 가능
                 //.requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
                 //.anyRequest().authenticated()); // 나머지 요청은 인증된 사용자만 접근 가능
                 .anyRequest().permitAll()); //TODO: security 설정 테스트를 위해 임시로 permitAll로 설정
 
         // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
+
+
 }
