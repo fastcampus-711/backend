@@ -27,6 +27,14 @@ jobs:
           echo "Asia/Seoul" | sudo tee /etc/timezone
         shell: bash
 
+      - name: make application-hidden.yaml
+        run: |
+          cd ./src/main/resources
+          touch ./application-hidden.yaml
+          
+          echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
+        shell: bash
+
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
