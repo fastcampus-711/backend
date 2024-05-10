@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
     List<T> findByDtype(String dtype);
+
+    List<T> findByTitleContainingOrderByHitsDesc(String keyword);
 }

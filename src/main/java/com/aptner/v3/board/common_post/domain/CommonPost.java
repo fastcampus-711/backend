@@ -23,7 +23,7 @@ public class CommonPost extends CreatedInfo {
     private String title;
     private String content;
     private int hits = 0;
-    //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreeBoardPost"
+    //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
     @Column(insertable = false, updatable = false)
     private String dtype;
 

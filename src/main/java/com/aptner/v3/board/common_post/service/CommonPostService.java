@@ -2,15 +2,20 @@ package com.aptner.v3.board.common_post.service;
 
 import com.aptner.v3.board.category.CategoryName;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.global.exception.custom.InvalidURIException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.PageFormat;
+import java.awt.print.Pageable;
+import java.awt.print.Printable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,9 +34,26 @@ public class CommonPostService<T extends CommonPost> {
     }
 
     public List<T> getPost(HttpServletRequest request) {
-        CategoryName categoryName = getCategoryName(request);
+        String dtype = getDtype(request);
 
-        return commonPostRepository.findByDtype(categoryName.getDtype());
+        if (dtype.equals("CommonPost"))
+            return commonPostRepository.findAll();
+        else
+            return commonPostRepository.findByDtype(dtype);
+    }
+
+    public List<T> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
+        String dtype = getDtype(request);
+        if (dtype.equals("CommonPost")) {
+            if (sort == null)
+                return commonPostRepository.findByTitleContainingOrderByHitsDesc(keyword);
+            else
+                return commonPostRepository.findByTitleContainingOrderByHitsDesc(keyword);
+
+        } else {
+
+        }
+        return null;
     }
 
     public <U extends CommonPostDto.CreateRequest> void createPost(U requestDto) {
@@ -53,13 +75,16 @@ public class CommonPostService<T extends CommonPost> {
         commonPostRepository.deleteById(id);
     }
 
-    private static CategoryName getCategoryName(HttpServletRequest request) {
-        String target = Arrays.stream(request.getRequestURI()
-                .split("/")).toList().get(1);
+    private static String getDtype(HttpServletRequest request) {
+
+        String[] URIs = request.getRequestURI()
+                .split("/");
+        String target = URIs.length <= 1 ? "" : URIs[1];
 
         return Arrays.stream(CategoryName.values())
                 .filter(c -> c.getURI().equals(target))
                 .findFirst()
-                .orElseThrow(InvalidURIException::new);
+                .orElseThrow(InvalidURIException::new)
+                .getDtype();
     }
 }
