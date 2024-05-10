@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -34,7 +35,7 @@ public class Menu {
 
     protected Menu() {}
 
-    public Menu(MenuName code, String name) {
+    private Menu(MenuName code, String name) {
         this.code = code;
         this.name = name;
     }
@@ -43,4 +44,16 @@ public class Menu {
         return new Menu(code, name);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Menu menu = (Menu) o;
+        return id == menu.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

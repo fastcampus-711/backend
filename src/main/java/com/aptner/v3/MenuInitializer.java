@@ -5,6 +5,8 @@ import com.aptner.v3.menu.category.dto.CategoryDto;
 import com.aptner.v3.menu.menu.MenuName;
 import com.aptner.v3.menu.menu.MenuService;
 import com.aptner.v3.menu.menu.dto.MenuDto;
+import com.aptner.v3.user.User;
+import com.aptner.v3.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,15 +17,19 @@ public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        menuService.createMenu(new MenuDto.Request(MenuName.INFO.name(), MenuName.INFO.getKo()));
-        menuService.createMenu(new MenuDto.Request(MenuName.NOTICE.name(), MenuName.NOTICE.getKo()));
-        menuService.createMenu(new MenuDto.Request(MenuName.MANDATORY.name(), MenuName.MANDATORY.getKo()));
-        menuService.createMenu(new MenuDto.Request(MenuName.COMMUNITY.name(), MenuName.COMMUNITY.getKo()));
-        menuService.createMenu(new MenuDto.Request(MenuName.COMPLAINT.name(), MenuName.COMPLAINT.getKo()));
-        menuService.createMenu(new MenuDto.Request(MenuName.FEE.name(), MenuName.FEE.getKo()));
+
+        userRepository.save(new User("user@aptner.com", "user", "12345678!"));
+
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.INFO.name(), MenuName.INFO.getKo()));
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.NOTICE.name(), MenuName.NOTICE.getKo()));
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.MANDATORY.name(), MenuName.MANDATORY.getKo()));
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.COMMUNITY.name(), MenuName.COMMUNITY.getKo()));
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.COMPLAINT.name(), MenuName.COMPLAINT.getKo()));
+        menuService.createMenu(new MenuDto.MenuRequest(MenuName.FEE.name(), MenuName.FEE.getKo()));
 
 //        menuService.updateMenu(2L, new MenuDto.Request(MenuName.NOTICE.name(), "공지사항2"));
 

@@ -1,5 +1,6 @@
 package com.aptner.v3.menu.menu;
 
+import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import com.aptner.v3.menu.menu.dto.MenuDto;
 import com.aptner.v3.global.error.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
@@ -26,7 +27,7 @@ public class MenuController {
 
     @PostMapping
     @Operation(summary = "상위 메뉴 생성")
-    public ApiResponse<?> createMenu(@RequestBody MenuDto.Request request) {
+    public ApiResponse<?> createMenu(@RequestBody MenuDto.MenuRequest request) {
         return ResponseUtil.create(menuService.createMenu(request));
     }
 
@@ -38,8 +39,8 @@ public class MenuController {
 
     @PutMapping("/{id}")
     @Operation(summary = "상위 메뉴 수정")
-    public ApiResponse<?> updateMenu(@PathVariable Long id, @RequestBody MenuDto.Request request) {
-       return ResponseUtil.update(menuService.updateMenu(id, request));
+    public ApiResponse<?> updateMenu(@PathVariable Long id, @RequestBody MenuDto.MenuRequest menuRequest) {
+       return ResponseUtil.update(menuService.updateMenu(id, menuRequest));
     }
 
     @GetMapping("/{id}/category")
