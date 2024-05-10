@@ -1,6 +1,6 @@
-package com.aptner.v3.menu.category;
+package com.aptner.v3.board.category;
 
-import com.aptner.v3.menu.menu.Menu;
+import com.aptner.v3.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;

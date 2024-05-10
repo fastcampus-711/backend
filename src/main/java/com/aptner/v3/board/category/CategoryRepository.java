@@ -1,4 +1,4 @@
-package com.aptner.v3.menu.category;
+package com.aptner.v3.board.category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

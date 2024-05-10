@@ -1,4 +1,4 @@
-package com.aptner.v3.menu.category.dto;
+package com.aptner.v3.board.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

@@ -28,7 +28,7 @@ public class CommonPostController<T extends CommonPost> {
     public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword,
                                               @RequestParam(required = false, defaultValue = "10") Integer limit,
                                               @RequestParam(required = false, defaultValue = "0") Integer page,
-                                              @RequestParam(required = false) SortType sort,
+                                              @RequestParam(required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
             return getPostList(request);

@@ -1,7 +1,6 @@
-package com.aptner.v3.menu.menu;
+package com.aptner.v3.menu;
 
-import com.aptner.v3.board.notice_post.dto.NoticePostDto;
-import com.aptner.v3.menu.menu.dto.MenuDto;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.global.error.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;

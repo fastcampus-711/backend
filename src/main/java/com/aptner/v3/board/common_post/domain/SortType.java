@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum SortType {
-    LIKED("hits"), RECENT("created_at");
+    LIKED("hits"), RECENT("createdAt");
 
     private final String columnName;
 

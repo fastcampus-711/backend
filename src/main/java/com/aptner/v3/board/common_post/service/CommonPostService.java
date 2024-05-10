@@ -9,12 +9,14 @@ import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.global.exception.custom.InvalidURIException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.PageFormat;
-import java.awt.print.Pageable;
 import java.awt.print.Printable;
 import java.util.Arrays;
 import java.util.List;
@@ -43,17 +45,14 @@ public class CommonPostService<T extends CommonPost> {
     }
 
     public List<T> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+
         String dtype = getDtype(request);
         if (dtype.equals("CommonPost")) {
-            if (sort == null)
-                return commonPostRepository.findByTitleContainingOrderByHitsDesc(keyword);
-            else
-                return commonPostRepository.findByTitleContainingOrderByHitsDesc(keyword);
-
+                return commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
         } else {
-
+            return commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
         }
-        return null;
     }
 
     public <U extends CommonPostDto.CreateRequest> void createPost(U requestDto) {

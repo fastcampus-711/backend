@@ -21,6 +21,8 @@ public class CommonPost extends CreatedInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+
+    @Column(length = 500)
     private String content;
     private int hits = 0;
     //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"

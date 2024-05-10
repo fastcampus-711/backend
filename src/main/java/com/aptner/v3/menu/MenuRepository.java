@@ -1,4 +1,4 @@
-package com.aptner.v3.menu.menu;
+package com.aptner.v3.menu;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
