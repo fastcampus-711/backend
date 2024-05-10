@@ -8,6 +8,8 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 public enum ErrorCode {
 
+    // 500
+    S3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "[%] S3 오류가 발생하였습니다."),
     // 400 Bad Request
     INCORRECT_CODE(BAD_REQUEST,  "잘못된 인증번호입니다."),
     EMAIL_REQUIRED(BAD_REQUEST, "이메일을 입력해 주세요."),
@@ -21,8 +23,10 @@ public enum ErrorCode {
 
     // 404 NOT_FONUD
     _NOT_FOUND(NOT_FOUND, "%s 정보를 찾을 수 없습니다."),
+    _EMPTY_FILE(NOT_FOUND, "파일이 없습니다."),
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다."),
     ARTICLE_NOT_FOUND(NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
+
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
     NOT_EXISTS_MENU_ID_EXCEPTION(HttpStatus.NOT_FOUND, "not existed menu id"),

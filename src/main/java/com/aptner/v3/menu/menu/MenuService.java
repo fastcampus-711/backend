@@ -22,32 +22,32 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    public MenuDto.Response createMenu(MenuDto.Request request) {
+    public MenuDto.MenuResponse createMenu(MenuDto.MenuRequest menuRequest) {
         // @todo mapStruct
-        Menu converted = new Menu(MenuName.valueOf(request.getCode()),request.getName());
+        Menu converted = Menu.of(MenuName.valueOf(menuRequest.getCode()), menuRequest.getName());
 
         Menu created = menuRepository.save(converted);
-        return modelMapper().map(created, MenuDto.Response.class);
+        return modelMapper().map(created, MenuDto.MenuResponse.class);
     }
 
-    public MenuDto.Response deleteMenu(Long id) {
+    public MenuDto.MenuResponse deleteMenu(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new MenuException(_NOT_FOUND));
 
         menuRepository.deleteById(id);
-        return modelMapper().map(menu, MenuDto.Response.class);
+        return modelMapper().map(menu, MenuDto.MenuResponse.class);
     }
 
-    public MenuDto.Response updateMenu(Long id, MenuDto.Request request) {
+    public MenuDto.MenuResponse updateMenu(Long id, MenuDto.MenuRequest menuRequest) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new MenuException(_NOT_FOUND));
 
         // update
-        menu.setCode(MenuName.valueOf(request.getCode()));
-        menu.setName(request.getName());
+        menu.setCode(MenuName.valueOf(menuRequest.getCode()));
+        menu.setName(menuRequest.getName());
 
         Menu updated = menuRepository.save(menu);
-        return modelMapper().map(updated, MenuDto.Response.class);
+        return modelMapper().map(updated, MenuDto.MenuResponse.class);
     }
 
     public List<Category> getCategoryList(long menuId) {
