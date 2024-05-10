@@ -31,7 +31,7 @@ public class AttachController {
 
     //    @preAuthorize("isAuthenticated()")
     @PostMapping(value = "/attach", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "첨부 파일 등록")
+    @Operation(summary = "첨부 파일 업로드")
     public ResponseEntity<?> uploadAttach(@RequestPart(value = "files") List<MultipartFile> files
 //            , Authentication authentication
     ) {
