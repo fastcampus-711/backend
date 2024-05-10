@@ -8,13 +8,19 @@ volumes:
   mysql-data:
 
 services:
-  app:
+  test:
     container_name: build_test
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 81:80
+
+  app:
+    container_name: 711-community
+    image: harbor.ha-ving.store/docker/711-community:latest
+    ports:
+      - 8282:80
 
   mysql:
     image: bitnami/mysql:8.3
