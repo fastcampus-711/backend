@@ -1,17 +1,21 @@
 package com.aptner.v3.menu;
 
-import com.aptner.v3.board.category.Category;
-import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.global.exception.MenuException;
+import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.dto.MenuDtoResponse;
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.aptner.v3.CommunityApplication.modelMapper;
+import static com.aptner.v3.global.error.ErrorCode._ALREADY_EXIST;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -19,41 +23,65 @@ public class MenuService {
     private final MenuRepository menuRepository;
 
     public List<Menu> getMenuList() {
-        return menuRepository.findAll();
+        return menuRepository.findAllActiveWithActiveParent();
     }
 
-    public MenuDto.MenuResponse createMenu(MenuDto.MenuRequest menuRequest) {
-        // @todo mapStruct
-        Menu converted = Menu.of(MenuName.valueOf(menuRequest.getCode()), menuRequest.getName());
+    public MenuDtoResponse createMenu(MenuDtoRequest request) {
+        // verify
+        verifyCreate(request);
 
-        Menu created = menuRepository.save(converted);
-        return modelMapper().map(created, MenuDto.MenuResponse.class);
+        try {
+            Menu created = menuRepository.save(request.toEntity());
+            return MenuDtoResponse.from(created);
+        } catch(DataIntegrityViolationException e) {
+            throw new MenuException(_ALREADY_EXIST);
+        }
     }
 
-    public MenuDto.MenuResponse deleteMenu(Long id) {
-        Menu menu = menuRepository.findById(id)
-                .orElseThrow(() -> new MenuException(_NOT_FOUND));
+    public MenuDtoResponse deleteMenu(Long id) {
+        Menu menu = getMenuById(id);
 
         menuRepository.deleteById(id);
-        return modelMapper().map(menu, MenuDto.MenuResponse.class);
+        return MenuDtoResponse.from(menu);
     }
 
-    public MenuDto.MenuResponse updateMenu(Long id, MenuDto.MenuRequest menuRequest) {
-        Menu menu = menuRepository.findById(id)
-                .orElseThrow(() -> new MenuException(_NOT_FOUND));
+    public MenuDtoResponse updateMenu(Long id, MenuDtoRequest request) {
+        Menu menu = getMenuById(id);
 
+        verifyUpdate(request, menu);
+        menuRepository.flush();
+        return MenuDtoResponse.from(menu);
+    }
+
+    private static void verifyUpdate(MenuDtoRequest request, Menu menu) {
         // update
-        menu.setCode(MenuName.valueOf(menuRequest.getCode()));
-        menu.setName(menuRequest.getName());
-
-        Menu updated = menuRepository.save(menu);
-        return modelMapper().map(updated, MenuDto.MenuResponse.class);
+        if(StringUtils.isNotEmpty(request.code())) {
+            menu.setCode(request.code());}
+        if(StringUtils.isNotEmpty(request.name())) {
+            menu.setName(request.name());}
     }
 
-    public List<Category> getCategoryList(long menuId) {
+    private void verifyCreate(MenuDtoRequest request) {
+
+        // check parent Menu
+        if (request.parentId() != null) {
+            if (!checkParentExists(request.parentId())) {
+                throw new MenuException(_NOT_FOUND);
+            }
+        }
+    }
+
+    private boolean checkParentExists(long menuId) {
+        return menuRepository.existsById(menuId);
+    }
+
+    private Menu getMenuById(long menuId) {
         return menuRepository.findById(menuId)
-                .orElseThrow(() -> new MenuException(_NOT_FOUND))
-                .getCategories();
+                .orElseThrow(() -> new MenuException(_NOT_FOUND));
+    }
+
+    public List<Menu> getSubMenuById(long menuId) {
+        return menuRepository.findByIdOrParentId(menuId, menuId);
     }
 
 }
