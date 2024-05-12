@@ -1,4 +1,4 @@
-package com.aptner.v3.menu.menu;
+package com.aptner.v3.menu;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;

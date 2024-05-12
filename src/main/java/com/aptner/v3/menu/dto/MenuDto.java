@@ -1,6 +1,6 @@
-package com.aptner.v3.menu.menu.dto;
+package com.aptner.v3.menu.dto;
 
-import com.aptner.v3.menu.category.Category;
+import com.aptner.v3.board.category.Category;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

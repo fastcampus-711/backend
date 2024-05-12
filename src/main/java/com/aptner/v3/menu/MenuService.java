@@ -1,7 +1,7 @@
-package com.aptner.v3.menu.menu;
+package com.aptner.v3.menu;
 
-import com.aptner.v3.menu.category.Category;
-import com.aptner.v3.menu.menu.dto.MenuDto;
+import com.aptner.v3.board.category.Category;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.global.exception.MenuException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

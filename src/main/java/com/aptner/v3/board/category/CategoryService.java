@@ -1,8 +1,8 @@
-package com.aptner.v3.menu.category;
+package com.aptner.v3.board.category;
 
-import com.aptner.v3.menu.category.dto.CategoryDto;
-import com.aptner.v3.menu.menu.Menu;
-import com.aptner.v3.menu.menu.MenuRepository;
+import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.menu.Menu;
+import com.aptner.v3.menu.MenuRepository;
 import com.aptner.v3.global.exception.CategoryException;
 import com.aptner.v3.global.exception.MenuException;
 import jakarta.transaction.Transactional;

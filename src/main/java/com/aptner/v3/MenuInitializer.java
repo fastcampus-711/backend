@@ -1,10 +1,10 @@
 package com.aptner.v3;
 
-import com.aptner.v3.menu.category.CategoryService;
-import com.aptner.v3.menu.category.dto.CategoryDto;
-import com.aptner.v3.menu.menu.MenuName;
-import com.aptner.v3.menu.menu.MenuService;
-import com.aptner.v3.menu.menu.dto.MenuDto;
+import com.aptner.v3.board.category.CategoryService;
+import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.menu.MenuName;
+import com.aptner.v3.menu.MenuService;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.user.User;
 import com.aptner.v3.user.UserRepository;
 import lombok.RequiredArgsConstructor;
