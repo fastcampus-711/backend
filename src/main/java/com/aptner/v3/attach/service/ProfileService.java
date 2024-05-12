@@ -3,8 +3,8 @@ package com.aptner.v3.attach.service;
 import com.aptner.v3.attach.AttachType;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.user.User;
-import com.aptner.v3.user.UserRepository;
+import com.aptner.v3.security.repository.UserDetailsRepository;
+import com.aptner.v3.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import static com.aptner.v3.global.util.MultipartUtil.createKey;
 @RequiredArgsConstructor
 public class ProfileService {
 
-    private final UserRepository userRepository;
+    private final UserDetailsRepository userRepository;
 
     private final S3Service s3Service;
 
     @Transactional
-    public User updateUserProfile(Long userId, MultipartFile file) {
-        User user = userRepository.findById(userId)
+    public UserEntity updateUserProfile(Long userId, MultipartFile file) {
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode._NOT_FOUND));
 
         String uuid = createFileId();

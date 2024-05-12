@@ -2,12 +2,12 @@ name: Docker Build 🚀
 
 on:
   push:
-    branches: [ "feature/**" ]
+    branches: [ "develop", "feature/**" ]
   workflow_dispatch:
 
 jobs:
   gradle:
-    name: Gradle Build
+    name: Gradle Test
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4

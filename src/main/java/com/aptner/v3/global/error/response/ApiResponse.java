@@ -1,4 +1,4 @@
-package com.aptner.v3.global.error;
+package com.aptner.v3.global.error.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
