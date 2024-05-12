@@ -1,8 +1,10 @@
 package com.aptner.v3.global.exception;
 
+import com.aptner.v3.global.error.ApiResponse;
 import com.aptner.v3.global.exception.custom.CustomException;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.error.response.ErrorResponse;
+import com.aptner.v3.global.util.ResponseUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(AuthException.class)
+    public ApiResponse<?> handleUserException(GlobalException e) {
+        return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ApiResponse<?> handleUserException(UserException e) {
+        return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
+    @ExceptionHandler(MenuException.class)
+    public ApiResponse<?> handleUserException(MenuException e) {
+        return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleCustomException(CustomException e) {
         return handleInternalException(e.getErrorCode());
@@ -36,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.builder()
                 .httpStatus(errorCode.getHttpStatus())
                 .code(errorCode.getHttpStatus().value())
-                .message(errorCode.getMessage())
+                .message(errorCode.getDetail())
                 .build();
     }
 
@@ -44,7 +62,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.builder()
                 .httpStatus(errorCode.getHttpStatus())
                 .code(errorCode.getHttpStatus().value())
-                .message(errorCode.getMessage())
+                .message(errorCode.getDetail())
                 .detailMessage(detailMessage)
                 .build();
     }
