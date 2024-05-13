@@ -4,7 +4,14 @@ on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
-
+    inputs:
+      branch:
+        description: 'Select a branch to build'
+        required: true
+        default: develop
+        type: choice
+        options:
+          - develop  # Manual build option for develop branch
 jobs:
   gradle:
     name: Image Build
@@ -15,6 +22,8 @@ jobs:
       image_tag: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
