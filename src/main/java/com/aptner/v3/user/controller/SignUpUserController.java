@@ -19,9 +19,9 @@ public class SignUpUserController {
     private final SignUpUserService signUpUserService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDto.Request request){
-        log.info("signUp request: {}", request);
-        signUpUserService.signUp(request);
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDto.SignUpRequest signUpRequest){
+        log.info("signUp request: {}", signUpRequest);
+        signUpUserService.signUp(signUpRequest);
         return new ResponseEntity<>("SIGNUP SUCCESS",HttpStatus.OK); //응답 양식 미정
     }
 }

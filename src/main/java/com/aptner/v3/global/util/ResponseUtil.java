@@ -1,8 +1,8 @@
 package com.aptner.v3.global.util;
 
-import com.aptner.v3.global.error.ApiResponse;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.error.SuccessCode;
+import com.aptner.v3.global.error.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;

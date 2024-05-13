@@ -1,4 +1,4 @@
-package com.aptner.v3.user.dto;
+package com.aptner.v3.security.dto;
 
 import com.aptner.v3.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;

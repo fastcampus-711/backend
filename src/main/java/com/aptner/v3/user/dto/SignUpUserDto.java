@@ -1,11 +1,9 @@
 package com.aptner.v3.user.dto;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
 public class SignUpUserDto {
     @Getter
@@ -13,7 +11,7 @@ public class SignUpUserDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
-    public static class Request{
+    public static class SignUpRequest {
 
         @Pattern(regexp = "[a-zA-Z0-9]{4,10}",
                 message = "아이디는 영어, 숫자를 포함한 4~10자리로 입력해주세요.")
@@ -35,7 +33,7 @@ public class SignUpUserDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
-    public static class Response{
+    public static class SignUpResponse {
         private long id;
         private String username;
         private String role;

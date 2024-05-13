@@ -6,13 +6,13 @@ import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+
 @RequiredArgsConstructor
 public class CommonPostController<T extends CommonPost> {
     private final CommonPostService<T> commonPostService;

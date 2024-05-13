@@ -1,7 +1,7 @@
 package com.aptner.v3.board.category;
 
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.global.error.ApiResponse;
+import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
