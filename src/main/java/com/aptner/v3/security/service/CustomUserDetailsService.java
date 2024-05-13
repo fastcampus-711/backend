@@ -1,8 +1,8 @@
 package com.aptner.v3.security.service;
 
-import com.aptner.v3.user.domain.UserEntity;
 import com.aptner.v3.security.dto.CustomUserDetailsDto;
-import com.aptner.v3.security.repository.UserDetailsRepository;
+import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

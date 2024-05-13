@@ -1,11 +1,10 @@
 package com.aptner.v3.global.jwt;
 
-import com.aptner.v3.user.dto.CustomUserDetailsDto;
+import com.aptner.v3.security.dto.CustomUserDetailsDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,11 +18,9 @@ import java.util.Iterator;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
+    public LoginFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
@@ -38,7 +35,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
 
         //최종적으로 검증을 담당할 AuthenticationManager에게 전달
-        return authenticationManager.authenticate(authToken);
+        return getAuthenticationManager().authenticate(authToken);
     }
 
     //로그인 성공시에 실행되는 메소드

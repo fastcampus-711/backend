@@ -5,9 +5,7 @@ import com.aptner.v3.menu.MenuCode;
 import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
 import com.aptner.v3.menu.dto.MenuDtoResponse;
-import com.aptner.v3.security.repository.UserDetailsRepository;
-import com.aptner.v3.user.domain.UserEntity;
-import com.aptner.v3.user.type.Role;
+import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -23,8 +21,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        userRepository.save(UserEntity.of("user", "tempPassword12!@", Role.USER));
-        userRepository.save(UserEntity.of("admin", "tempPassword12!@", Role.ADMIN));
+//        userRepository.save(UserEntity.of("user", "tempPassword12!@", Role.USER));
+//        userRepository.save(UserEntity.of("admin", "tempPassword12!@", Role.ADMIN));
 
         // intro
         MenuDtoResponse intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.INFO.name(), MenuCode.INFO.getKo(), null));
