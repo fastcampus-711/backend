@@ -3,8 +3,10 @@ package com.aptner.v3.global.jwt;
 import com.aptner.v3.user.dto.CustomUserDetailsDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,7 +53,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //로그인 성공시 JWT토큰을 생성해서 응답해주는 메소드
         System.out.println("successfulAuthentication 호출 : 로그인 성공");
 
-        CustomUserDetailsDto customUserDetailsDto = (CustomUserDetailsDto) authResult.getPrincipal();
+        String username = authResult.getName();
+        //String role = customUserDetailsDto.getAuthorities().toString();
+
+        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority grantedAuthority = iterator.next();
+        String role = grantedAuthority.getAuthority();
+
+        String accessToken = jwtUtil.createToken("access", username, role, 600000L);//10분
+        String refreshToken = jwtUtil.createToken("refresh", username, role, 86400000L); //24시간
+
+        response.setHeader("access", accessToken);
+        response.addCookie(createCookie("refresh", refreshToken));
+        response.setStatus(HttpStatus.OK.value());
+
+
+        /*CustomUserDetailsDto customUserDetailsDto = (CustomUserDetailsDto) authResult.getPrincipal();
         String username = customUserDetailsDto.getUsername();
         //String role = customUserDetailsDto.getAuthorities().toString();
 
@@ -64,7 +82,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //Authorization 키에 Bearer 토큰값을 넣어서 응답
         //"Bearer " Bearer 뒤에 공백을 넣어줘야함
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("Authorization", "Bearer " + token);*/
     }
 
     @Override
@@ -73,5 +91,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("unsuccessfulAuthentication 호출 : 로그인 실패");
         //로그인 실패시 401에러를 반환
         response.setStatus(401);
+    }
+
+    private Cookie createCookie(String key, String value){
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);//24시간
+        cookie.setHttpOnly(true);//자바스크립트에서 쿠키에 접근하지 못하도록 설정
+        //cookie.setPath("/");//쿠키가 적용될 범위
+        //cookie.setSecure(true);//https에서만 쿠키가 전송되도록 설정
+        return cookie;
     }
 }
