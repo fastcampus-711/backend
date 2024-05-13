@@ -2,14 +2,19 @@ package com.aptner.v3.board.common_post.domain;
 
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.free_post.domain.FreePost;
+import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.domain.CreatedInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.annotations.Fetch;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.config.Configuration;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTokenizers;
+import org.modelmapper.spi.NameTokenizer;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -33,20 +38,22 @@ public class CommonPost extends CreatedInfo {
     private List<Comment> comments;
     private Boolean visible = true;
 
-    public CommonPost() {}
+    public CommonPost() {
+    }
 
     public CommonPost(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
-    public <T extends CommonPostDto.UpdateRequest, U extends CommonPost> U update(T updateRequest) {
+    public <Q extends CommonPostDto.Request, E extends CommonPost> E update(Q updateRequest) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setFieldMatchingEnabled(true)
                 .setSkipNullEnabled(true);
+
         modelMapper.map(updateRequest, this);
-        return (U)this;
+        return (E) this;
     }
 }

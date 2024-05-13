@@ -12,30 +12,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 @RequiredArgsConstructor
-public class CommonPostService<T extends CommonPost> {
-    private final CommonPostRepository<T> commonPostRepository;
+public class CommonPostService<E extends CommonPost,
+        Q extends CommonPostDto.Request,
+        S extends CommonPostDto.Response> {
+    private final CommonPostRepository<E> commonPostRepository;
 
-    public T getPost(long postId) {
-        T domain = commonPostRepository.findById(postId)
+    public E getPost(long postId) {
+        E domain = commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new);
 
         return domain;
 
     }
 
-    public List<T> getPost(HttpServletRequest request) {
+    public List<E> getPost(HttpServletRequest request) {
         String dtype = getDtype(request);
 
         if (dtype.equals("CommonPost"))
@@ -44,30 +44,29 @@ public class CommonPostService<T extends CommonPost> {
             return commonPostRepository.findByDtype(dtype);
     }
 
-    public List<T> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
+    public List<E> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
 
         String dtype = getDtype(request);
         if (dtype.equals("CommonPost")) {
-                return commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
+            return commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
         } else {
             return commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
         }
     }
 
-    public <U extends CommonPostDto.CreateRequest> void createPost(U requestDto) {
-        createPost((T) requestDto.toEntity());
-    }
-
-    public void createPost(T entity) {
+    public S createPost(Q requestDto) {
+        E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
+        return null;
     }
 
-
-    public <U extends CommonPostDto.UpdateRequest> void updatePost(U requestDto) {
-        commonPostRepository.findById(requestDto.getId())
+    public E updatePost(long postId, Q requestDto) {
+        System.out.println(commonPostRepository.findById(postId).get().getClass().getTypeName());
+        return commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
-                .update(requestDto);
+                .update(requestDto)
+                ;
     }
 
     public void deletePost(long id) {

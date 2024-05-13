@@ -2,11 +2,10 @@ package com.aptner.v3.board.common_post.controller;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
-import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class CommonPostController<T extends CommonPost> {
-    private final CommonPostService<T> commonPostService;
+public class CommonPostController<E extends CommonPost,
+        Q extends CommonPostDto.Request,
+        S extends CommonPostDto.Response> {
+    private final CommonPostService<E, Q, S> commonPostService;
 
     @GetMapping("/{post-id}")
     @Operation(summary = "게시판 조회")
@@ -47,16 +48,14 @@ public class CommonPostController<T extends CommonPost> {
 
     @PostMapping
     @Operation(summary = "게시판 등록")
-    public ResponseEntity<?> createPost(@RequestBody NoticePostDto.CreateRequest requestDto) {
-        commonPostService.createPost(requestDto);
-        return new ResponseEntity<>("create post success", HttpStatus.CREATED);
+    public ResponseEntity<?> createPost(@RequestBody Q requestDto) {
+        return new ResponseEntity<>(commonPostService.createPost(requestDto), HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{post-id}")
     @Operation(summary = "게시판 수정")
-    public ResponseEntity<?> updatePost(@RequestBody NoticePostDto.UpdateRequest requestDto) {
-        commonPostService.updatePost(requestDto);
-        return new ResponseEntity<>("update post success", HttpStatus.OK);
+    public ResponseEntity<?> updatePost(@PathVariable(name = "post-id") long postId, @RequestBody Q requestDto) {
+        return new ResponseEntity<>(commonPostService.updatePost(postId, requestDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{post-id}")
