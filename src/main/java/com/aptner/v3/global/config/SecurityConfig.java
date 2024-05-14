@@ -1,5 +1,6 @@
 package com.aptner.v3.global.config;
 
+
 import com.aptner.v3.global.jwt.JwtFilter;
 import com.aptner.v3.global.jwt.JwtUtil;
 import com.aptner.v3.global.jwt.LoginFilter;
@@ -60,6 +61,7 @@ public class SecurityConfig {
         // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
         http.addFilterAt(LoginFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        //http.addFilterBefore(new CustomLogoutFilter(jwtUtil,refreshRepository), LogoutFilter.class);
         return http.build();
     }
 
@@ -87,4 +89,5 @@ public class SecurityConfig {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console());
     }
+
 }

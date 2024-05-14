@@ -38,6 +38,15 @@ public class JwtUtil {
                 .getBody()
                 .get("role", String.class);
     }
+    // 토큰에서 tokenType을 가져옴
+    public String getTokenType(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("tokenType", String.class);
+    }
 
     // 토큰이 만료되었으면 true , 아니면 false
     public boolean isExpired(String token){
@@ -50,8 +59,9 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public String createToken(String username, String role, Long expireTime){
+    public String createToken(String tokenType,String username, String role, Long expireTime){
         return Jwts.builder()
+                .claim("tokenType", tokenType)
                 .claim("username",username)
                 .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
