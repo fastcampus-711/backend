@@ -5,6 +5,7 @@ import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ public class NoticePostDto {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class Response extends CommonPostDto.Response {
         private LocalDateTime postAt;
 

@@ -84,7 +84,7 @@ public class CommonPostService<E extends CommonPost,
 
         String[] URIs = request.getRequestURI()
                 .split("/");
-        String target = URIs.length <= 1 ? "" : URIs[1];
+        String target = URIs.length <= 2 ? "" : URIs[2];
 
         return Arrays.stream(CategoryName.values())
                 .filter(c -> c.getURI().equals(target))
