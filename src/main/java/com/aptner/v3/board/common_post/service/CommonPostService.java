@@ -6,7 +6,6 @@ import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
-import com.aptner.v3.global.exception.custom.InvalidURIException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -27,32 +26,40 @@ public class CommonPostService<E extends CommonPost,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
 
-    public E getPost(long postId) {
-        E domain = commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new);
-
-        return domain;
+    public S getPost(long postId) {
+        return (S) commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new)
+                .toResponseDto();
 
     }
 
-    public List<E> getPost(HttpServletRequest request) {
+    public List<S> getPost(HttpServletRequest request) {
         String dtype = getDtype(request);
 
+        List<E> list;
         if (dtype.equals("CommonPost"))
-            return commonPostRepository.findAll();
+            list = commonPostRepository.findAll();
         else
-            return commonPostRepository.findByDtype(dtype);
+            list = commonPostRepository.findByDtype(dtype);
+
+        return list.stream()
+                .map(e -> (S) e.toResponseDto())
+                .toList();
     }
 
-    public List<E> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
+    public List<S> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
         String dtype = getDtype(request);
-        if (dtype.equals("CommonPost")) {
-            return commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
-        } else {
-            return commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
-        }
+
+        List<E> list;
+        if (dtype.equals("CommonPost"))
+            list = commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
+        else
+            list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
+
+        return list.stream()
+                .map(e -> (S)e.toResponseDto())
+                .toList();
     }
 
     public S createPost(Q requestDto) {
@@ -61,16 +68,16 @@ public class CommonPostService<E extends CommonPost,
         return null;
     }
 
-    public E updatePost(long postId, Q requestDto) {
-        System.out.println(commonPostRepository.findById(postId).get().getClass().getTypeName());
-        return commonPostRepository.findById(postId)
+    public S updatePost(long postId, Q requestDto) {
+        return (S) commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
                 .update(requestDto)
-                ;
+                .toResponseDto();
     }
 
-    public void deletePost(long id) {
+    public long deletePost(long id) {
         commonPostRepository.deleteById(id);
+        return id;
     }
 
     private static String getDtype(HttpServletRequest request) {
@@ -82,7 +89,7 @@ public class CommonPostService<E extends CommonPost,
         return Arrays.stream(CategoryName.values())
                 .filter(c -> c.getURI().equals(target))
                 .findFirst()
-                .orElseThrow(InvalidURIException::new)
+                .orElseGet(() -> CategoryName.공통)
                 .getDtype();
     }
 }

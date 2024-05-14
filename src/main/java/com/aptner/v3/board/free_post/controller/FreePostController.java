@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/frees")
+@RequestMapping("/boards/frees")
 public class FreePostController extends CommonPostController<FreePost, FreePostDto.Request, FreePostDto.Response> {
     public FreePostController(CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService) {
         super(commonPostService);

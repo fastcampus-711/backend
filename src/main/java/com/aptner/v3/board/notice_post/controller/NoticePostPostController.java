@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/notices")
+@RequestMapping("/boards/notices")
 public class NoticePostPostController extends CommonPostController<NoticePost, NoticePostDto.Request, NoticePostDto.Response> {
     public NoticePostPostController(CommonPostService<NoticePost, NoticePostDto.Request, NoticePostDto.Response> commonPostService) {
         super(commonPostService);

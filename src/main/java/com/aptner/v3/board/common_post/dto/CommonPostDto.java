@@ -3,6 +3,7 @@ package com.aptner.v3.board.common_post.dto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -27,8 +28,10 @@ public class CommonPostDto {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class Response {
         private long id;
+        private String title;
         private String content;
         private int hits;
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
@@ -28,7 +29,7 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시판 조회")
     public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword,
                                               @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                              @RequestParam(required = false, defaultValue = "0") Integer page,
+                                              @RequestParam(required = false, defaultValue = "1") Integer page,
                                               @RequestParam(required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
@@ -61,7 +62,7 @@ public class CommonPostController<E extends CommonPost,
     @DeleteMapping("/{post-id}")
     @Operation(summary = "게시판 삭제")
     public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
-        commonPostService.deletePost(postId);
-        return new ResponseEntity<>("delete post success", HttpStatus.OK);
+
+        return new ResponseEntity<>(commonPostService.deletePost(postId), HttpStatus.OK);
     }
 }

@@ -1,6 +1,6 @@
 package com.aptner.v3.board.category;
 
-import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.category.dto.categoryDto;
 import com.aptner.v3.global.error.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,13 +23,13 @@ public class CategoryController {
 
     @PostMapping("/categories")
     @Operation(summary = "게시판 생성")
-    public ApiResponse<?> createCategory(@PathVariable("menu_id") long menuId, @RequestBody CategoryDto.Request request) {
+    public ApiResponse<?> createCategory(@PathVariable("menu_id") long menuId, @RequestBody categoryDto.Request request) {
         return ResponseUtil.create(categoryService.createCategory(menuId, request));
     }
 
     @PutMapping("/categories/{category_id}")
     @Operation(summary = "게시판 수정")
-    public ApiResponse<?> updateCategory(@PathVariable("category_id") long categoryId, @RequestBody CategoryDto.Request request) {
+    public ApiResponse<?> updateCategory(@PathVariable("category_id") long categoryId, @RequestBody categoryDto.Request request) {
         return ResponseUtil.update(categoryService.updateCategory(categoryId, request));
     }
 }

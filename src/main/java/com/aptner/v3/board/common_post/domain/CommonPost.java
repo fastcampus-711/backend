@@ -1,24 +1,18 @@
 package com.aptner.v3.board.common_post.domain;
 
+import com.aptner.v3.board.category.CategoryName;
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.free_post.domain.FreePost;
-import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.domain.CreatedInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.modelmapper.config.Configuration;
-import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.convention.NameTokenizers;
-import org.modelmapper.spi.NameTokenizer;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Entity
-@DiscriminatorColumn
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
 public class CommonPost extends CreatedInfo {
@@ -38,6 +32,7 @@ public class CommonPost extends CreatedInfo {
     private List<Comment> comments;
     private Boolean visible = true;
 
+
     public CommonPost() {
     }
 
@@ -46,7 +41,7 @@ public class CommonPost extends CreatedInfo {
         this.content = content;
     }
 
-    public <Q extends CommonPostDto.Request, E extends CommonPost> E update(Q updateRequest) {
+    public <Q extends CommonPostDto.Request> CommonPost update(Q updateRequest) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
@@ -54,6 +49,22 @@ public class CommonPost extends CreatedInfo {
                 .setSkipNullEnabled(true);
 
         modelMapper.map(updateRequest, this);
-        return (E) this;
+        return this;
+    }
+
+    public CommonPostDto.Response toResponseDto() {
+        ModelMapper modelMapper = new ModelMapper();
+        Class<?> responseDto = Arrays.stream(CategoryName.values())
+                .filter(s -> s.getDomain().equals(this.getClass()))
+                .findFirst()
+                .orElseThrow()
+                .getDtoForResponse();
+
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true);
+
+        return (CommonPostDto.Response) modelMapper.map(this, responseDto);
     }
 }

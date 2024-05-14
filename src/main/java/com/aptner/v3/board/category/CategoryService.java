@@ -1,6 +1,6 @@
 package com.aptner.v3.board.category;
 
-import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.category.dto.categoryDto;
 import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuRepository;
 import com.aptner.v3.global.exception.CategoryException;
@@ -28,16 +28,16 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryDto.Response deleteCategory(Long id) {
+    public categoryDto.Response deleteCategory(Long id) {
 
         // verify
         Category searched = getCategoryById(id);
         // set
         categoryRepository.deleteById(id);
-        return modelMapper().map(searched, CategoryDto.Response.class);
+        return modelMapper().map(searched, categoryDto.Response.class);
     }
 
-    public CategoryDto.Response createCategory(long menuId, CategoryDto.Request request) {
+    public categoryDto.Response createCategory(long menuId, categoryDto.Request request) {
 
         // verify
         Menu verified = verifyCreate(menuId, request);
@@ -46,15 +46,15 @@ public class CategoryService {
         category.setMenu(verified);
         // save
         Category created = categoryRepository.save(category);
-        return modelMapper().map(created, CategoryDto.Response.class);
+        return modelMapper().map(created, categoryDto.Response.class);
     }
 
-    public CategoryDto.Response updateCategory(long categoryId, CategoryDto.Request request) {
+    public categoryDto.Response updateCategory(long categoryId, categoryDto.Request request) {
         // verify
         Category searched = getCategoryById(categoryId);
         searched.setName(request.getName());
         Category updated = categoryRepository.save(searched);
-        return modelMapper().map(updated, CategoryDto.Response.class);
+        return modelMapper().map(updated, categoryDto.Response.class);
     }
 
     private Menu getMenuById(long menuId) {
@@ -67,7 +67,7 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryException(_NOT_FOUND));
     }
 
-    private Menu verifyCreate(long menuId, CategoryDto.Request request) {
+    private Menu verifyCreate(long menuId, categoryDto.Request request) {
         // check menu
         Menu menu = getMenuById(menuId);
         // check category

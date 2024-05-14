@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-public class CategoryDto {
+public class categoryDto {
 
     @Data
     @AllArgsConstructor
