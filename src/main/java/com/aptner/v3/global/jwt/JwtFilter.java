@@ -1,8 +1,8 @@
 package com.aptner.v3.global.jwt;
 
-import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.domain.User;
 import com.aptner.v3.user.dto.CustomUserDetailsDto;
-import com.aptner.v3.user.type.Role;
+import com.aptner.v3.user.type.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,13 +51,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
+        User user = new User();
+        user.setUsername(username);
         // password의 경우 token에 담겨있지 않기때문에 매번 요청마다 db를 조회를 하는 상황을 방지하기위해 password는 임시로 설정
-        userEntity.setPassword("tempPassword12!@");
-        userEntity.setRoles(Role.valueOf(role));
+        //user.setPassword("tempPassword12!@");
+        user.setRoles(UserRole.valueOf(role));
 
-        CustomUserDetailsDto customUserDetailsDto = new CustomUserDetailsDto(userEntity);
+        CustomUserDetailsDto customUserDetailsDto = new CustomUserDetailsDto(user);
         //검증된 토큰 정보를 기반으로 Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 customUserDetailsDto, null, customUserDetailsDto.getAuthorities());

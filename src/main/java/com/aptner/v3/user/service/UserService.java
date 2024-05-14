@@ -2,10 +2,10 @@ package com.aptner.v3.user.service;
 
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.custom.CustomException;
-import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.domain.User;
 import com.aptner.v3.user.dto.SignUpUserDto;
 import com.aptner.v3.user.repository.SignUpUserRepository;
-import com.aptner.v3.user.type.Role;
+import com.aptner.v3.user.type.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,10 +31,10 @@ public class UserService {
                     throw new CustomException(ErrorCode.ALREADY_REGISTERED_USER_EXCEPTION);
                 });
 
-        UserEntity userEntity = UserEntity.builder()
+        User userEntity = User.builder()
                 .username(username)
                 .password(bCryptPasswordEncoder.encode(password))
-                .roles(Role.valueOf(request.getRole()))
+                .roles(UserRole.valueOf(request.getRole()))
                 .build();
 
         signUpUserRepository.save(userEntity);

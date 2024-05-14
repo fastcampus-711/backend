@@ -2,11 +2,10 @@ package com.aptner.v3.attach.controller;
 
 import com.aptner.v3.attach.Attach;
 import com.aptner.v3.attach.AttachType;
-import com.aptner.v3.attach.dto.AttachDto;
 import com.aptner.v3.attach.service.AttachService;
 import com.aptner.v3.attach.service.ProfileService;
 import com.aptner.v3.global.exception.AttachException;
-import com.aptner.v3.user.User;
+import com.aptner.v3.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

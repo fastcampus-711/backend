@@ -1,6 +1,6 @@
 package com.aptner.v3.user.dto;
 
-import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +11,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class CustomUserDetailsDto implements UserDetails {
 
-    private final UserEntity userEntity;
+    private final User user;
 
     //ROLE 을 반환하는 메소드
     @Override
@@ -21,7 +21,7 @@ public class CustomUserDetailsDto implements UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return userEntity.getRoles().toString();
+                return user.getRoles().toString();
             }
         });
 
@@ -31,12 +31,12 @@ public class CustomUserDetailsDto implements UserDetails {
     //Password 반환하는 메소드
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return user.getPassword();
     }
     //Username 반환하는 메소드
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return user.getUsername();
     }
 
     //계정 만료 여부 반환하는 메소드

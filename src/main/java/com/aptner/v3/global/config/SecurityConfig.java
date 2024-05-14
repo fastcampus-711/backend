@@ -70,7 +70,9 @@ public class SecurityConfig {
         // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
         http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                 UsernamePasswordAuthenticationFilter.class);
+
         //http.addFilterBefore(new CustomLogoutFilter(jwtUtil,refreshRepository), LogoutFilter.class);
+
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

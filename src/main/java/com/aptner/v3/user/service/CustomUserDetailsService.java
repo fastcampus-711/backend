@@ -1,6 +1,6 @@
 package com.aptner.v3.user.service;
 
-import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.domain.User;
 import com.aptner.v3.user.dto.CustomUserDetailsDto;
 import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userData = userRepository.findByUsername(username)
+        User userData = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         if (userData != null) {
