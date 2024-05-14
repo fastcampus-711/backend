@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Configuration
-
 public class SwaggerConfig {
 
     public static final Map<String, String[]> GROUPS = Stream.of(

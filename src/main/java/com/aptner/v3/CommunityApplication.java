@@ -1,5 +1,7 @@
 package com.aptner.v3;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
@@ -26,5 +28,10 @@ public class CommunityApplication {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		// 비밀번호 암호화를 위한 Bean 등록
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    JPAQueryFactory jPAQueryFactory(EntityManager em) {
+        return new JPAQueryFactory(em);
     }
 }

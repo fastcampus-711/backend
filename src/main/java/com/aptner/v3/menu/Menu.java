@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,20 +19,25 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE menu SET deleted = true WHERE id = ?")
+@Where(clause = "deleted is false")
 public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ListIndexBase(1)
-    private long id;
+    private Long id;
 
     @Setter
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String code;
 
     @Setter
     @Column(nullable = false, length = 50)
     private String name;
+
+    @Setter
+    @Column
+    private String url;
 
     @Setter
     @Column(updatable = false)
@@ -40,21 +46,22 @@ public class Menu {
     @ToString.Exclude
 //    @OrderBy("createdAt ASC ")
     @OneToMany(mappedBy = "parentId", cascade = CascadeType.MERGE)
-    private List<Menu> sub = new ArrayList<>();
+    private List<Menu> list = new ArrayList<>();
 
     private Boolean deleted = Boolean.FALSE;
 
     protected Menu() {
     }
 
-    protected Menu(String code, String name, Long parentId) {
+    protected Menu(String code, String name, String url, Long parentId) {
         this.code = code;
         this.name = name;
+        this.url = url;
         this.parentId = parentId;
     }
 
-    public static Menu of(String code, String name, Long parentId) {
-        return new Menu(code, name, parentId);
+    public static Menu of(String code, String name, String url, Long parentId) {
+        return new Menu(code, name, url, parentId);
     }
 
     @Override

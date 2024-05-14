@@ -5,20 +5,22 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Objects;
 
 @Getter
 @Table(name = "categories", indexes = {
-        @Index(columnList = "name"),
+        @Index(columnList = "code"),
 })
 @Entity
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
+@Where(clause = "deleted is false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ListIndexBase(1)
-    private long id;
+    private Long id;
 
     @Setter
     @Column(nullable = false, unique = true, length = 50)

@@ -4,34 +4,38 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 메뉴 생성을 위한 코드
+ **/
 @Getter
 @RequiredArgsConstructor
 public enum MenuCode {
 
-    INFO("소개", "INFO"),
-    NOTICE("공지 사항", "NOTICE"),
-    MANDATORY("의무 공개", "MANDATORY"),
-    COMMUNITY("소통 공간", "COMMUNITY"),
-    COMPLAINT("민원 게시판", "COMPLAINT"),
-    FEE("관리비", "FEE"),
+    TOP_INFO("소개", "TOP_INFO", null),
+    TOP_NOTICE("공지 사항", "TOP_NOTICE", null),
+    TOP_MANDATORY("의무 공개", "TOP_MANDATORY", null),
+    TOP_COMMUNITY("소통 공간", "TOP_COMMUNITY", null),
+    TOP_COMPLAINT("민원 게시판", "TOP_COMPLAINT", null),
+    TOP_FEE("관리비", "TOP_FEE", null),
 
-    SUB_INTRO("인사말", "SUB_INTRO"),
-    SUB_APT("단지전경", "SUB_APT"),
-    SUB_CONTACT("연락처 정보", "SUB_CONTACT"),
-    SUB_COMMUNITY("커뮤니티 시설", "SUB_COMMUNITY"),
-    SUB_NOTICE("공지사항", "SUB_NOTICE"),
-    SUB_SCHEDULE("일정표", "SUB_SCHEDULE"),
-    SUB_FREE("자유게시판", "SUB_FREE"),
-    SUB_MARKET("나눔장터", "SUB_MARKET"),
-    SUB_QNA("QnA", "SUB_QNA"),
-    SUB_COMPLAINT("전체민원", "SUB_COMPLAINT"),
-    SUB_MYCOMPLAINT("나의민원", "SUB_MYCOMPLAINT"),
-    SUB_TOTALFEE("전체조회", "SUB_TOTALFEE"),
-    SUB_MYFEE("나의관리비", "SUB_MYFEE")
+    INTRO("인사말", "INTRO", null),
+    APT("단지전경", "APT", null),
+    CONTACT("연락처 정보", "CONTACT", null),
+    COMMUNITY("커뮤니티 시설", "COMMUNITY", null),
+    NOTICE("공지사항", "NOTICE", null),
+    SCHEDULE("일정표", "SCHEDULE", null),
+    FREE("자유게시판", "FREE", null),
+    MARKET("나눔장터", "MARKET", null),
+    QNA("QnA", "QNA", null),
+    COMPLAINT("전체민원", "COMPLAINT", null),
+    MYCOMPLAINT("나의민원", "MYCOMPLAINT", null),
+    TOTALFEE("전체조회", "TOTALFEE", null),
+    MYFEE("나의관리비", "MYFEE", null)
     ;
 
     private final String ko;
     private final String code;
+    private final Class<?> clazz;
 
     @JsonCreator
     public static MenuCode from(String val) {

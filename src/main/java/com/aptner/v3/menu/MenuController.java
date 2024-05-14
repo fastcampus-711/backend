@@ -18,37 +18,43 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping
-    @Operation(summary = "상위 메뉴 조회")
+    @Operation(summary = "전체 메뉴 조회")
     public ApiResponse<?> getMenu() {
         return ResponseUtil.ok(
-                MenuDtoResponse.list(menuService.getMenuList())
+                MenuDtoResponse.toList(menuService.getMenuList())
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{menuId}")
     @Operation(summary = "하위 메뉴 조회")
-    public ApiResponse<?> getSubMenu(@PathVariable("id") long menuId) {
+    public ApiResponse<?> getSubMenu(@PathVariable("menuId") Long menuId) {
         return ResponseUtil.ok(
-                MenuDtoResponse.list(menuService.getSubMenuById(menuId))
+                MenuDtoResponse.toList(menuService.getSubMenuById(menuId))
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{menuId}")
     @Operation(summary = "메뉴 삭제")
-    public ApiResponse<?> deleteMenu(@PathVariable Long id) {
-        return ResponseUtil.delete(menuService.deleteMenu(id));
+    public ApiResponse<?> deleteMenu(@PathVariable("menuId") Long id) {
+        return ResponseUtil.delete(
+                MenuDtoResponse.from(menuService.deleteMenu(id))
+        );
     }
 
     @PostMapping
     @Operation(summary = "메뉴 생성")
     public ApiResponse<?> createMenu(@RequestBody MenuDtoRequest request) {
-        return ResponseUtil.create(menuService.createMenu(request));
+        return ResponseUtil.create(
+                MenuDtoResponse.from(menuService.createMenu(request))
+        );
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "메뉴 수정")
     public ApiResponse<?> updateMenu(@PathVariable Long id, @RequestBody MenuDtoRequest request) {
-       return ResponseUtil.update(menuService.updateMenu(id, request));
+       return ResponseUtil.update(
+               MenuDtoResponse.from(menuService.updateMenu(id, request))
+       );
     }
 
 }
