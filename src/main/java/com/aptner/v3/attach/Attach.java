@@ -1,7 +1,7 @@
 package com.aptner.v3.attach;
 
-import com.aptner.v3.BaseTimeEntity;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

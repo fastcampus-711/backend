@@ -22,7 +22,7 @@ public class S3Service {
 
     private final S3Client s3Client;
 
-    @Value("${aws.s3.bucket:aptners}")
+    @Value("${aws.s3.bucket:default}")
     private String bucket;
 
     public String uploadFile(String key, MultipartFile multipartFile) {

@@ -20,13 +20,13 @@ import static com.aptner.v3.global.util.MultipartUtil.createKey;
 @RequiredArgsConstructor
 public class ProfileService {
 
-    private final UserRepository userRepository;
+    private final UserDetailsRepository userRepository;
 
     private final S3Service s3Service;
 
     @Transactional
-    public User updateUserProfile(Long userId, MultipartFile file) {
-        User user = userRepository.findById(userId)
+    public UserEntity updateUserProfile(Long userId, MultipartFile file) {
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode._NOT_FOUND));
 
         String uuid = createFileId();

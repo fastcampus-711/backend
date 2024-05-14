@@ -55,14 +55,14 @@ public class AttachController {
 
     @PostMapping(value = "/user/{id}/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "사용자 프로필 등록")
-    public ResponseEntity<User> uploads(@PathVariable("id") Long userId
+    public ResponseEntity<UserEntity> uploads(@PathVariable("id") Long userId
             , @RequestPart(value = "file") MultipartFile file
     ) {
         log.info("Received user ID: {}", userId);
         if (file.isEmpty()) {
             throw new AttachException(_EMPTY_FILE);
         }
-        User updated = profileService.updateUserProfile(userId, file);
+        UserEntity updated = profileService.updateUserProfile(userId, file);
         return ResponseEntity.ok(updated);
     }
 
