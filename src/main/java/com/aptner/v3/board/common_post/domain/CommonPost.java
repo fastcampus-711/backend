@@ -3,7 +3,7 @@ package com.aptner.v3.board.common_post.domain;
 import com.aptner.v3.board.category.CategoryName;
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.global.domain.CreatedInfo;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-public class CommonPost extends CreatedInfo {
+public class CommonPost extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

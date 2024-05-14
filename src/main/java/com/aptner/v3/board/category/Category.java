@@ -9,6 +9,9 @@ import lombok.Setter;
 import java.util.Objects;
 
 @Getter
+@Table(name = "categories", indexes = {
+        @Index(columnList = "code"),
+})
 @Entity
 public class Category {
     @Id

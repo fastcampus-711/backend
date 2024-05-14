@@ -1,4 +1,4 @@
-package com.aptner.v3;
+package com.aptner.v3.global.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -19,7 +19,11 @@ import java.time.LocalDateTime;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class BaseTimeEntity {
+public abstract class BaseTimeEntity {
+
+    @CreatedBy
+    @JsonIgnore
+    private String createdBy;
 
     @CreatedDate
     @DateTimeFormat(iso = DateTimeFormat. ISO.DATE_TIME)
@@ -27,18 +31,14 @@ public class BaseTimeEntity {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedBy
+    @JsonIgnore
+    private String modifiedBy;
+
     @LastModifiedDate
     @DateTimeFormat(iso = DateTimeFormat. ISO.DATE_TIME)
     @JsonIgnore
     @Column(updatable = false)
     private LocalDateTime modifiedAt;
-
-    @CreatedBy
-    @JsonIgnore
-    private String createdBy;
-
-    @LastModifiedBy
-    @JsonIgnore
-    private String modifiedBy;
 
 }
