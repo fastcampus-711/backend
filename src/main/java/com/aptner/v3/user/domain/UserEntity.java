@@ -36,6 +36,9 @@ public class UserEntity {
     @Column(nullable = false)
     private Role roles;
 
+    @Setter
+    private String image;
+
     /*@NotNull(message = "필수 입력값입니다.")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

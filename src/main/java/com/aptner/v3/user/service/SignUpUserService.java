@@ -19,10 +19,10 @@ public class SignUpUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public void signUp(SignUpUserDto.Request request) {
-        String username = request.getUsername();
-        String password = request.getPassword();
-        String passwordConfirm = request.getPasswordConfirm();
+    public void signUp(SignUpUserDto.SignUpRequest signUpRequest) {
+        String username = signUpRequest.getUsername();
+        String password = signUpRequest.getPassword();
+        String passwordConfirm = signUpRequest.getPasswordConfirm();
 
         passwordMatch(password, passwordConfirm);
 
@@ -34,7 +34,7 @@ public class SignUpUserService {
         UserEntity userEntity = UserEntity.builder()
                 .username(username)
                 .password(bCryptPasswordEncoder.encode(password))
-                .roles(Role.valueOf(request.getRole()))
+                .roles(Role.valueOf(signUpRequest.getRole()))
                 .build();
 
         signUpUserRepository.save(userEntity);
