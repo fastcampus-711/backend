@@ -10,28 +10,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@Tag(name = "분류")
-@RequestMapping("/categories")
+@Tag(name = "게시판")
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @DeleteMapping("/{categoryId}")
-    @Operation(summary = "분류 삭제")
-    public ApiResponse<?> deleteCategory(@PathVariable("categoryId") Long categoryId) {
-        return ResponseUtil.delete(
-                CategoryDtoResponse.from(categoryService.deleteCategory(categoryId))
-        );
-    }
-
-    @PostMapping("")
-    @Operation(summary = "분류 생성")
-    public ApiResponse<?> createCategory(@RequestBody CategoryDtoRequest categoryRequest) {
-        return ResponseUtil.create(
-                CategoryDtoResponse.from(categoryService.createCategory(categoryRequest))
-        );
+    @DeleteMapping("/categories/{id}")
+    @Operation(summary = "게시판 삭제")
+    public ApiResponse<?> deleteCategory(@PathVariable("id") long id) {
+        return ResponseUtil.delete(categoryService.deleteCategory(id));
     }
 
     @PutMapping("/{categoryId}")

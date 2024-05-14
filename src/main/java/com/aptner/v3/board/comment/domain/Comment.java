@@ -8,6 +8,8 @@ import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 
+import java.util.List;
+
 @Entity
 @Getter
 public class Comment extends BaseTimeEntity {
@@ -16,17 +18,18 @@ public class Comment extends BaseTimeEntity {
     private Long id;
     private String content;
     private boolean visible = true;
-//    @OneToMany
-//    @JoinColumn(name = "comment_id")
-//    private List<Comment> comments;
+
+    @OneToMany
+    @JoinColumn(name = "comment_id")
+    private List<Comment> comments;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "common_post_id")
     private CommonPost commonPost;
 
-//    @ManyToOne
-//    @JoinColumn(name = "comment_id")
-//    private Comment parentComment;
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment parentComment;
 
     public Comment() {}
 
