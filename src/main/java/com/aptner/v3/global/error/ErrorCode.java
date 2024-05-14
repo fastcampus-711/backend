@@ -35,8 +35,9 @@ public enum ErrorCode {
     INVALID_URI_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid URI"),
     INVALID_TABLE_ID_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid table id exception"),
     BINDING_EXCEPTION(HttpStatus.BAD_REQUEST, "binding exception"),
-    ALREADY_REGISTERED_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "Already Registered Username");
-    ;
+    ALREADY_REGISTERED_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "Already Registered Username"),
+
+    PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "Password Mismatch");
 
     private final HttpStatus httpStatus;
     private final String detail;

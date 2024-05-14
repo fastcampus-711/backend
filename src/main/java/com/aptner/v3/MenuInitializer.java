@@ -1,12 +1,12 @@
 package com.aptner.v3;
 
-import com.aptner.v3.menu.category.CategoryService;
-import com.aptner.v3.menu.category.dto.CategoryDto;
-import com.aptner.v3.menu.menu.MenuName;
-import com.aptner.v3.menu.menu.MenuService;
-import com.aptner.v3.menu.menu.dto.MenuDto;
-import com.aptner.v3.user.User;
-import com.aptner.v3.user.UserRepository;
+import com.aptner.v3.board.category.CategoryService;
+import com.aptner.v3.board.category.dto.CategoryDtoRequest;
+import com.aptner.v3.menu.Menu;
+import com.aptner.v3.menu.MenuCode;
+import com.aptner.v3.menu.MenuService;
+import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,54 +17,70 @@ public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
     private final CategoryService categoryService;
-    private final UserRepository userRepository;
+    private final UserDetailsRepository userRepository;
 
     @Override
     public void run(String... args) throws Exception {
 
-        userRepository.save(new User("user@aptner.com", "user", "12345678!"));
+//        userRepository.save(UserEntity.of("user", "tempPassword12!@", Role.USER));
+//        userRepository.save(UserEntity.of("admin", "tempPassword12!@", Role.ADMIN));
 
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.INFO.name(), MenuName.INFO.getKo()));
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.NOTICE.name(), MenuName.NOTICE.getKo()));
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.MANDATORY.name(), MenuName.MANDATORY.getKo()));
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.COMMUNITY.name(), MenuName.COMMUNITY.getKo()));
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.COMPLAINT.name(), MenuName.COMPLAINT.getKo()));
-        menuService.createMenu(new MenuDto.MenuRequest(MenuName.FEE.name(), MenuName.FEE.getKo()));
+        // intro
+        Menu intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.INTRO.name(),MenuCode.INTRO.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.APT.name(),MenuCode.APT.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.CONTACT.name(),MenuCode.CONTACT.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMMUNITY.name(),MenuCode.COMMUNITY.getKo(), intro.getId()));
 
-//        menuService.updateMenu(2L, new MenuDto.Request(MenuName.NOTICE.name(), "공지사항2"));
+        // notice
+        Menu notice = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_NOTICE.name(), MenuCode.TOP_NOTICE.getKo(), null));
+        Menu target = menuService.createMenu(MenuDtoRequest.of(MenuCode.NOTICE.name(), MenuCode.NOTICE.getKo(), notice.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.SCHEDULE.name(),MenuCode.SCHEDULE.getKo(), notice.getId()));
 
-        // remove
-        categoryService.createCategory(1L, new CategoryDto.Request("인사말"));
-        categoryService.createCategory(1L, new CategoryDto.Request("단지전경"));
-        categoryService.createCategory(1L, new CategoryDto.Request("연락처 정보"));
-        categoryService.createCategory(1L, new CategoryDto.Request("커뮤니티 시설"));
-        categoryService.createCategory(2L, new CategoryDto.Request("공지사항"));
-        categoryService.createCategory(2L, new CategoryDto.Request("일정표"));
-        categoryService.createCategory(3L, new CategoryDto.Request("관리비"));
-        categoryService.createCategory(3L, new CategoryDto.Request("계약서"));
-        categoryService.createCategory(3L, new CategoryDto.Request("관리규약"));
-        categoryService.createCategory(3L, new CategoryDto.Request("장기수선충당금"));
-        categoryService.createCategory(3L, new CategoryDto.Request("안전관리계획"));
-        categoryService.createCategory(3L, new CategoryDto.Request("입찰정보"));
-        categoryService.createCategory(4L, new CategoryDto.Request("자유게시판"));
-        categoryService.createCategory(4L, new CategoryDto.Request("나눔장터"));
-        categoryService.createCategory(4L, new CategoryDto.Request("QnA"));
-        categoryService.createCategory(5L, new CategoryDto.Request("전체민원"));
-        categoryService.createCategory(5L, new CategoryDto.Request("나의민원"));
-        categoryService.createCategory(6L, new CategoryDto.Request("전체조회"));
-        categoryService.createCategory(6L, new CategoryDto.Request("나의관리비"));
+        // mandatory
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_MANDATORY.name(), MenuCode.TOP_MANDATORY.getKo(), null));
 
-//        categoryService.createCategory(2L, new CategoryDto.Request("엘리베이터"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("공동생활"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("공동현관/복도"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("주차장"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("보안/경비"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("조명"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("조경"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("커뮤니티시설"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("시공사하자"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("도로/인도"));
-//        categoryService.createCategory(2L, new CategoryDto.Request("기타"));
+        // community
+        Menu community = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_COMMUNITY.name(), MenuCode.TOP_COMMUNITY.getKo(), null));
+        Menu target2 = menuService.createMenu(MenuDtoRequest.of(MenuCode.FREE.name(), MenuCode.FREE.getKo(), community.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MARKET.name(),MenuCode.MARKET.getKo(), community.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.QNA.name(),MenuCode.QNA.getKo(), community.getId()));
+
+        // complaint
+        Menu complaint = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_COMPLAINT.name(), MenuCode.TOP_COMPLAINT.getKo(), null));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMPLAINT.name(),MenuCode.COMPLAINT.getKo(), complaint.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYCOMPLAINT.name(),MenuCode.MYCOMPLAINT.getKo(), complaint.getId()));
+
+        // fee
+        Menu fee = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_FEE.name(), MenuCode.TOP_FEE.getKo(), null));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.TOTALFEE.name(),MenuCode.TOTALFEE.getKo(), fee.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYFEE.name(),MenuCode.MYFEE.getKo(), fee.getId()));
+
+        // 공지사항 분류
+        categoryService.createCategory(CategoryDtoRequest.of("엘리베이터", "1", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("공동생활", "2", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("주차장", "3", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("공동현관/복도", "4", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("보안/경비", "5", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("조명", "6", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("조경", "7", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("커뮤니티시설", "8", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("시공사하자", "9", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("도로/인도", "10", target.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("기타", "11", target.getId()));
+
+        // 자유 게시판 분류
+        categoryService.createCategory(CategoryDtoRequest.of("생활/편의", "13", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("음식/카페", "14", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("병원/약국", "15", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("수리/시공", "16", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("투자/부동산", "17", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("교육/육아", "18", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("아파트/동네소식", "19", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("여행", "20", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("살림정보", "21", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("모임/동호회", "22", target2.getId()));
+        categoryService.createCategory(CategoryDtoRequest.of("기타", "23", target2.getId()));
 
     }
 }

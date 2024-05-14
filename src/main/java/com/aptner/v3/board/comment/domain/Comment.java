@@ -2,18 +2,15 @@ package com.aptner.v3.board.comment.domain;
 
 import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.global.domain.CreatedInfo;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-import org.springframework.context.annotation.Lazy;
-
-import java.util.List;
 
 @Entity
 @Getter
-public class Comment extends CreatedInfo {
+public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
