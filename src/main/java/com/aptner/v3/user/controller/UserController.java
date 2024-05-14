@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDto.Request request){
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpUserDto.SignUpRequest request){
         log.info("signUp request: {}", request);
         userService.signUp(request);
         return new ResponseEntity<>("SIGNUP SUCCESS",HttpStatus.OK); //응답 양식 미정

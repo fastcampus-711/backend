@@ -4,7 +4,7 @@ import com.aptner.v3.attach.AttachType;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.user.domain.User;
-import com.aptner.v3.user.repository.UserRepository;
+import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import static com.aptner.v3.global.util.MultipartUtil.createKey;
 @RequiredArgsConstructor
 public class ProfileService {
 
-    private final UserRepository userRepository;
+    private final UserDetailsRepository userRepository;
 
     private final S3Service s3Service;
 

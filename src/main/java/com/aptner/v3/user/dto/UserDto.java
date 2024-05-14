@@ -1,6 +1,6 @@
 package com.aptner.v3.user.dto;
 
-import com.aptner.v3.BaseTimeEntity;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

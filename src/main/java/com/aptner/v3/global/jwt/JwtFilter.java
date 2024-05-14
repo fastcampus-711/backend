@@ -1,7 +1,7 @@
 package com.aptner.v3.global.jwt;
 
+import com.aptner.v3.security.dto.CustomUserDetailsDto;
 import com.aptner.v3.user.domain.User;
-import com.aptner.v3.user.dto.CustomUserDetailsDto;
 import com.aptner.v3.user.type.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
