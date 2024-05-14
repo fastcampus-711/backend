@@ -37,9 +37,12 @@ springdoc:
     default-consumes-media-type: application/json;charset=UTF-8
     swagger-ui:
         path: /api-docs.html
-        operations-sorter: method
-#        disable-swagger-default-url: true
+        tags-sorter: alpha
+        operations-sorter: alpha
+        disable-swagger-default-url: true
         display-request-duration: true
+        doc-expansion: none
+        show-login-endpoint: true	# login endpoint 인식
 
     api-docs:
         path: /api-docs

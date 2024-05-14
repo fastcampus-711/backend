@@ -3,6 +3,7 @@ package com.aptner.v3.menu;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.MenuException;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,8 @@ class MenuServiceTest {
         MenuDtoRequest duplicateRequest = MenuDtoRequest.of("uniqueCode", "uniqueCodeName", null);
 
         // When
-        when(menuRepository.save(any(Menu.class))).thenThrow(new MenuException(ErrorCode._ALREADY_EXIST));
+        when(menuRepository.save(any(Menu.class)))
+                .thenThrow(new MenuException(ErrorCode._ALREADY_EXIST));
 
         // Then
         assertThrows(MenuException.class, () -> {

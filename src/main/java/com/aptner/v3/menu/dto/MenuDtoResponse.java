@@ -7,18 +7,38 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * The type Menu dto response.
+ */
 public record MenuDtoResponse(
         Long id,
         Long parentId,
         String code,
         String name,
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        Set<MenuDtoResponse> sub
+        Set<MenuDtoResponse> list
 ) {
+    /**
+     * Of menu dto response.
+     *
+     * @param id   the id
+     * @param code the code
+     * @param name the name
+     * @return the menu dto response
+     */
     public static MenuDtoResponse of(Long id, String code, String name) {
         return MenuDtoResponse.of(id, code, name);
     }
 
+    /**
+     * Of menu dto response.
+     *
+     * @param id       the id
+     * @param parentId the parent id
+     * @param code     the code
+     * @param name     the name
+     * @return the menu dto response
+     */
     public static MenuDtoResponse of(Long id, Long parentId, String code, String name) {
 
         Comparator<MenuDtoResponse> comparator = Comparator
@@ -27,6 +47,12 @@ public record MenuDtoResponse(
         return new MenuDtoResponse(id, parentId, code, name, new TreeSet<>(comparator));
     }
 
+    /**
+     * From menu dto response.
+     *
+     * @param menu the menu
+     * @return the menu dto response
+     */
     public static MenuDtoResponse from(Menu menu) {
 
         return MenuDtoResponse.of(
@@ -37,7 +63,13 @@ public record MenuDtoResponse(
         );
     }
 
-    public static Set<MenuDtoResponse> list(List<Menu> menus) {
+    /**
+     * To list set.
+     *
+     * @param menus the menus
+     * @return the set
+     */
+    public static Set<MenuDtoResponse> toList(List<Menu> menus) {
         Map<Long, MenuDtoResponse> map = menus.stream()
                 .map(MenuDtoResponse::from)
                 .collect(Collectors.toMap(MenuDtoResponse::id, Function.identity())); // @todo
@@ -46,8 +78,8 @@ public record MenuDtoResponse(
         map.values().stream()
                 .filter(MenuDtoResponse::hasParent)
                 .forEach(child -> {
-                    MenuDtoResponse parent = map.get(child.parentId());
-                    parent.sub().add(child);
+                    MenuDtoResponse parent = map.get(child.parentId);
+                    parent.list().add(child);
                 });
 
         // 부모가 없는 경우(상위 메뉴) (필터링)
@@ -58,6 +90,11 @@ public record MenuDtoResponse(
                 ));
     }
 
+    /**
+     * Has parent boolean.
+     *
+     * @return the boolean
+     */
     public boolean hasParent() {
         return this.parentId != null;
     }

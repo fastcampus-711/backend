@@ -1,6 +1,7 @@
 package com.aptner.v3.menu;
 
 import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class MenuJpaTest {
         // Given
         long previousCount = menuRepository.count();
         Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of(null, parent.getId(), "child", "child").toEntity();
+        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
 
         menuRepository.save(parent);
         menuRepository.save(child);
@@ -61,7 +62,7 @@ public class MenuJpaTest {
         // Given
         long previousCount = menuRepository.count();
         Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of(null, parent.getId(), "child", "child").toEntity();
+        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
         menuRepository.save(parent);
         menuRepository.save(child);
 
@@ -69,7 +70,7 @@ public class MenuJpaTest {
         menuRepository.delete(child);
 
         // Then
-        assertThat(menuRepository.count()).isEqualTo(previousCount + 2);
+        assertThat(menuRepository.count()).isEqualTo(previousCount + 1);
     }
 
     @Test
@@ -78,7 +79,7 @@ public class MenuJpaTest {
         // Given
         long previousCount = menuRepository.count();
         Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of(null, parent.getId(), "child", "child").toEntity();
+        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
         menuRepository.save(parent);
         menuRepository.save(child);
 
@@ -86,7 +87,7 @@ public class MenuJpaTest {
         menuRepository.delete(parent);
 
         // Then
-        assertThat(menuRepository.count()).isEqualTo(previousCount + 2);
+        assertThat(menuRepository.count()).isEqualTo(previousCount + 1);
     }
 
     @Test
@@ -94,11 +95,11 @@ public class MenuJpaTest {
     void givenId_whenSearch_thenReturnContainParentId() {
 
         // Setup data scenario
-        Menu menu1 = Menu.of("code1", "code1", null);
+        Menu menu1 = Menu.of("code1", "code1", null, null);
         entityManager.persist(menu1);
-        Menu menu2 = Menu.of("code2", "code2", menu1.getId());
+        Menu menu2 = Menu.of("code2", "code2", null, menu1.getId());
         entityManager.persist(menu2);
-        Menu menu3 = Menu.of("code3", "code3", menu2.getId());
+        Menu menu3 = Menu.of("code3", "code3", null, menu2.getId());
         entityManager.persist(menu3);
         entityManager.flush();
 

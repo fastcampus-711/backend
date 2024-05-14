@@ -4,6 +4,7 @@ package com.aptner.v3.menu;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.MenuException;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

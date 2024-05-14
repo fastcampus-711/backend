@@ -1,75 +1,109 @@
 package com.aptner.v3.board.category;
 
-import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.menu.MenuRepository;
+import com.aptner.v3.board.category.dto.CategoryDtoRequest;
+import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.global.exception.CategoryException;
+import com.aptner.v3.global.exception.MenuException;
+import com.aptner.v3.menu.MenuService;
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import static com.aptner.v3.CommunityApplication.modelMapper;
+import java.util.List;
+
+import static com.aptner.v3.global.error.ErrorCode._ALREADY_EXIST;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
+
+@Slf4j
 @Service
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final MenuService menuService;
 
     @Autowired
-    public CategoryService(
-            MenuRepository menuRepository,
-            CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, MenuService menuService) {
         this.categoryRepository = categoryRepository;
+        this.menuService = menuService;
     }
 
-    public CategoryDto.Response deleteCategory(Long id) {
+    public List<Category> search(Long menuId) {
+
+        if (menuId != null) {
+            return categoryRepository.findByMenuId(menuId);
+        }
+        return categoryRepository.findAll();
+    }
+
+    public Category createCategory(CategoryDtoRequest request) {
 
         // verify
-        Category searched = getCategoryById(id);
-        // set
+        verifyCreate(request);
+
+        try {
+            return categoryRepository.save(request.toEntity());
+        } catch (DataIntegrityViolationException e) {
+            throw new CategoryException(_ALREADY_EXIST);
+        }
+    }
+
+    public Category deleteCategory(Long id) {
+        Category category = getCategoryById(id);
+
         categoryRepository.deleteById(id);
-        return modelMapper().map(searched, CategoryDto.Response.class);
+        return category;
     }
 
-    public CategoryDto.Response createCategory(long menuId, CategoryDto.Request request) {
+    public Category updateCategory(long categoryId, CategoryDtoRequest request) {
+        Category category = getCategoryById(categoryId);
 
         // verify
-//        Menu verified = verifyCreate(menuId, request);
-        // set
-        Category category = modelMapper().map(request, Category.class);
-//        category.setMenu(verified);
-        // save
-        Category created = categoryRepository.save(category);
-        return modelMapper().map(created, CategoryDto.Response.class);
+        verifyUpdate(request, category);
+        categoryRepository.flush();
+
+        return category;
     }
 
-    public CategoryDto.Response updateCategory(long categoryId, CategoryDto.Request request) {
-        // verify
-        Category searched = getCategoryById(categoryId);
-        searched.setName(request.getName());
-        Category updated = categoryRepository.save(searched);
-        return modelMapper().map(updated, CategoryDto.Response.class);
+    private void verifyUpdate(CategoryDtoRequest request, Category category) {
+        // code
+        if (StringUtils.isNotEmpty(request.code())) {
+            checkDuplicatedCode(request);
+            category.setCode(request.code());
+        }
+        // name
+        if (StringUtils.isNotEmpty(request.name())) {
+            category.setName(request.name());
+        }
     }
 
-//    private Menu getMenuById(long menuId) {
-//        return menuRepository.findById(menuId)
-//                .orElseThrow(()-> new MenuException(_NOT_FOUND));
-//    }
+    private void verifyCreate(CategoryDtoRequest request) {
+        // menuId
+        if (request.menuId() != null) {
+            if (!menuService.isExistsMenu(request.menuId())) {
+                throw new MenuException(_NOT_FOUND);
+            }
+        }
+        // code
+        if (StringUtils.isNotEmpty(request.code())) {
+            checkDuplicatedCode(request);
+        }
+    }
+
+    private void checkDuplicatedCode(CategoryDtoRequest request) {
+        // duplicate code (constraint)
+        categoryRepository.findByCode(request.code())
+                .ifPresent(c -> {
+                    throw new CategoryException(_ALREADY_EXIST);
+                });
+    }
 
     private Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(_NOT_FOUND));
     }
-
-//    private Menu verifyCreate(long menuId, CategoryDto.Request request) {
-//        // check menu
-//        Menu menu = getMenuById(menuId);
-//        // check category
-//        categoryRepository.findByMenuIdAndName(menuId, request.getName())
-//                .ifPresent(c -> {
-//                    throw new CategoryException(_ALREADY_EXIST);
-//                });
-//        return menu;
-//    }
 
 }

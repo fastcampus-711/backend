@@ -1,6 +1,6 @@
 package com.aptner.v3.board.common_post.service;
 
-import com.aptner.v3.board.category.CategoryName;
+import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
@@ -80,7 +80,7 @@ public class CommonPostService<T extends CommonPost> {
                 .split("/");
         String target = URIs.length <= 1 ? "" : URIs[1];
 
-        return Arrays.stream(CategoryName.values())
+        return Arrays.stream(CategoryCode.values())
                 .filter(c -> c.getURI().equals(target))
                 .findFirst()
                 .orElseThrow(InvalidURIException::new)
