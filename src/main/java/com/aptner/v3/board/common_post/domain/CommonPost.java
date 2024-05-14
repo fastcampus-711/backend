@@ -1,6 +1,6 @@
 package com.aptner.v3.board.common_post.domain;
 
-import com.aptner.v3.board.category.CategoryName;
+import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
@@ -54,7 +54,7 @@ public class CommonPost extends BaseTimeEntity {
 
     public CommonPostDto.Response toResponseDto() {
         ModelMapper modelMapper = new ModelMapper();
-        Class<?> responseDto = Arrays.stream(CategoryName.values())
+        Class<?> responseDto = Arrays.stream(CategoryCode.values())
                 .filter(s -> s.getDomain().equals(this.getClass()))
                 .findFirst()
                 .orElseThrow()

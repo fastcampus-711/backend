@@ -89,7 +89,7 @@ public class CommonPostService<E extends CommonPost,
         return Arrays.stream(CategoryCode.values())
                 .filter(c -> c.getURI().equals(target))
                 .findFirst()
-                .orElseGet(() -> CategoryName.공통)
+                .orElseGet(() -> CategoryCode.공통)
                 .getDtype();
     }
 }

@@ -1,6 +1,5 @@
 package com.aptner.v3.board.complain.dto;
 
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

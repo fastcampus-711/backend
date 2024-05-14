@@ -8,6 +8,8 @@ import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 
+import java.util.List;
+
 @Entity
 @Getter
 public class Comment extends BaseTimeEntity {
