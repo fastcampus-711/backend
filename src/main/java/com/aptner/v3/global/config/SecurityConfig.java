@@ -48,27 +48,27 @@ public class SecurityConfig {
                         "/api-docs.html",
                         "/api-docs/**",
                         "/swagger-ui/**",
-                        "/actuator/**").permitAll()
+                        "/actuator/**",
+                        "/boards/**",
+                        "/boards").permitAll()
                 .requestMatchers(
                         "/signup",
                         "/login").permitAll()
                 //.requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
                 .anyRequest().authenticated());
 
-        // JWT 인증 필터를 LoginFilter 전에 넣어줌
-        http.addFilterBefore(AuthenticationFilter(), LoginFilter.class);
-        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
-        http.addFilterAt(LoginFilter(), UsernamePasswordAuthenticationFilter.class);
+//        // JWT 인증 필터를 LoginFilter 전에 넣어줌
+//        http.addFilterBefore(AuthenticationFilter(), LoginFilter.class);
+//        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
+//        http.addFilterAt(LoginFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
     public JwtFilter AuthenticationFilter() {
         return new JwtFilter(jwtUtil);
     }
 
-    @Bean
     public LoginFilter LoginFilter() throws Exception {
         LoginFilter loginFilter = new LoginFilter(jwtUtil);
         loginFilter.setAuthenticationManager(authenticationManager(authenticationConfiguration));

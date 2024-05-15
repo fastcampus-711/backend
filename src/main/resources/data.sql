@@ -9,6 +9,7 @@ insert into free_post (id, blind_at, blind_by)
 values (2, '2021-03-10 08:48:50', 'blind_by');
 -- insert into free_board_post (id, title, content, created_by, created_at, hits, status)
 -- values (2, 'freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
+
 insert into common_post (title, content, created_by, created_at, hits, visible, dtype) values ('Honorable', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.', 'Wynny Jerrard', '2023-07-06', 1, true, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, dtype) values ('Mrs', 'Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.', 'Eirena Hindrick', '2023-06-04', 2, true, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, dtype) values ('Mrs', 'Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.', 'Ardisj Gayther', '2023-08-01', 3, true, 'FreePost');

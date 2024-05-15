@@ -1,5 +1,6 @@
 package com.aptner.v3.board.common_post.domain;
 
+import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
@@ -8,10 +9,10 @@ import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
-@DiscriminatorColumn
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
 public class CommonPost extends BaseTimeEntity {
@@ -31,20 +32,39 @@ public class CommonPost extends BaseTimeEntity {
     private List<Comment> comments;
     private Boolean visible = true;
 
-    public CommonPost() {}
+
+    public CommonPost() {
+    }
 
     public CommonPost(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
-    public <T extends CommonPostDto.UpdateRequest, U extends CommonPost> U update(T updateRequest) {
+    public <Q extends CommonPostDto.Request> CommonPost update(Q updateRequest) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setFieldMatchingEnabled(true)
                 .setSkipNullEnabled(true);
+
         modelMapper.map(updateRequest, this);
-        return (U)this;
+        return this;
+    }
+
+    public CommonPostDto.Response toResponseDto() {
+        ModelMapper modelMapper = new ModelMapper();
+        Class<?> responseDto = Arrays.stream(CategoryCode.values())
+                .filter(s -> s.getDomain().equals(this.getClass()))
+                .findFirst()
+                .orElseThrow()
+                .getDtoForResponse();
+
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true);
+
+        return (CommonPostDto.Response) modelMapper.map(this, responseDto);
     }
 }
