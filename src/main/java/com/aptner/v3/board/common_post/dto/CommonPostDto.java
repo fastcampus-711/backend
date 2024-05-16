@@ -1,12 +1,17 @@
 package com.aptner.v3.board.common_post.dto;
 
+import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommonPostDto {
 
@@ -28,12 +33,14 @@ public class CommonPostDto {
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     public static class Response {
         private long id;
         private String title;
         private String content;
         private int hits;
+        private List<CommentDto.Response> comments = new ArrayList<>();
 
         public <E extends CommonPost> Response(E entity) {
             ModelMapper modelMapper = new ModelMapper();
@@ -43,10 +50,6 @@ public class CommonPostDto {
                     .setSkipNullEnabled(true);
 
             modelMapper.map(entity, this);
-        }
-
-        public static <S extends Response> S from(CommonPost update) {
-            return null;
         }
     }
 }

@@ -11,25 +11,30 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @Tag(name="댓글")
-@RequestMapping("/{post-id}/comments")
+@RequestMapping("/boards/{post-id}/comments")
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping
-    public ResponseEntity<?> addComment(@PathVariable(name = "post-id") long postId, @RequestBody CommentDto.Request requestDto) {
-        commentService.addComment(postId, requestDto);
-        return new ResponseEntity<>("add comment success", HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<?> getComment() {
+        return new ResponseEntity<>(commentService.getComment(), HttpStatus.OK);
+    }
+
+    @PostMapping(value = {"/{comment-id}", ""})
+    public ResponseEntity<?> addComment(@PathVariable(name = "post-id") long postId,
+                                        @PathVariable(name = "comment-id", required = false) Long commentId,
+                                        @RequestBody CommentDto.Request requestDto) {
+        return new ResponseEntity<>(commentService.addComment(postId, commentId, requestDto), HttpStatus.OK);
     }
 
     @PutMapping("/{comment-id}")
     public ResponseEntity<?> updateComment(@PathVariable(name = "comment-id") long commentId, @RequestBody CommentDto.Request requestDto) {
-        commentService.updateComment(commentId, requestDto);
-        return new ResponseEntity<>("update comment success", HttpStatus.OK);
+        return new ResponseEntity<>(commentService.updateComment(commentId, requestDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{comment-id}")
     public ResponseEntity<?> deleteComment(@PathVariable(name = "comment-id") long commentId) {
-        commentService.deleteComment(commentId);
-        return new ResponseEntity<>("delete comment success", HttpStatus.OK);
+
+        return new ResponseEntity<>(commentService.deleteComment(commentId), HttpStatus.OK);
     }
 }
