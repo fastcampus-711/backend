@@ -52,7 +52,9 @@ public class SecurityConfig {
                         "/actuator/**").permitAll()
                 .requestMatchers(
                         "/signup",
-                        "/login").permitAll()
+                        "/login",
+                        "/**"
+                ).permitAll()
                 //.requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
                 .anyRequest().authenticated());
 
