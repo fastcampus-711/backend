@@ -10,4 +10,12 @@ public class MarketService extends CommonPostService<Market, MarketDto.Request, 
     public MarketService(CommonPostRepository<Market> commonPostRepository) {
         super(commonPostRepository);
     }
+
+    public MarketDto.Response createPost(MarketDto.Request requestDto) {
+        if (!requestDto.getImageUrls().isEmpty()) {
+            Market entity = requestDto.toEntity(requestDto.getImageUrls());
+            return new MarketDto.Response(commonPostRepository.save(entity));
+        }
+        return new MarketDto.Response(commonPostRepository.save(requestDto.toEntity()));
+    }
 }

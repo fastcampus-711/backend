@@ -8,6 +8,7 @@ import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,12 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Primary
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
 @RequiredArgsConstructor
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
-    private final CommonPostRepository<E> commonPostRepository;
+    protected final CommonPostRepository<E> commonPostRepository;
 
     public S getPost(long postId) {
         return (S) commonPostRepository.findById(postId)
@@ -63,7 +65,7 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public S createPost(Q requestDto) {
-        E entity = (E) requestDto.toEntity();
+       E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
         return null;
     }
