@@ -14,10 +14,18 @@ public class NoticePostService extends CommonPostService<NoticePost, NoticePostD
     }
 
     public NoticePostDto.Response createNoticePost(NoticePostDto.Request requestDto) {
-        if (!requestDto.getImageUrls().isEmpty()){
+        if (!requestDto.getImageUrls().isEmpty()) {
             NoticePost entity = requestDto.toEntity(requestDto.getImageUrls());
             return new NoticePostDto.Response(commonPostRepository.save(entity));
         }
         return new NoticePostDto.Response(commonPostRepository.save(requestDto.toEntity()));
     }
+
+    public NoticePostDto.Response updatePost(long postId, NoticePostDto.Request requestDto) {
+        NoticePost entity = commonPostRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        entity.update(requestDto);
+        return new NoticePostDto.Response(commonPostRepository.save(entity));
+    }
+
+
 }

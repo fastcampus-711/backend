@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name = "공지 사항")
@@ -33,5 +30,11 @@ public class NoticePostPostController extends CommonPostController<NoticePost, N
     @Operation(summary = "첨부 파일 업로드")
     public ResponseEntity<?> createNoticePost(@RequestBody NoticePostDto.Request requestDto) {
         return new ResponseEntity<>(noticePostService.createNoticePost(requestDto), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{post-id}/update")
+    @Operation(summary = "게시판 수정")
+    public ResponseEntity<?> updateNoticePost(@PathVariable(name = "post-id") long postId, @RequestBody NoticePostDto.Request requestDto) {
+        return new ResponseEntity<>(noticePostService.updatePost(postId, requestDto), HttpStatus.OK);
     }
 }
