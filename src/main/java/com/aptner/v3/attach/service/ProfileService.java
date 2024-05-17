@@ -3,7 +3,7 @@ package com.aptner.v3.attach.service;
 import com.aptner.v3.attach.AttachType;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.user.domain.UserEntity;
+import com.aptner.v3.user.domain.User;
 import com.aptner.v3.user.repository.UserDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,8 @@ public class ProfileService {
     private final S3Service s3Service;
 
     @Transactional
-    public UserEntity updateUserProfile(Long userId, MultipartFile file) {
-        UserEntity user = userRepository.findById(userId)
+    public User updateUserProfile(Long userId, MultipartFile file) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode._NOT_FOUND));
 
         String uuid = createFileId();
