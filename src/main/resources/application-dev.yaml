@@ -13,6 +13,12 @@ spring:
         show_sql: true
         use_sql_comments: true  # querydsl
 
+decorator.datasource.p6spy:
+  enable-logging: true
+  multiline: true
+  logging: slf4j
+  tracing.include-parameter-values: true
+
 logging:
   level:
     com.aptner.v3: debug

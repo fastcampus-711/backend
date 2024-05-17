@@ -25,8 +25,7 @@ public class CommunityApplication {
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		// 비밀번호 암호화를 위한 Bean 등록
+    public static BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

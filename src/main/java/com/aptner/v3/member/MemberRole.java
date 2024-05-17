@@ -1,11 +1,11 @@
-package com.aptner.v3.user.type;
+package com.aptner.v3.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UserRole {
+public enum MemberRole {
     USER("입주민"),
     ADMIN("관리자"),
     RELATED_COMPANY("관계사"),
