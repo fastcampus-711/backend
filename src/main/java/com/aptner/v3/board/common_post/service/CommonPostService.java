@@ -19,17 +19,20 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 @RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
 
     public S getPost(long postId) {
-        return (S) commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new)
-                .toResponseDto();
+        return (S) commonPostRepository.findByComments_CommonPostId(postId)
+                .orElse(
+                        commonPostRepository.findById(postId)
+                                .orElseThrow(InvalidTableIdException::new)
+                )
+                .toResponseDtoWithComments();
 
     }
 
@@ -43,7 +46,7 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByDtype(dtype);
 
         return list.stream()
-                .map(e -> (S) e.toResponseDto())
+                .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
     }
 
@@ -58,21 +61,21 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
 
         return list.stream()
-                .map(e -> (S)e.toResponseDto())
+                .map(e -> (S)e.toResponseDtoWithoutComments())
                 .toList();
     }
 
     public S createPost(Q requestDto) {
         E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
-        return null;
+        return (S)entity.toResponseDtoWithoutComments();
     }
 
     public S updatePost(long postId, Q requestDto) {
         return (S) commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
                 .update(requestDto)
-                .toResponseDto();
+                .toResponseDtoWithoutComments();
     }
 
     public long deletePost(long id) {
@@ -81,7 +84,6 @@ public class CommonPostService<E extends CommonPost,
     }
 
     private static String getDtype(HttpServletRequest request) {
-
         String[] URIs = request.getRequestURI()
                 .split("/");
         String target = URIs.length <= 2 ? "" : URIs[2];
