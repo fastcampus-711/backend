@@ -40,7 +40,7 @@ public class CommonPostDto {
         private String title;
         private String content;
         private int hits;
-        private List<CommentDto.Response> comments = new ArrayList<>();
+        private List<CommentDto.Response> comments;
 
         public <E extends CommonPost> Response(E entity) {
             ModelMapper modelMapper = new ModelMapper();
