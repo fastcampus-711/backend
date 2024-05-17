@@ -2,8 +2,8 @@ package com.aptner.v3.board.common_post.controller;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
-import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-
 @RequiredArgsConstructor
-public class CommonPostController<T extends CommonPost> {
-    private final CommonPostService<T> commonPostService;
+@RequestMapping("/boards")
+public class CommonPostController<E extends CommonPost,
+        Q extends CommonPostDto.Request,
+        S extends CommonPostDto.Response> {
+    private final CommonPostService<E, Q, S> commonPostService;
 
     @GetMapping("/{post-id}")
     @Operation(summary = "게시판 조회")
@@ -27,7 +29,7 @@ public class CommonPostController<T extends CommonPost> {
     @Operation(summary = "게시판 조회")
     public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword,
                                               @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                              @RequestParam(required = false, defaultValue = "0") Integer page,
+                                              @RequestParam(required = false, defaultValue = "1") Integer page,
                                               @RequestParam(required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
@@ -47,22 +49,20 @@ public class CommonPostController<T extends CommonPost> {
 
     @PostMapping
     @Operation(summary = "게시판 등록")
-    public ResponseEntity<?> createPost(@RequestBody NoticePostDto.CreateRequest requestDto) {
-        commonPostService.createPost(requestDto);
-        return new ResponseEntity<>("create post success", HttpStatus.CREATED);
+    public ResponseEntity<?> createPost(@RequestBody Q requestDto) {
+        return new ResponseEntity<>(commonPostService.createPost(requestDto), HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{post-id}")
     @Operation(summary = "게시판 수정")
-    public ResponseEntity<?> updatePost(@RequestBody NoticePostDto.UpdateRequest requestDto) {
-        commonPostService.updatePost(requestDto);
-        return new ResponseEntity<>("update post success", HttpStatus.OK);
+    public ResponseEntity<?> updatePost(@PathVariable(name = "post-id") long postId, @RequestBody Q requestDto) {
+        return new ResponseEntity<>(commonPostService.updatePost(postId, requestDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{post-id}")
     @Operation(summary = "게시판 삭제")
     public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
-        commonPostService.deletePost(postId);
-        return new ResponseEntity<>("delete post success", HttpStatus.OK);
+
+        return new ResponseEntity<>(commonPostService.deletePost(postId), HttpStatus.OK);
     }
 }
