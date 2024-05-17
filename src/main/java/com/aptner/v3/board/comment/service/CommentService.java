@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -17,22 +19,40 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommonPostRepository<CommonPost> commonPostRepository;
 
-    public void addComment(long postId, CommentDto.Request requestDto) {
-        CommonPost commonPost = commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new);
+    public CommentDto.Response addComment(long postId, Long commentId, CommentDto.Request requestDto) {
+        Comment comment;
+        if (commentId == null) {
+            CommonPost commonPost = commonPostRepository.findById(postId)
+                    .orElseThrow(InvalidTableIdException::new);
 
-        Comment comment = Comment.of(commonPost, requestDto.getContent());
+            comment = Comment.of(commonPost, requestDto);
+        } else {
+            System.out.println("commentId : " + commentId);
+            Comment parentComment = commentRepository.findById(commentId)
+                    .orElseThrow(InvalidTableIdException::new);
 
-        commentRepository.save(comment);
+            comment = Comment.of(parentComment, requestDto);
+        }
+
+        return commentRepository.save(comment)
+                .toResponseDto();
     }
 
-    public void updateComment(long commentId, CommentDto.Request requestDto) {
-        commentRepository.findById(commentId)
+    public CommentDto.Response updateComment(long commentId, CommentDto.Request requestDto) {
+        return commentRepository.findById(commentId)
                 .orElseThrow(InvalidTableIdException::new)
-                .update(requestDto);
+                .update(requestDto)
+                .toResponseDto();
     }
 
-    public void deleteComment(long commentId) {
+    public long deleteComment(long commentId) {
         commentRepository.deleteById(commentId);
+        return commentId;
+    }
+
+    public List<CommentDto.Response> getComment() {
+        return commentRepository.findAll()
+                .stream().map(Comment::toResponseDto)
+                .toList();
     }
 }

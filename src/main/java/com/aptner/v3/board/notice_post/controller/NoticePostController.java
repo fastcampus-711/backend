@@ -14,12 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Tag(name = "공지 사항")
 @RequestMapping("/boards/notices")
-public class NoticePostPostController extends CommonPostController<NoticePost, NoticePostDto.Request, NoticePostDto.Response> {
-    public NoticePostPostController(CommonPostService<
-            NoticePost,
-            NoticePostDto.Request,
-            NoticePostDto.Response> commonPostService,
-                                    NoticePostService noticePostService) {
+public class NoticePostController extends CommonPostController<NoticePost, NoticePostDto.Request, NoticePostDto.Response> {
+    public NoticePostController(CommonPostService<NoticePost, NoticePostDto.Request, NoticePostDto.Response> commonPostService) {
         super(commonPostService);
         this.noticePostService = noticePostService;
     }

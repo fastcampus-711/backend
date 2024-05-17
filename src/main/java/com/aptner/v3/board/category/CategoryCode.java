@@ -27,9 +27,9 @@ public enum CategoryCode {
     private final String URI;
     private final Class<?> domain;
     private final String dtype;
-    private final Class<?> dtoForResponse;
+    private final Class<? extends CommonPostDto.Response> dtoForResponse;
 
-    CategoryCode(String uri, Class<?> domain, Class<?> dtoForResponse) {
+    CategoryCode(String uri, Class<?> domain, Class<? extends CommonPostDto.Response> dtoForResponse) {
         this.URI = uri;
         this.domain = domain;
         this.dtoForResponse = dtoForResponse;

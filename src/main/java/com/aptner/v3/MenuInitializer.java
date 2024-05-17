@@ -22,8 +22,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-//        userRepository.save(UserEntity.of("user", "tempPassword12!@", Role.USER));
-//        userRepository.save(UserEntity.of("admin", "tempPassword12!@", Role.ADMIN));
+//        userRepository.save(User.of("user", "tempPassword12!@", Role.USER));
+//        userRepository.save(User.of("admin", "tempPassword12!@", Role.ADMIN));
 
         // intro
         Menu intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));

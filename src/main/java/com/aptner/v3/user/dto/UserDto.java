@@ -11,7 +11,7 @@ import lombok.*;
 public class UserDto extends BaseTimeEntity {
 
     private String id;
-    private String email;
+    private String username;
     private String name;
     private String uuid;
     private String password;

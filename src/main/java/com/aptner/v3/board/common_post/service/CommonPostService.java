@@ -8,7 +8,6 @@ import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,9 +28,12 @@ public class CommonPostService<E extends CommonPost,
     protected final CommonPostRepository<E> commonPostRepository;
 
     public S getPost(long postId) {
-        return (S) commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new)
-                .toResponseDto();
+        return (S) commonPostRepository.findByComments_CommonPostId(postId)
+                .orElse(
+                        commonPostRepository.findById(postId)
+                                .orElseThrow(InvalidTableIdException::new)
+                )
+                .toResponseDtoWithComments();
 
     }
 
@@ -45,7 +47,7 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByDtype(dtype);
 
         return list.stream()
-                .map(e -> (S) e.toResponseDto())
+                .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
     }
 
@@ -60,21 +62,21 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
 
         return list.stream()
-                .map(e -> (S)e.toResponseDto())
+                .map(e -> (S)e.toResponseDtoWithoutComments())
                 .toList();
     }
 
     public S createPost(Q requestDto) {
-       E entity = (E) requestDto.toEntity();
+        E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
-        return null;
+        return (S)entity.toResponseDtoWithoutComments();
     }
 
     public S updatePost(long postId, Q requestDto) {
         return (S) commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
                 .update(requestDto)
-                .toResponseDto();
+                .toResponseDtoWithoutComments();
     }
 
     public long deletePost(long id) {
@@ -83,7 +85,6 @@ public class CommonPostService<E extends CommonPost,
     }
 
     private static String getDtype(HttpServletRequest request) {
-
         String[] URIs = request.getRequestURI()
                 .split("/");
         String target = URIs.length <= 2 ? "" : URIs[2];
