@@ -19,6 +19,9 @@ spring:
             dialect: org.hibernate.dialect.MySQLDialect
             ddl-auto: create-drop
         show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
 
     jackson:
         property-naming-strategy: SNAKE_CASE
@@ -47,3 +50,4 @@ springdoc:
     api-docs:
         path: /api-docs
 ---
+

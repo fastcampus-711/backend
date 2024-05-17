@@ -5,14 +5,14 @@ import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 public class NoticePostDto {
 
     @Getter
-    public static class CreateRequest extends CommonPostDto.CreateRequest {
+    public static class Request extends CommonPostDto.Request {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime postAt;
 
@@ -22,8 +22,12 @@ public class NoticePostDto {
     }
 
     @Getter
-    public static class UpdateRequest extends CommonPostDto.UpdateRequest {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @NoArgsConstructor
+    public static class Response extends CommonPostDto.Response {
         private LocalDateTime postAt;
+
+        public <E extends CommonPost> Response(E entity) {
+            super(entity);
+        }
     }
 }
