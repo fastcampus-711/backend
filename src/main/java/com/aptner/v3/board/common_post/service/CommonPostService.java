@@ -8,6 +8,7 @@ import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

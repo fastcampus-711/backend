@@ -27,5 +27,10 @@ public class NoticePostService extends CommonPostService<NoticePost, NoticePostD
         return new NoticePostDto.Response(commonPostRepository.save(entity));
     }
 
+    public long deletePost(long postId) {
+        NoticePost entity = commonPostRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        commonPostRepository.deleteById(postId);
+        return entity.getId();
+    }
 
 }

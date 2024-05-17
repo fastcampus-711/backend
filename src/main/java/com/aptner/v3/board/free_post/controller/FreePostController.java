@@ -33,6 +33,12 @@ public class FreePostController extends CommonPostController<FreePost, FreePostD
         return new ResponseEntity<>(freePostService.updatePost(postId, requestDto), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{post-id}")
+    @Operation(summary = "게시판 삭제")
+    public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
+        return new ResponseEntity<>(freePostService.deletePost(postId), HttpStatus.OK);
+    }
+
     public FreePostController(
             CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,
             FreePostService freePostService) {

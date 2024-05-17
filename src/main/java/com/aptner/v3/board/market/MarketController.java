@@ -32,4 +32,10 @@ public class MarketController extends CommonPostController<Market, MarketDto.Req
     public ResponseEntity<?> updateMarketPost(@PathVariable(name = "post-id") long postId, @RequestBody MarketDto.Request requestDto) {
         return new ResponseEntity<>(marketService.updatePost(postId, requestDto), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{post-id}")
+    @Operation(summary = "게시판 삭제")
+    public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
+        return new ResponseEntity<>(marketService.deletePost(postId), HttpStatus.OK);
+    }
 }

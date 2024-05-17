@@ -26,4 +26,11 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto.Req
         freePost.update(requestDto);
         return new FreePostDto.Response(commonPostRepository.save(freePost));
     }
+
+    public long deletePost(long postId) {
+        FreePost freePost = commonPostRepository.findById(postId).orElseThrow(() ->
+                new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        commonPostRepository.deleteById(postId);
+        return freePost.getId();
+    }
 }

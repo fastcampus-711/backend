@@ -24,4 +24,10 @@ public class MarketService extends CommonPostService<Market, MarketDto.Request, 
         entity.update(requestDto);
         return new MarketDto.Response(commonPostRepository.save(entity));
     }
+
+    public long deletePost(long postId) {
+        Market entity = commonPostRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        commonPostRepository.deleteById(postId);
+        return entity.getId();
+    }
 }
