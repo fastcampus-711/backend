@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-@SQLDelete(sql = "UPDATE commonpost SET deleted = true where id = ?")
+@SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
 public class CommonPost extends BaseTimeEntity {
     @Id
