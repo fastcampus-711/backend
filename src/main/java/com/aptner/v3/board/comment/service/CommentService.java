@@ -3,18 +3,16 @@ package com.aptner.v3.board.comment.service;
 import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.comment.repository.CommentRepository;
-import com.aptner.v3.board.common.reaction.service.ReactionApplyService;
+import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @Transactional
-public class CommentService extends ReactionApplyService<Comment> {
+public class CommentService extends CountOfReactionAndCommentApplyService<Comment> {
     private final CommentRepository commentRepository;
     private final CommonPostRepository<CommonPost> commonPostRepository;
 
@@ -25,11 +23,11 @@ public class CommentService extends ReactionApplyService<Comment> {
     }
 
     public CommentDto.Response addComment(long postId, Long commentId, CommentDto.Request requestDto) {
+        CommonPost commonPost = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
         Comment comment;
         if (commentId == null) {
-            CommonPost commonPost = commonPostRepository.findById(postId)
-                    .orElseThrow(InvalidTableIdException::new);
-
             comment = Comment.of(commonPost, requestDto);
         } else {
             Comment parentComment = commentRepository.findById(commentId)
@@ -37,26 +35,36 @@ public class CommentService extends ReactionApplyService<Comment> {
 
             comment = Comment.of(parentComment, requestDto);
         }
+        comment = commentRepository.save(comment);
 
-        return commentRepository.save(comment)
-                .toResponseDto();
+        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+
+        return comment.toResponseDto();
     }
 
-    public CommentDto.Response updateComment(long commentId, CommentDto.Request requestDto) {
-        return commentRepository.findById(commentId)
+    public CommentDto.Response updateComment(long postId, long commentId, CommentDto.Request requestDto) {
+        CommonPost commonPost = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(InvalidTableIdException::new)
-                .updateByRequestDto(requestDto)
-                .toResponseDto();
+                .updateByRequestDto(requestDto);
+
+        commentRepository.save(comment);
+
+        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+
+        return comment.toResponseDto();
     }
 
-    public long deleteComment(long commentId) {
+    public long deleteComment(long postId, long commentId) {
+        CommonPost commonPost = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
         commentRepository.deleteById(commentId);
-        return commentId;
-    }
 
-    public List<CommentDto.Response> getComment() {
-        return commentRepository.findAll()
-                .stream().map(Comment::toResponseDto)
-                .toList();
+        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+
+        return commentId;
     }
 }
