@@ -1,13 +1,16 @@
 package com.aptner.v3.board.common_post.service;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
+import com.aptner.v3.board.common.reaction.service.ReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
+import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.ReactionException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,7 +27,7 @@ import java.util.List;
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response>
-        extends CountOfReactionAndCommentApplyService<CommonPost> {
+        extends ReactionApplyService<CommonPost> {
     private final CommonPostRepository<E> commonPostRepository;
 
     public CommonPostService(CommonPostRepository<E> commonPostRepository) {
@@ -33,19 +36,16 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public S getPost(long postId) {
-        E commonPost = commonPostRepository.findByComments_CommonPostId(postId)
+        return (S) commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
                                 .orElseThrow(InvalidTableIdException::new)
-                );
-
-        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
-
-        return (S) commonPost.toResponseDtoWithComments();
+                )
+                .toResponseDtoWithComments();
 
     }
 
-    public List<S> getPostList(HttpServletRequest request) {
+    public List<S> getPost(HttpServletRequest request) {
         String dtype = getDtype(request);
 
         List<E> list;
@@ -92,7 +92,7 @@ public class CommonPostService<E extends CommonPost,
         return id;
     }
 
-    private String getDtype(HttpServletRequest request) {
+    private static String getDtype(HttpServletRequest request) {
         String[] URIs = request.getRequestURI()
                 .split("/");
         String target = URIs.length <= 2 ? "" : URIs[2];

@@ -17,6 +17,7 @@ public class CommentDto {
         private boolean visible;
         private CommonPost commonPost;
         private Comment parentComment;
+
     }
 
     @Getter

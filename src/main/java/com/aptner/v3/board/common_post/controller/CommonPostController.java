@@ -39,7 +39,7 @@ public class CommonPostController<E extends CommonPost,
     }
 
     public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPostList(request), HttpStatus.OK);
+        return new ResponseEntity<>(commonPostService.getPost(request), HttpStatus.OK);
     }
 
     public ResponseEntity<?> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {

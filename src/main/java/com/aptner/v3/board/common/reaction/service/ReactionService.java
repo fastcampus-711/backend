@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public abstract class ReactionService<T extends ReactionColumns, E extends Reaction> {
-    private final CountOfReactionAndCommentApplyService<T> countOfReactionAndCommentApplyService;
+    private final ReactionApplyService<T> reactionApplyService;
     private final ReactionRepository<E> reactionRepository;
 
-    protected ReactionService(CountOfReactionAndCommentApplyService<T> countOfReactionAndCommentApplyService, ReactionRepository<E> reactionRepository) {
-        this.countOfReactionAndCommentApplyService = countOfReactionAndCommentApplyService;
+    protected ReactionService(ReactionApplyService<T> reactionApplyService, ReactionRepository<E> reactionRepository) {
+        this.reactionApplyService = reactionApplyService;
         this.reactionRepository = reactionRepository;
     }
 
@@ -32,7 +32,7 @@ public abstract class ReactionService<T extends ReactionColumns, E extends React
         long countReactiondTypeGood = countAllByTargetIdAndReactionType(targetId, ReactionType.GOOD);
         long countReactionTypeBad = countAllByTargetIdAndReactionType(targetId, ReactionType.BAD);
 
-        countOfReactionAndCommentApplyService.applyReactionCount(targetId, countReactiondTypeGood, countReactionTypeBad);
+        reactionApplyService.applyReactionCount(targetId, countReactiondTypeGood, countReactionTypeBad);
     }
 
     private long countAllByTargetIdAndReactionType(long targetId, ReactionType reactionType) {
