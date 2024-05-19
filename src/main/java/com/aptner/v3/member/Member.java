@@ -1,37 +1,35 @@
-package com.aptner.v3.user.domain;
+package com.aptner.v3.member;
 
-import com.aptner.v3.user.type.UserRole;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 @Entity(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-@Table(
-        indexes = {
-        @Index(columnList = "username"),
-        @Index(columnList = "password"),
-        @Index(columnList = "roles"),
-})
-public class User {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull(message = "필수 입력값입니다.")
-    @Column(nullable = false,unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
-    @NotNull(message = "필수 입력값입니다.")
-    @Column(nullable = false, length = 50)
+
+    @Column(length = 50)
     private String name;
+
     @NotNull(message = "필수 입력값입니다.")
     @Column(nullable = false)
     private String password;
@@ -39,31 +37,31 @@ public class User {
     @Setter
     private String image;
 
-    @NotNull(message = "필수 입력값입니다.")
     @Column(length = 50)
     private String phone;
 
-    @NotNull(message = "필수 입력값입니다.")
+    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole roles;
+    @CollectionTable(name = "user_roles", joinColumns = { @JoinColumn(name = "USER_ID") })
+    @Column(name = "user_role")
+    private List<MemberRole> roles;
 
-    public User(String username, String name, String password) {
+    public Member(String username, String password, List<MemberRole> roles) {
         this.username = username;
-        this.name = name;
         this.password = password;
+        this.roles = roles;
     }
 
-    public static User of(String username, String name, String password) {
-        return new User(username, name, password);
+    public static Member of(String username, String password, List<MemberRole> roles) {
+        return new Member(username, password, roles);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
+        Member member = (Member) o;
+        return Objects.equals(id, member.id);
     }
 
     @Override
