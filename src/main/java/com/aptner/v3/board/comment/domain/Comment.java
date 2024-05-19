@@ -2,25 +2,27 @@ package com.aptner.v3.board.comment.domain;
 
 import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.global.domain.BaseTimeEntity;
+import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 
 import java.util.List;
 
 @Entity
 @Getter
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
-public class Comment extends BaseTimeEntity {
+@NoArgsConstructor
+public class Comment extends ReactionColumns {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String content;
-    private boolean visible = true;
-    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "common_post_id")
@@ -33,15 +35,14 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "comment_id")
     private Comment parentComment;
 
-    public Comment() {
-    }
+    @ColumnDefault(value = "true")
+    private Boolean visible;
+
+    @ColumnDefault(value = "false")
+    private Boolean deleted;
 
     public static Comment of(CommonPost commonPost, CommentDto.Request request) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         request.setCommonPost(commonPost);
 
@@ -50,37 +51,22 @@ public class Comment extends BaseTimeEntity {
     }
 
     public static Comment of(Comment comment, CommentDto.Request request) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         request.setParentComment(comment);
         return modelMapper.map(request, Comment.class);
     }
 
-    public Comment update(CommentDto.Request requestDto) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+    public Comment updateByRequestDto(CommentDto.Request requestDto) {
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         modelMapper.map(requestDto, this);
         return this;
     }
 
     public CommentDto.Response toResponseDto() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-//        modelMapper
-//                .createTypeMap(this, CommentDto.Response.class)
-//                .addMappings(mapper -> mapper.map(comment -> comment.getParentComment().getId(), CommentDto.Response::setParentCommentId));
         return modelMapper.map(this, CommentDto.Response.class);
     }
 }

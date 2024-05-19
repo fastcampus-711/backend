@@ -17,6 +17,7 @@ public class CommentDto {
         private boolean visible;
         private CommonPost commonPost;
         private Comment parentComment;
+
     }
 
     @Getter
@@ -24,6 +25,8 @@ public class CommentDto {
     public static class Response {
         private long id;
         private String content;
+        private long countReactionTypeGood;
+        private long countReactionTypeBad;
         private boolean visible;
         private long commonPostId;
         private List<CommentDto.Response> childComments;

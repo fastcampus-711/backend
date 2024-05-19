@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseTimeEntity {
-
     @CreatedBy
     @JsonIgnore
     private String createdBy;
@@ -40,5 +39,4 @@ public abstract class BaseTimeEntity {
     @JsonIgnore
     @Column(updatable = false)
     private LocalDateTime modifiedAt;
-
 }

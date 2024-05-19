@@ -28,6 +28,9 @@ public class CustomUserDetailsDto implements UserDetails {
         return collection;
     }
 
+    public long getId() {
+        return user.getId();
+    }
     //Password 반환하는 메소드
     @Override
     public String getPassword() {
