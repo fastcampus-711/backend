@@ -35,7 +35,7 @@ public class CommonPost extends ReactionColumns {
     private long hits;
 
     @ColumnDefault(value = "0")
-    private long countComments;
+    private long countOfComments;
     //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
     @Column(insertable = false, updatable = false)
     private String dtype;
@@ -93,5 +93,10 @@ public class CommonPost extends ReactionColumns {
                 .findFirst()
                 .orElseThrow()
                 .getDtoForResponse();
+    }
+
+    public CommonPost updateCountOfComments(long countOfComments) {
+        this.countOfComments = countOfComments;
+        return this;
     }
 }
