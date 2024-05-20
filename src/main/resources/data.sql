@@ -112,4 +112,10 @@ insert into common_post (title, content, created_by, created_at, hits, visible, 
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Honorable', 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', 'Arv Peckett', '2023-07-08', 100, false, false, 'FreePost');
 -- -- article_comment
 
-insert into comment(content) values ('content');
+insert into comment(id, content, common_post_id, comment_id) values (1, 'parent comment1', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (2, 'parent comment2', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (3, 'parent comment3', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (4, 'parent comment4', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (5, 'child comment1', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (6, 'child comment2', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (7, 'child comment1', null, 3);

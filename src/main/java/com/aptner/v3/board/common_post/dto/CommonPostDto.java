@@ -3,6 +3,8 @@ package com.aptner.v3.board.common_post.dto;
 import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.util.ModelMapperUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

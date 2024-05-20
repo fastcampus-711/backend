@@ -8,6 +8,7 @@ import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Primary
 @Service
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class CommonPostService<E extends CommonPost,

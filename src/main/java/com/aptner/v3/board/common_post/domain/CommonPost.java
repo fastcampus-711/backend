@@ -73,8 +73,10 @@ public class CommonPost extends ReactionColumns {
 
         Class<? extends CommonPostDto.Response> responseDto = getResponseDtoClassType();
 
-        modelMapper.createTypeMap(this, responseDto)
-                .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        try {
+            modelMapper.createTypeMap(this, responseDto)
+                    .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        } catch (IllegalStateException ignored) {}
 
         return modelMapper.map(this, responseDto);
     }

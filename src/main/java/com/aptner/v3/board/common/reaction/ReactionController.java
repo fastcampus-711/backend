@@ -18,7 +18,7 @@ public class ReactionController {
     private final CommentReactionService commentReactionService;
 
     @PostMapping
-    public ApiResponse<?> saveLike(@RequestBody ReactionDto.Request reactionDto) {
+    public ApiResponse<?> saveReaction(@RequestBody ReactionDto.Request reactionDto) {
         if (reactionDto.getReactionTarget() == ReactionTarget.POST)
             postReactionService.acceptReaction(reactionDto);
         else //(likeDto.getLikeTarget() == LikeTarget.COMMENT)
