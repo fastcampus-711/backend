@@ -32,6 +32,10 @@ public class CustomUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public long getId() {
+        return member.getId();
+    }
+
     /**
      * Password 반환
      */

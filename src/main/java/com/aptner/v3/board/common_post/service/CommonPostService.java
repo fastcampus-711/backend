@@ -1,16 +1,20 @@
 package com.aptner.v3.board.common_post.service;
 
 import com.aptner.v3.board.category.CategoryCode;
+import com.aptner.v3.board.common.reaction.service.ReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
+import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.ReactionException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +23,17 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
-        S extends CommonPostDto.Response> {
+        S extends CommonPostDto.Response>
+        extends ReactionApplyService<CommonPost> {
     private final CommonPostRepository<E> commonPostRepository;
+
+    public CommonPostService(CommonPostRepository<E> commonPostRepository) {
+        super((JpaRepository<CommonPost, Long>) commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
+    }
 
     public S getPost(long postId) {
         return (S) commonPostRepository.findByComments_CommonPostId(postId)
@@ -61,20 +70,20 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
 
         return list.stream()
-                .map(e -> (S)e.toResponseDtoWithoutComments())
+                .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
     }
 
     public S createPost(Q requestDto) {
         E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
-        return (S)entity.toResponseDtoWithoutComments();
+        return (S) entity.toResponseDtoWithoutComments();
     }
 
     public S updatePost(long postId, Q requestDto) {
         return (S) commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
-                .update(requestDto)
+                .updateByUpdateRequest(requestDto)
                 .toResponseDtoWithoutComments();
     }
 
