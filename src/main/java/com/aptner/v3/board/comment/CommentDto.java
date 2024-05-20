@@ -1,8 +1,6 @@
-package com.aptner.v3.board.comment.dto;
+package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.comment.domain.Comment;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 

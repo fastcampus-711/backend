@@ -1,6 +1,5 @@
-package com.aptner.v3.board.comment.domain;
+package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.global.util.ModelMapperUtil;

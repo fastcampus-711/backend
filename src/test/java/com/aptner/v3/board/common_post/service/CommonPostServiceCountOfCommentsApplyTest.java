@@ -1,10 +1,8 @@
 package com.aptner.v3.board.common_post.service;
 
-import com.aptner.v3.board.comment.dto.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;

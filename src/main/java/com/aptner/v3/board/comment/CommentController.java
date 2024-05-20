@@ -1,13 +1,9 @@
-package com.aptner.v3.board.comment.controller;
+package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.comment.dto.CommentDto;
-import com.aptner.v3.board.comment.service.CommentService;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
 package com.aptner.v3.board.common.reaction.service;
 
-import com.aptner.v3.board.comment.domain.Comment;
+import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.ReactionException;

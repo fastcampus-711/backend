@@ -1,7 +1,7 @@
 package com.aptner.v3.board.common.reaction;
 
-import com.aptner.v3.board.comment.domain.Comment;
-import com.aptner.v3.board.comment.service.CommentService;
+import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.comment.CommentService;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionDto;

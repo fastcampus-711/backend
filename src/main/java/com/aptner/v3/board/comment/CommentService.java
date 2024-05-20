@@ -1,8 +1,5 @@
-package com.aptner.v3.board.comment.service;
+package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.comment.domain.Comment;
-import com.aptner.v3.board.comment.dto.CommentDto;
-import com.aptner.v3.board.comment.repository.CommentRepository;
 import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;

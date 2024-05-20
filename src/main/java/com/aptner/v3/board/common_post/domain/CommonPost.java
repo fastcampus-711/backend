@@ -1,7 +1,7 @@
 package com.aptner.v3.board.common_post.domain;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.comment.domain.Comment;
+import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.global.util.ModelMapperUtil;
