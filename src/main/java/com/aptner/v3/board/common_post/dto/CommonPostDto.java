@@ -37,6 +37,7 @@ public class CommonPostDto {
     @NoArgsConstructor
     public static class Response {
         private long id;
+        private long categoryId;
         private String title;
         private String content;
         private int hits;

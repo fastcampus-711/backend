@@ -17,4 +17,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
 
     Optional<T> findByComments_CommonPostId(long postId);
+
+    List<T> findByCategoryId(Long categoryId);
 }

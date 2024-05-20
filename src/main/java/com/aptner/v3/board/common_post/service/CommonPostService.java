@@ -8,6 +8,7 @@ import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,9 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-public class CommonPostService<E extends CommonPost,
+public class CommonPostService<
+        E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
@@ -61,14 +64,14 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
 
         return list.stream()
-                .map(e -> (S)e.toResponseDtoWithoutComments())
+                .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
     }
 
     public S createPost(Q requestDto) {
         E entity = (E) requestDto.toEntity();
         commonPostRepository.save(entity);
-        return (S)entity.toResponseDtoWithoutComments();
+        return (S) entity.toResponseDtoWithoutComments();
     }
 
     public S updatePost(long postId, Q requestDto) {
@@ -94,4 +97,32 @@ public class CommonPostService<E extends CommonPost,
                 .orElseGet(() -> CategoryCode.공통)
                 .getDtype();
     }
+
+    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
+        String dtype = getDtype(request);
+        List<E> list;
+        if (categoryId == null) {
+            list = commonPostRepository.findByDtype(dtype);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        }else {
+            list = commonPostRepository.findByCategoryId(categoryId);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        }
+
+    }
+
+    /*public List<Category> getCategoryList(Long postId, HttpServletRequest request) {
+        String dtype = getDtype(request);
+        Menu menu = (Menu) menuRepository.findByName(dtype);
+        List<Category> categoryList = categoryRepository.findByMenuId(menu.getId());
+        return categoryList;
+    }*/
+
+
 }

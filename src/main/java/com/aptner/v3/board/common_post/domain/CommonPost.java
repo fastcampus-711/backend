@@ -23,6 +23,8 @@ public class CommonPost extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private long categoryId;
     private String title;
 
     @Column(length = 500)
@@ -36,7 +38,6 @@ public class CommonPost extends BaseTimeEntity {
     private List<Comment> comments;
     private Boolean visible = true;
     private Boolean deleted = false;
-
     public CommonPost() {
     }
 

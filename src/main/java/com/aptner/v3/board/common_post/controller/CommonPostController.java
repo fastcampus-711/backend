@@ -19,6 +19,17 @@ public class CommonPostController<E extends CommonPost,
         S extends CommonPostDto.Response> {
     private final CommonPostService<E, Q, S> commonPostService;
 
+    /*@GetMapping("/categories")
+    @Operation(summary = "게시판 조회")
+    public ResponseEntity<?> getCategoryList(@PathVariable(name = "post-id") Long postId, HttpServletRequest request) {
+        return new ResponseEntity<>(commonPostService.getCategoryList(postId,request), HttpStatus.OK);
+    }*/
+    @GetMapping("/categories/{category-id}")
+    @Operation(summary = "분류 선택 게시판 조회")
+    public ResponseEntity<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId, HttpServletRequest request) {
+        return new ResponseEntity<>(commonPostService.getPostListByCategoryId(categoryId, request), HttpStatus.OK);
+    }
+
     @GetMapping("/{post-id}")
     @Operation(summary = "게시판 조회")
     public ResponseEntity<?> getPost(@PathVariable(name = "post-id") Long postId) {
