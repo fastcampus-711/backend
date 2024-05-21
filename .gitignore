@@ -39,3 +39,9 @@ out/
 ### Secret ###
 .env
 src/main/**/application-hidden**.yaml
+
+### querydls ###
+/src/main/generated/
+### P6Spy ###
+spy.log
+

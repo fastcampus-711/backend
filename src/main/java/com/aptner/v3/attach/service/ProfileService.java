@@ -3,8 +3,8 @@ package com.aptner.v3.attach.service;
 import com.aptner.v3.attach.AttachType;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.user.domain.User;
-import com.aptner.v3.user.repository.UserDetailsRepository;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,21 +20,21 @@ import static com.aptner.v3.global.util.MultipartUtil.createKey;
 @RequiredArgsConstructor
 public class ProfileService {
 
-    private final UserDetailsRepository userRepository;
+    private final MemberRepository memberRepository;
 
-    private final S3Service s3Service;
+    private final S3Service s3ServiceImpl;
 
     @Transactional
-    public User updateUserProfile(Long userId, MultipartFile file) {
-        User user = userRepository.findById(userId)
+    public Member updateUserProfile(Long userId, MultipartFile file) {
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode._NOT_FOUND));
 
         String uuid = createFileId();
         String key = createKey(AttachType.PROFILE.getLocation(), uuid, file.getContentType());
 
-        String url = s3Service.uploadFile(key, file);
-        log.info(url);
-        user.setImage(url);
-        return userRepository.save(user);
+        String url = s3ServiceImpl.uploadFile(key, file);
+        log.debug(url);
+        member.setImage(url);
+        return memberRepository.save(member);
     }
 }

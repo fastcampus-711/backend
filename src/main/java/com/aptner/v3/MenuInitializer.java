@@ -2,14 +2,20 @@ package com.aptner.v3;
 
 import com.aptner.v3.board.category.CategoryService;
 import com.aptner.v3.board.category.dto.CategoryDtoRequest;
+import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuCode;
 import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
-import com.aptner.v3.user.repository.UserDetailsRepository;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
 @Component
 @RequiredArgsConstructor
@@ -17,25 +23,25 @@ public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
     private final CategoryService categoryService;
-    private final UserDetailsRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public void run(String... args) throws Exception {
 
-//        userRepository.save(User.of("user", "tempPassword12!@", Role.USER));
-//        userRepository.save(User.of("admin", "tempPassword12!@", Role.ADMIN));
+        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER)));
+        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER, MemberRole.ADMIN)));
 
         // intro
         Menu intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.INTRO.name(),MenuCode.INTRO.getKo(), intro.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.APT.name(),MenuCode.APT.getKo(), intro.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.CONTACT.name(),MenuCode.CONTACT.getKo(), intro.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMMUNITY.name(),MenuCode.COMMUNITY.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.INTRO.name(), MenuCode.INTRO.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.APT.name(), MenuCode.APT.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.CONTACT.name(), MenuCode.CONTACT.getKo(), intro.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMMUNITY.name(), MenuCode.COMMUNITY.getKo(), intro.getId()));
 
         // notice
         Menu notice = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_NOTICE.name(), MenuCode.TOP_NOTICE.getKo(), null));
         Menu target = menuService.createMenu(MenuDtoRequest.of(MenuCode.NOTICE.name(), MenuCode.NOTICE.getKo(), notice.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.SCHEDULE.name(),MenuCode.SCHEDULE.getKo(), notice.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.SCHEDULE.name(), MenuCode.SCHEDULE.getKo(), notice.getId()));
 
         // mandatory
         menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_MANDATORY.name(), MenuCode.TOP_MANDATORY.getKo(), null));
@@ -43,18 +49,18 @@ public class MenuInitializer implements CommandLineRunner {
         // community
         Menu community = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_COMMUNITY.name(), MenuCode.TOP_COMMUNITY.getKo(), null));
         Menu target2 = menuService.createMenu(MenuDtoRequest.of(MenuCode.FREE.name(), MenuCode.FREE.getKo(), community.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.MARKET.name(),MenuCode.MARKET.getKo(), community.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.QNA.name(),MenuCode.QNA.getKo(), community.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MARKET.name(), MenuCode.MARKET.getKo(), community.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.QNA.name(), MenuCode.QNA.getKo(), community.getId()));
 
         // complaint
         Menu complaint = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_COMPLAINT.name(), MenuCode.TOP_COMPLAINT.getKo(), null));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMPLAINT.name(),MenuCode.COMPLAINT.getKo(), complaint.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYCOMPLAINT.name(),MenuCode.MYCOMPLAINT.getKo(), complaint.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.COMPLAINT.name(), MenuCode.COMPLAINT.getKo(), complaint.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYCOMPLAINT.name(), MenuCode.MYCOMPLAINT.getKo(), complaint.getId()));
 
         // fee
         Menu fee = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_FEE.name(), MenuCode.TOP_FEE.getKo(), null));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.TOTALFEE.name(),MenuCode.TOTALFEE.getKo(), fee.getId()));
-        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYFEE.name(),MenuCode.MYFEE.getKo(), fee.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.TOTALFEE.name(), MenuCode.TOTALFEE.getKo(), fee.getId()));
+        menuService.createMenu(MenuDtoRequest.of(MenuCode.MYFEE.name(), MenuCode.MYFEE.getKo(), fee.getId()));
 
         // 공지사항 분류
         categoryService.createCategory(CategoryDtoRequest.of("엘리베이터", "1", target.getId()));
