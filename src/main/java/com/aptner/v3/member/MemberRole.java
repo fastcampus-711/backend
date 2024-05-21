@@ -1,0 +1,15 @@
+package com.aptner.v3.member;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum MemberRole {
+    USER("입주민"),
+    ADMIN("관리자"),
+    RELATED_COMPANY("관계사"),
+    OWNER("소유주");
+
+    private final String description;
+}

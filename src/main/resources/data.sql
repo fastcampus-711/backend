@@ -1,17 +1,16 @@
-insert into common_post (title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values ('title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost');
-insert into notice_post (id, post_at)
-values (1, '2021-03-10 08:48:50');
+insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id)
+values ('title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost', 12);
+--insert into notice_post (post_at)
+--values ('2021-03-10 08:48:50');
 
-insert into common_post (title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values ('FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, False, 'FreePost');
-insert into free_post (id, blind_at, blind_by)
-values (2, '2021-03-10 08:48:50', 'blind_by');
--- insert into free_board_post (id, title, content, created_by, created_at, hits, status)
--- values (2, 'freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
+insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id)
+values ('FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'FreePost', 13);
+--insert into free_post (blind_at, blind_by)
+--values ('2021-03-10 08:48:50', 'blind_by');
+-- insert into free_board_post (title, content, created_by, created_at, hits, status)
+-- values ('freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
 
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Honorable', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.', 'Wynny Jerrard', '2023-07-06', 1, true, false, 'FreePost',13);
-
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Ms', 'Passenger on bus injured in collision with fixed or stationary object in nontraffic accident, subsequent encounter', 'Bratch', '2023-06-04', 96, false, false, 'FreePost', 20);
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Honorable', 'Unspecified fracture of left forearm, subsequent encounter for open fracture type I or II with routine healing', 'Brazenor', '2023-12-11', 33, true, true, 'FreePost', 18);
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Dr', 'Burn of unspecified degree of back of left hand, subsequent encounter', 'Staker', '2023-05-21', 38, true, false, 'FreePost', 15);
@@ -113,4 +112,10 @@ insert into common_post (title, content, created_by, created_at, hits, visible, 
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Dr', 'Contact with hot household appliances', 'Normanvell', '2023-05-01', 43, true, false, 'FreePost', 14);
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Dr', 'War operations involving other forms of conventional warfare, military personnel', 'Treweek', '2023-05-28', 9, true, false, 'FreePost', 16);
 
--- -- article_comment
+insert into comment(id, content, common_post_id, comment_id) values (1, 'parent comment1', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (2, 'parent comment2', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (3, 'parent comment3', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (4, 'parent comment4', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (5, 'child comment1', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (6, 'child comment2', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (7, 'child comment1', null, 3);

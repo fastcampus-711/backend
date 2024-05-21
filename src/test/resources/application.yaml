@@ -1,15 +1,37 @@
+local:
+  server:
+    port: 80
+
 spring:
+  profiles:
+    active: dev
   sql:
     init:
-      mode: never
+      mode: always
 
   jpa:
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true
+    hibernate:
+      dialect: org.hibernate.dialect.MySQLDialect
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
 
   datasource:
     url: jdbc:h2:mem:local;MODE=MySQL;DATABASE_TO_LOWER=TRUE
     username: sa
     driver-class-name: org.h2.Driver
 
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+aws:
+  s3:
+    enabled: false
+
 jwt:
   secret: 7ZWc6riA66Gc66eM65Og64ukLu2FjOyKpO2KuOyaqeycvOuhnCDrp4zrk6DqsoHri4jri6Qu7YWM7Iqk7Yq47Jqp7YKk7J6F64uI64uk
+  access-token-expire-in-seconds: 3600    # 1시간
+  refresh-token-expire-in-seconds: 3600
+  refresh-create-in-hours: 1              # 1시간

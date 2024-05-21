@@ -49,9 +49,8 @@ public class CommonPostController<E extends CommonPost,
             return searchPost(request, keyword, limit, page, sort);
     }
 
-    //자식 테이블에서만 정상 동작
     public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPost(request), HttpStatus.OK);
+        return new ResponseEntity<>(commonPostService.getPostList(request), HttpStatus.OK);
     }
 
     public ResponseEntity<?> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {

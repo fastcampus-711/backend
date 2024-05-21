@@ -1,17 +1,18 @@
 package com.aptner.v3.board.common_post.service;
 
 import com.aptner.v3.board.category.CategoryCode;
+import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,27 +20,35 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
 @Primary
-@RequiredArgsConstructor
+@Service
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class CommonPostService<
         E extends CommonPost,
         Q extends CommonPostDto.Request,
-        S extends CommonPostDto.Response> {
+        S extends CommonPostDto.Response>
+        extends CountOfReactionAndCommentApplyService<CommonPost> {
     private final CommonPostRepository<E> commonPostRepository;
 
+    public CommonPostService(CommonPostRepository<E> commonPostRepository) {
+        super((JpaRepository<CommonPost, Long>) commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
+    }
+
     public S getPost(long postId) {
-        return (S) commonPostRepository.findByComments_CommonPostId(postId)
+        E commonPost = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
                                 .orElseThrow(InvalidTableIdException::new)
-                )
-                .toResponseDtoWithComments();
+                );
+
+        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+
+        return (S) commonPost.toResponseDtoWithComments();
 
     }
 
-    public List<S> getPost(HttpServletRequest request) {
+    public List<S> getPostList(HttpServletRequest request) {
         String dtype = getDtype(request);
 
         List<E> list;
@@ -77,7 +86,7 @@ public class CommonPostService<
     public S updatePost(long postId, Q requestDto) {
         return (S) commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new)
-                .update(requestDto)
+                .updateByUpdateRequest(requestDto)
                 .toResponseDtoWithoutComments();
     }
 
@@ -86,7 +95,7 @@ public class CommonPostService<
         return id;
     }
 
-    private static String getDtype(HttpServletRequest request) {
+    private String getDtype(HttpServletRequest request) {
         String[] URIs = request.getRequestURI()
                 .split("/");
         String target = URIs.length <= 2 ? "" : URIs[2];
@@ -107,7 +116,7 @@ public class CommonPostService<
             return list.stream()
                     .map(e -> (S) e.toResponseDtoWithoutComments())
                     .toList();
-        }else {
+        } else {
             list = commonPostRepository.findByCategoryId(categoryId);
 
             return list.stream()

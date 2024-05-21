@@ -1,73 +1,74 @@
 package com.aptner.v3.global.jwt;
 
-import com.aptner.v3.security.dto.CustomUserDetailsDto;
-import com.aptner.v3.user.domain.User;
-import com.aptner.v3.user.type.UserRole;
+import com.aptner.v3.global.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.IncorrectClaimException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-// OncePerRequestFilter 는 한번의 요청에 대해서 한번만 수행하도록 보장하는 필터
+import static com.aptner.v3.global.util.JwtUtil.BEARER_PREFIX;
+
+@Slf4j
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-    public JwtFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        // 1. Request Header 에서 토큰을 꺼냄
+        String token = resolveToken(request);
+        try {
+            if (StringUtils.hasText(token) && !jwtUtil.isExpired(token)) {
+
+                // 2. security Context 저장
+                Authentication authentication = jwtUtil.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+        } catch (IncorrectClaimException e) { // 잘못된 토큰일 경우
+            SecurityContextHolder.clearContext();
+            log.debug("Invalid JWT token.");
+            response.sendError(403);
+        } catch (UsernameNotFoundException e) { // 회원을 찾을 수 없을 경우
+            SecurityContextHolder.clearContext();
+            log.debug("Can't find user.");
+            response.sendError(403);
+        } catch (IllegalArgumentException e) { // 회원을 찾을 수 없을 경우
+            SecurityContextHolder.clearContext();
+            log.debug("IllegalArgumentException .");
+            response.sendError(403);
+        } catch (ExpiredJwtException e) {
+            SecurityContextHolder.clearContext();
+            log.debug("IllegalArgumentException .");
+            response.sendError(403);
+        } catch (SignatureException e) {
+            log.debug("Authentication Failed. Username or Password not valid.");
+        }
+        filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
-
-        //1. 헤더에 토큰이 있는지 검증
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            System.out.println("JwtFilter.doFilterInternal 토큰 없음");
-
-            //다음 필터로 넘겨줌
-            filterChain.doFilter(request, response);
-
-            //해당 조건이 만족될 경우 메소드 종료
-            return;
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
         }
-        //Bearer 접두사 제거
-        String token = authorizationHeader.substring(7);
-
-        // 2.토큰 소멸시간 검증
-        if (jwtUtil.isExpired(token)) {
-            System.out.println("JwtFilter.doFilterInternal 토큰 만료");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // 검증 수행후 토큰에서 유저정보를 가져옴
-        String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
-
-        User user = new User();
-        user.setUsername(username);
-        // password의 경우 token에 담겨있지 않기때문에 매번 요청마다 db를 조회를 하는 상황을 방지하기위해 password는 임시로 설정
-        //user.setPassword("tempPassword12!@");
-        user.setRoles(UserRole.valueOf(role));
-
-        CustomUserDetailsDto customUserDetailsDto = new CustomUserDetailsDto(user);
-        //검증된 토큰 정보를 기반으로 Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                customUserDetailsDto, null, customUserDetailsDto.getAuthorities());
-        //SecurityContextHolder에 Authentication 객체 저장
-        //SESSION을 STATELESS 로 사용하기 때문에 SecurityContextHolder에 저장해놓아야함
-        //이후 SecurityContextHolder를 통해 Authentication 객체를 가져올 수 있음
-        //이를 통해 로그인한 사용자의 정보를 가져올 수 있음
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        //security 필터로 넘겨줌
-        filterChain.doFilter(request, response);
+        return null;
     }
 }

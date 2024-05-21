@@ -1,4 +1,4 @@
-[![Docker Build 🚀](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml/badge.svg)](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml)
+[![Docker Build 🚀](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml/badge.svg)](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml) 
 
 
 - [팀 개발 규칙](https://github.com/fastcampus-711/backend/wiki/Spring-Convention)

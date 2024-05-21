@@ -82,7 +82,7 @@ public class AttachService {
         Attach attach = attachRepository.findByUuid(uuid)
                 .orElseThrow(() -> new AttachException(_NOT_FOUND));
         // s3
-        return s3Service.getObjectBytes(getKeyfromAttach(attach));
+        return s3Service.downloadFile(getKeyfromAttach(attach));
     }
 
     public String getUrl(String uuid) {

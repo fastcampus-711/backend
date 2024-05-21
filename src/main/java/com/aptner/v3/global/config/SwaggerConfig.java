@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -15,32 +16,27 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Configuration
+@ConditionalOnProperty(name = "springdoc.api-docs.enabled", havingValue = "true")
 public class SwaggerConfig {
+
+    public static final String Accesskey = "Access Token";
+    public static final String refreshKey = "Refresh Token";
+
 
     public static final Map<String, String[]> GROUPS = Stream.of(
             new SimpleEntry<>("메뉴", new String[]{"/menu/**"}),
             new SimpleEntry<>("회원", new String[]{"/user/**", "/auth/**"}),
-            new SimpleEntry<>("게시판", new String[]{
-                    "/categories/**",
-                    "/notices/**",
-                    "/complaints/**",
-                    "/frees/**",
-                    "/markets/**",
-                    "/qnas/**",
-                    "/search/**",
-                    "/comments/**"}
+            new SimpleEntry<>("게시판", new String[]{"/boards/**", "/reactions/**"}
             )
     ).collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
 
     @Bean
     public OpenAPI openAPI() {
 
-        String key = "Access Token";
-        String refreshKey = "Refresh Token";
-
+        // @issue https://github.com/springdoc/springdoc-openapi/issues/915
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("key").
-                addList("refreshKey");
+                .addList(Accesskey).
+                addList(refreshKey);
 
         SecurityScheme refreshTokenSecurityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY)
@@ -55,12 +51,12 @@ public class SwaggerConfig {
                 .name(HttpHeaders.AUTHORIZATION);
 
         Components components = new Components()
-                .addSecuritySchemes(key, accessTokenSecurityScheme)
-                .addSecuritySchemes(refreshKey, refreshTokenSecurityScheme);
+                .addSecuritySchemes(Accesskey, accessTokenSecurityScheme);
+//                .addSecuritySchemes(refreshKey, refreshTokenSecurityScheme);
 
         return new OpenAPI()
-                .components(components)
-                .addSecurityItem(securityRequirement);
+                .addSecurityItem(securityRequirement)
+                .components(components);
     }
 
     @Bean

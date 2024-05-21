@@ -15,7 +15,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     Page<T> findByTitleContainingAndDtype(String keyword, String dtype, Pageable pageable);
 
-
     Optional<T> findByComments_CommonPostId(long postId);
 
     List<T> findByCategoryId(Long categoryId);
