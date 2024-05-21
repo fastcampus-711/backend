@@ -1,16 +1,17 @@
-insert into common_post (id, title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values (1, 'title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost');
-insert into notice_post (id, post_at)
-values (1, '2021-03-10 08:48:50');
+insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype)
+values ('title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost');
+--insert into notice_post (post_at)
+--values ('2021-03-10 08:48:50');
 
-insert into common_post (id, title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values (2, 'FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, False, 'FreePost');
-insert into free_post (id, blind_at, blind_by)
-values (2, '2021-03-10 08:48:50', 'blind_by');
--- insert into free_board_post (id, title, content, created_by, created_at, hits, status)
--- values (2, 'freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
+insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype)
+values ('FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'FreePost');
+--insert into free_post (blind_at, blind_by)
+--values ('2021-03-10 08:48:50', 'blind_by');
+-- insert into free_board_post (title, content, created_by, created_at, hits, status)
+-- values ('freeBoard', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE);
 
-insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype) values ('Honorable', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.', 'Wynny Jerrard', '2023-07-06', 1, true, false, 'FreePost');
+insert into common_post (title, content, created_by, created_at, hits, visible, deleted, dtype)
+values ('Honorable', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.', 'Wynny Jerrard', '2023-07-06', 1, true, false, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Mrs', 'Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.', 'Eirena Hindrick', '2023-06-04', 2, true, false, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Mrs', 'Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.', 'Ardisj Gayther', '2023-08-01', 3, true, false, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Rev', 'Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.', 'Catharine Devinn', '2023-12-01', 4, true, false, 'FreePost');

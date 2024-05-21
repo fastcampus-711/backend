@@ -1,12 +1,12 @@
 package com.aptner.v3.attach.service.Impl;
 
 import com.aptner.v3.attach.service.S3Service;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@Profile("dev")
+@ConditionalOnProperty(name = "aws.s3.enabled", havingValue = "false")
 public class DBServiceImpl implements S3Service {
     @Override
     public String getFileUrl(String key) {
