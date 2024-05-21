@@ -10,4 +10,8 @@ public class AuthException extends GlobalException {
     public AuthException(ErrorCode responseCode) {
         super("권한", responseCode);
     }
+
+    public AuthException(ErrorCode responseCode, String message) {
+        super("권한", responseCode, message);
+    }
 }

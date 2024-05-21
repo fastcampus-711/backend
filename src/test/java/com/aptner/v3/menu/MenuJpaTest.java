@@ -1,5 +1,6 @@
 package com.aptner.v3.menu;
 
+import com.aptner.v3.global.config.JpaConfig;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
 import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -8,19 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(MenuJpaTest.TestJpaConfig.class)
+@Import(JpaConfig.class)
 @AutoConfigureTestDatabase
 public class MenuJpaTest {
 
@@ -111,12 +107,4 @@ public class MenuJpaTest {
         assertThat(results).extracting("name", String.class).containsExactlyInAnyOrder("code1", "code2");
     }
 
-    @EnableJpaAuditing
-    @TestConfiguration
-    static class TestJpaConfig {
-        @Bean
-        AuditorAware<String> auditorAware() {
-            return () -> Optional.of("");
-        }
-    }
 }
