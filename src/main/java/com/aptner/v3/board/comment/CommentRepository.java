@@ -1,6 +1,5 @@
-package com.aptner.v3.board.comment.repository;
+package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.comment.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

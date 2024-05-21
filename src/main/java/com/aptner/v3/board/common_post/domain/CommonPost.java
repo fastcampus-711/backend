@@ -1,7 +1,7 @@
 package com.aptner.v3.board.common_post.domain;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.comment.domain.Comment;
+import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.global.util.ModelMapperUtil;
@@ -35,7 +35,7 @@ public class CommonPost extends ReactionColumns {
     private long hits;
 
     @ColumnDefault(value = "0")
-    private long countComments;
+    private long countOfComments;
     //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
     @Column(insertable = false, updatable = false)
     private String dtype;
@@ -73,8 +73,10 @@ public class CommonPost extends ReactionColumns {
 
         Class<? extends CommonPostDto.Response> responseDto = getResponseDtoClassType();
 
-        modelMapper.createTypeMap(this, responseDto)
-                .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        try {
+            modelMapper.createTypeMap(this, responseDto)
+                    .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        } catch (IllegalStateException ignored) {}
 
         return modelMapper.map(this, responseDto);
     }
@@ -93,5 +95,10 @@ public class CommonPost extends ReactionColumns {
                 .findFirst()
                 .orElseThrow()
                 .getDtoForResponse();
+    }
+
+    public CommonPost updateCountOfComments(long countOfComments) {
+        this.countOfComments = countOfComments;
+        return this;
     }
 }

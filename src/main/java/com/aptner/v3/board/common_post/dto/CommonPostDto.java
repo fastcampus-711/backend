@@ -1,6 +1,6 @@
 package com.aptner.v3.board.common_post.dto;
 
-import com.aptner.v3.board.comment.dto.CommentDto;
+import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.validation.constraints.NotBlank;
@@ -8,11 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommonPostDto {
@@ -44,7 +41,7 @@ public class CommonPostDto {
         private int hits;
         private long countReactionTypeGood;
         private long countReactionTypeBad;
-        private long countComments;
+        private long countOfComments;
         private List<CommentDto.Response> comments;
 
         public <E extends CommonPost> Response(E entity) {
