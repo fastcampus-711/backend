@@ -1,11 +1,13 @@
 package com.aptner.v3.board.common_post.domain;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.comment.domain.Comment;
+import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.global.domain.BaseTimeEntity;
+import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.modelmapper.ModelMapper;
@@ -19,23 +21,33 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
-public class CommonPost extends BaseTimeEntity {
+public class CommonPost extends ReactionColumns {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
 
     @Column(length = 500)
     private String content;
-    private int hits = 0;
+
+    @ColumnDefault(value = "0")
+    private long hits;
+
+    @ColumnDefault(value = "0")
+    private long countOfComments;
     //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
     @Column(insertable = false, updatable = false)
     private String dtype;
 
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-    private Boolean visible = true;
-    private Boolean deleted = false;
+
+    @ColumnDefault(value = "true")
+    private Boolean visible;
+
+    @ColumnDefault(value = "false")
+    private Boolean deleted;
 
     public CommonPost() {
     }
@@ -45,7 +57,7 @@ public class CommonPost extends BaseTimeEntity {
         this.content = content;
     }
 
-    public <Q extends CommonPostDto.Request> CommonPost update(Q updateRequest) {
+    public <Q extends CommonPostDto.Request> CommonPost updateByUpdateRequest(Q updateRequest) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
@@ -57,37 +69,36 @@ public class CommonPost extends BaseTimeEntity {
     }
 
     public CommonPostDto.Response toResponseDtoWithoutComments() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        Class<? extends CommonPostDto.Response> responseDto = Arrays.stream(CategoryCode.values())
-                .filter(s -> s.getDomain().equals(this.getClass()))
-                .findFirst()
-                .orElseThrow()
-                .getDtoForResponse();
+        Class<? extends CommonPostDto.Response> responseDto = getResponseDtoClassType();
 
-        modelMapper.createTypeMap(this, responseDto)
-                .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        try {
+            modelMapper.createTypeMap(this, responseDto)
+                    .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        } catch (IllegalStateException ignored) {}
 
         return modelMapper.map(this, responseDto);
     }
 
     public CommonPostDto.Response toResponseDtoWithComments() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true);
+        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        Class<? extends CommonPostDto.Response> responseDto = Arrays.stream(CategoryCode.values())
+        Class<? extends CommonPostDto.Response> responseDto = getResponseDtoClassType();
+
+        return modelMapper.map(this, responseDto);
+    }
+
+    private Class<? extends CommonPostDto.Response> getResponseDtoClassType() {
+        return Arrays.stream(CategoryCode.values())
                 .filter(s -> s.getDomain().equals(this.getClass()))
                 .findFirst()
                 .orElseThrow()
                 .getDtoForResponse();
+    }
 
-        return modelMapper.map(this, responseDto);
+    public CommonPost updateCountOfComments(long countOfComments) {
+        this.countOfComments = countOfComments;
+        return this;
     }
 }

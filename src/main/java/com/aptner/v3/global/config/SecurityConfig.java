@@ -2,15 +2,12 @@ package com.aptner.v3.global.config;
 
 
 import com.aptner.v3.global.jwt.JwtFilter;
-import com.aptner.v3.global.jwt.JwtUtil;
-import com.aptner.v3.global.jwt.LoginFilter;
+import com.aptner.v3.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -25,8 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-
-    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,38 +45,20 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/swagger-ui/**",
                         "/actuator/**",
-                        "/boards/**",
-                        "/boards").permitAll()
+                        "/boards/**").permitAll()
                 .requestMatchers(
-                        "/signup",
-                        "/login",
-                        "/**"
+                        "/auth/**"
                 ).permitAll()
                 //.requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
                 .anyRequest().authenticated());
 
-//        // JWT 인증 필터를 LoginFilter 전에 넣어줌
-//        http.addFilterBefore(AuthenticationFilter(), LoginFilter.class);
-//        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 넣어줌
-//        http.addFilterAt(LoginFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        //http.addFilterBefore(new CustomLogoutFilter(jwtUtil,refreshRepository), LogoutFilter.class);
+        http.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
+    @Bean
     public JwtFilter AuthenticationFilter() {
         return new JwtFilter(jwtUtil);
-    }
-
-    public LoginFilter LoginFilter() throws Exception {
-        LoginFilter loginFilter = new LoginFilter(jwtUtil);
-        loginFilter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
-        return loginFilter;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
     }
 
     @Bean

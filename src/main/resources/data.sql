@@ -1,10 +1,10 @@
-insert into common_post (title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values ('title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost');
+insert into common_post (id, title, content, created_by, created_at, hits, visible, deleted, DTYPE)
+values (1, 'title', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, FALSE, 'NoticePost');
 insert into notice_post (id, post_at)
 values (1, '2021-03-10 08:48:50');
 
-insert into common_post (title, content, created_by, created_at, hits, visible, deleted, DTYPE)
-values ('FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, False, 'FreePost');
+insert into common_post (id, title, content, created_by, created_at, hits, visible, deleted, DTYPE)
+values (2, 'FreeBoardTitle', 'content', 'created_by', '2021-03-10 08:48:50', 30, TRUE, False, 'FreePost');
 insert into free_post (id, blind_at, blind_by)
 values (2, '2021-03-10 08:48:50', 'blind_by');
 -- insert into free_board_post (id, title, content, created_by, created_at, hits, status)
@@ -110,5 +110,12 @@ insert into common_post (title, content, created_by, created_at, hits, visible, 
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Mr', 'Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.', 'Catherin Cammell', '2024-03-10', 98, true, false, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Rev', 'Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.', 'Kathryn Finker', '2024-01-29', 99, true, false, 'FreePost');
 insert into common_post (title, content, created_by, created_at, hits, visible, deleted,  dtype) values ('Honorable', 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', 'Arv Peckett', '2023-07-08', 100, false, false, 'FreePost');
-
 -- -- article_comment
+
+insert into comment(id, content, common_post_id, comment_id) values (1, 'parent comment1', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (2, 'parent comment2', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (3, 'parent comment3', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (4, 'parent comment4', 1, null);
+insert into comment(id, content, common_post_id, comment_id) values (5, 'child comment1', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (6, 'child comment2', null, 1);
+insert into comment(id, content, common_post_id, comment_id) values (7, 'child comment1', null, 3);

@@ -26,6 +26,7 @@ public enum ErrorCode {
     _EMPTY_FILE(NOT_FOUND, "파일이 없습니다."),
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다."),
     ARTICLE_NOT_FOUND(NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
+    TARGET_NOT_FOUND(NOT_FOUND, "대상 게시물, 댓글을 찾을 수 없습니다."),
 
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),

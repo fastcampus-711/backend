@@ -5,7 +5,7 @@ import com.aptner.v3.attach.AttachType;
 import com.aptner.v3.attach.service.AttachService;
 import com.aptner.v3.attach.service.ProfileService;
 import com.aptner.v3.global.exception.AttachException;
-import com.aptner.v3.user.domain.User;
+import com.aptner.v3.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -55,14 +55,14 @@ public class AttachController {
 
     @PostMapping(value = "/user/{id}/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "사용자 프로필 등록")
-    public ResponseEntity<User> uploads(@PathVariable("id") Long userId
+    public ResponseEntity<Member> uploads(@PathVariable("id") Long userId
             , @RequestPart(value = "file") MultipartFile file
     ) {
         log.info("Received user ID: {}", userId);
         if (file.isEmpty()) {
             throw new AttachException(_EMPTY_FILE);
         }
-        User updated = profileService.updateUserProfile(userId, file);
+        Member updated = profileService.updateUserProfile(userId, file);
         return ResponseEntity.ok(updated);
     }
 
