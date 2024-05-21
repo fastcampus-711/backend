@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,9 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("비즈니스 로직 - 인증")
 @ExtendWith(MockitoExtension.class)
+@TestPropertySource(properties = {"jwt.access-token-expire-in-seconds=3600",
+        "jwt.refresh-token-expire-in-seconds=3600",
+        "jwt.refresh-create-in-hours=1"})
 public class AuthServiceTest {
 
     @InjectMocks
@@ -112,7 +116,7 @@ public class AuthServiceTest {
         });
     }
 
-//    @Test
+    //    @Test
     @DisplayName("새로운 토큰 생성 실패 - AuthException")
     public void testLogin_whenNull_Failure() {
 
@@ -138,22 +142,23 @@ public class AuthServiceTest {
 
     @Test
     public void testReissue_Successful() {
+        // given
         String accessToken = "validAccessToken";
         Authentication authentication = new UsernamePasswordAuthenticationToken("username", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-        RefreshToken refreshToken = new RefreshToken("username", "validRefreshToken", System.currentTimeMillis() + 60000);
+        RefreshToken refreshToken = new RefreshToken("username", "validRefreshToken", System.currentTimeMillis()); // 1일
 
+        // when
         when(jwtUtil.validateToken(accessToken)).thenReturn(true);
         when(jwtUtil.getAuthentication(accessToken)).thenReturn(authentication);
         when(refreshTokenRepository.findByKey("username")).thenReturn(Optional.of(refreshToken));
         when(jwtUtil.validateToken(refreshToken.getValue())).thenReturn(true);
         when(jwtUtil.createAccessToken(anyString(), anyString())).thenReturn("newAccessToken");
-        when(jwtUtil.createRefreshToken(anyString(), anyString())).thenReturn("newRefreshToken");
 
+        // then
         TokenDto tokenDto = sut.reissue(accessToken);
-
         assertNotNull(tokenDto);
         assertEquals("newAccessToken", tokenDto.accessToken());
-        assertEquals("newRefreshToken", tokenDto.refreshToken());
+        assertEquals("validRefreshToken", tokenDto.refreshToken()); // Refresh Token 유지됨
     }
 
     @Test
