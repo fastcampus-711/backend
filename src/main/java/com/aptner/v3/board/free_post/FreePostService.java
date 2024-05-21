@@ -35,4 +35,6 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto.Req
         commonPostRepository.deleteById(postId);
         return freePost.getId();
     }*/
+
+
 }
