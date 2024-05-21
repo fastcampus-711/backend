@@ -21,5 +21,6 @@ decorator.datasource.p6spy:
 
 logging:
   level:
-    com.aptner.v3: debug
-    org.hibernate.SQL: error
+    com.aptner.v3: DEBUG
+    org.hibernate.SQL: ERROR
+    org.springframework: DEBUG
