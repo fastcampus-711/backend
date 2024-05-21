@@ -16,11 +16,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
-import static com.aptner.v3.global.error.ErrorCode.*;
+import static com.aptner.v3.global.error.ErrorCode.NOT_AVAILABLE_TOKEN;
+import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 @Slf4j
 @Service
@@ -111,8 +110,7 @@ public class AuthService {
 
     private String determineRefreshToken(RefreshToken originRefreshToken, String username, String authorities) {
 
-        long oneHourFromNow = Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli();
-        if (originRefreshToken == null || originRefreshToken.getExpireAt() <= oneHourFromNow) {
+        if (originRefreshToken == null || jwtUtil.is3DaysLeftFromExpire(originRefreshToken)) {
             // If originRefreshToken is null or its expiration time is within 1 hour, create a new refresh token
             String newRefreshToken = jwtUtil.createRefreshToken(username, authorities);
             refreshTokenRepository.save(new RefreshToken(username, newRefreshToken, jwtUtil.getRefreshTokenExpirationInSeconds()));

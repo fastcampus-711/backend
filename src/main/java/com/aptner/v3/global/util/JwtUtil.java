@@ -1,5 +1,6 @@
 package com.aptner.v3.global.util;
 
+import com.aptner.v3.auth.RefreshToken;
 import com.aptner.v3.global.exception.AuthException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -39,6 +41,7 @@ public class JwtUtil {
     private static final String AUTHORITIES_KEY = "auth";
     private final long accessTokenExpirationInSeconds;
     private final long refreshTokenExpirationInSeconds;
+    private final long refreshTokenCreateInHours;
 
     private SecretKey secretKey;
 
@@ -50,12 +53,14 @@ public class JwtUtil {
     public JwtUtil(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-token-expire-in-seconds}") long accessTokenExpiration,
-            @Value("${jwt.refresh-token-expire-in-seconds}") long refreshTokenExpirationInSeconds
+            @Value("${jwt.refresh-token-expire-in-seconds}") long refreshTokenExpirationInSeconds,
+            @Value("${jwt.refresh-create-in-hours}") long refreshTokenCreateInHours
     ) {
         byte[] secretBytes = Decoders.BASE64.decode(secret);
         this.secretKey = Keys.hmacShaKeyFor(secretBytes);
         this.accessTokenExpirationInSeconds = accessTokenExpiration;
         this.refreshTokenExpirationInSeconds = refreshTokenExpirationInSeconds;
+        this.refreshTokenCreateInHours = refreshTokenCreateInHours;
     }
 
     /**
@@ -207,4 +212,8 @@ public class JwtUtil {
         return claims.get(AUTHORITIES_KEY).toString().split(",");
     }
 
+    public boolean is3DaysLeftFromExpire(RefreshToken originRefreshToken) {
+        long oneHourFromNow = Instant.now().plus(refreshTokenCreateInHours, ChronoUnit.HOURS).toEpochMilli();
+        return originRefreshToken.getExpireAt() <= oneHourFromNow;
+    }
 }
