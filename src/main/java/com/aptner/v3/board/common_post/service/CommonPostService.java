@@ -23,7 +23,6 @@ import java.util.List;
 @Primary
 @Service
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-@RequiredArgsConstructor
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
 
