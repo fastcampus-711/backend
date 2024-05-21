@@ -25,10 +25,9 @@ import java.util.List;
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
-
-        S extends CommonPostDto.Response> {
-    protected final CommonPostRepository<E> commonPostRepository;
-
+        S extends CommonPostDto.Response>
+        extends CountOfReactionAndCommentApplyService<CommonPost> {
+    private final CommonPostRepository<E> commonPostRepository;
 
     public CommonPostService(CommonPostRepository<E> commonPostRepository) {
         super((JpaRepository<CommonPost, Long>) commonPostRepository);

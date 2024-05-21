@@ -27,7 +27,7 @@ public class FreePostController extends CommonPostController<FreePost, FreePostD
         return new ResponseEntity<>(freePostService.createPost(requestDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{post-id}/update")
+    /*@PutMapping("/{post-id}/update")
     @Operation(summary = "게시판 수정")
     public ResponseEntity<?> updateFreePost(@PathVariable(name = "post-id") long postId, @RequestBody FreePostDto.Request requestDto) {
         return new ResponseEntity<>(freePostService.updatePost(postId, requestDto), HttpStatus.OK);
@@ -37,7 +37,7 @@ public class FreePostController extends CommonPostController<FreePost, FreePostD
     @Operation(summary = "게시판 삭제")
     public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
         return new ResponseEntity<>(freePostService.deletePost(postId), HttpStatus.OK);
-    }
+    }*/
 
     public FreePostController(
             CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,

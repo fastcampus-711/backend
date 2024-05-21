@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FreePostService extends CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> {
+    private final CommonPostRepository<FreePost> commonPostRepository;
     public FreePostService(CommonPostRepository<FreePost> commonPostRepository) {
         super(commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
     }
 
     public FreePostDto.Response createPost(FreePostDto.Request requestDto) {
@@ -20,7 +22,7 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto.Req
         return new FreePostDto.Response(commonPostRepository.save(requestDto.toEntity()));
     }
 
-    public FreePostDto.Response updatePost(long postId, FreePostDto.Request requestDto) {
+   /* public FreePostDto.Response updatePost(long postId, FreePostDto.Request requestDto) {
         FreePost freePost = commonPostRepository.findById(postId).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
         freePost.update(requestDto);
@@ -32,5 +34,5 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto.Req
                 new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
         commonPostRepository.deleteById(postId);
         return freePost.getId();
-    }
+    }*/
 }

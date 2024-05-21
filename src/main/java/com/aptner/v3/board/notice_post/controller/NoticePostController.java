@@ -29,7 +29,7 @@ public class NoticePostController extends CommonPostController<NoticePost, Notic
         return new ResponseEntity<>(noticePostService.createNoticePost(requestDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{post-id}/update")
+    /*@PutMapping("/{post-id}/update")
     @Operation(summary = "게시판 수정")
     public ResponseEntity<?> updateNoticePost(@PathVariable(name = "post-id") long postId, @RequestBody NoticePostDto.Request requestDto) {
         return new ResponseEntity<>(noticePostService.updatePost(postId, requestDto), HttpStatus.OK);
@@ -39,5 +39,5 @@ public class NoticePostController extends CommonPostController<NoticePost, Notic
     @Operation(summary = "게시판 삭제")
     public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
         return new ResponseEntity<>(noticePostService.deletePost(postId), HttpStatus.OK);
-    }
+    }*/
 }
