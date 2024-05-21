@@ -1,6 +1,7 @@
 package com.aptner.v3.global.config;
 
 
+import com.aptner.v3.global.exception.JwtAccessDeniedHandler;
 import com.aptner.v3.global.jwt.JwtFilter;
 import com.aptner.v3.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -18,10 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,6 +42,9 @@ public class SecurityConfig {
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http.exceptionHandling(ex -> ex.accessDeniedHandler(jwtAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        );
 
         //인가 설정
         http.authorizeHttpRequests(auth -> auth
@@ -46,10 +55,12 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/actuator/**").permitAll()
                 .requestMatchers(
+                        "/**",
                         "/auth/**"
                 ).permitAll()
-                //.requestMatchers("/admin/**").hasRole("ADMIN") //TODO: admin 기능 구현때 주석 해제
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
+
 
         http.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

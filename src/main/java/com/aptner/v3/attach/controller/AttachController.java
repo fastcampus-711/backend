@@ -7,6 +7,7 @@ import com.aptner.v3.attach.service.ProfileService;
 import com.aptner.v3.global.exception.AttachException;
 import com.aptner.v3.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 import static com.aptner.v3.global.error.ErrorCode._EMPTY_FILE;
 
 @Slf4j
@@ -55,10 +57,11 @@ public class AttachController {
 
     @PostMapping(value = "/user/{id}/profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "사용자 프로필 등록")
+    @SecurityRequirement(name = Accesskey)
     public ResponseEntity<Member> uploads(@PathVariable("id") Long userId
             , @RequestPart(value = "file") MultipartFile file
     ) {
-        log.info("Received user ID: {}", userId);
+        log.debug("Received user ID: {}", userId);
         if (file.isEmpty()) {
             throw new AttachException(_EMPTY_FILE);
         }

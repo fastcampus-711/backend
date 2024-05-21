@@ -35,6 +35,12 @@ public class ResponseUtil {
         return new ApiResponse<>(false, statusCode, msg, null, null);
     }
 
+    public static ApiResponse<?> error(String Subject, ErrorCode errorCode, String message) {
+        int statusCode = errorCode.getHttpStatus().value();
+        String msg = String.format(errorCode.getDetail(), Subject);
+        return new ApiResponse<>(false, statusCode, msg, null, message);
+    }
+
     public static ApiResponse<?> error(HttpStatus httpStatus, Map<String, String> errors) {
         return new ApiResponse<>(false, httpStatus.value(), null, null, errors);
     }

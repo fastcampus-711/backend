@@ -22,7 +22,7 @@ public class ProfileService {
 
     private final MemberRepository memberRepository;
 
-    private final S3Service s3Service;
+    private final S3Service s3ServiceImpl;
 
     @Transactional
     public Member updateUserProfile(Long userId, MultipartFile file) {
@@ -32,8 +32,8 @@ public class ProfileService {
         String uuid = createFileId();
         String key = createKey(AttachType.PROFILE.getLocation(), uuid, file.getContentType());
 
-        String url = s3Service.uploadFile(key, file);
-        log.info(url);
+        String url = s3ServiceImpl.uploadFile(key, file);
+        log.debug(url);
         member.setImage(url);
         return memberRepository.save(member);
     }

@@ -6,10 +6,13 @@ import com.aptner.v3.global.error.response.ErrorResponse;
 import com.aptner.v3.global.exception.custom.CustomException;
 import com.aptner.v3.global.util.ResponseUtil;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -19,8 +22,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AuthException.class)
     public ApiResponse<?> handleUserException(GlobalException e) {
-        return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+        return ResponseUtil.error(e.getSubject(), e.getErrorCode(), e.getMessage());
     }
+
 
     @ExceptionHandler(UserException.class)
     public ApiResponse<?> handleUserException(UserException e) {
@@ -30,6 +34,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MenuException.class)
     public ApiResponse<?> handleUserException(MenuException e) {
         return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ApiResponse<?> handleAccessDeniedException(final AccessDeniedException e) {
+        return ResponseUtil.error("권한", ErrorCode.INVALID_REQUEST);
     }
 
     @ExceptionHandler(CustomException.class)

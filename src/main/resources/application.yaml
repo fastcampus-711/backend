@@ -23,6 +23,15 @@ spring:
             hibernate:
                 format_sql: true
 
+    redis:
+        enabled: false
+        host: 127.0.0.1
+        port: 6379
+        lettuce:
+            pool.max-active: 10
+            pool.max-idle: 10
+            pool.min-idle: 2
+
     jackson:
         property-naming-strategy: SNAKE_CASE
 
@@ -48,6 +57,7 @@ springdoc:
         show-login-endpoint: true	# login endpoint 인식
 
     api-docs:
+        enabled: true
         path: /api-docs
 ---
 
