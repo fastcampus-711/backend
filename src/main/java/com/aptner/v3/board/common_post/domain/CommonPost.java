@@ -26,6 +26,8 @@ public class CommonPost extends ReactionColumns {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private long categoryId;
+
     private String title;
 
     @Column(length = 500)
@@ -42,12 +44,10 @@ public class CommonPost extends ReactionColumns {
 
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-
     @ColumnDefault(value = "true")
-    private Boolean visible;
-
+    private Boolean visible = true;
     @ColumnDefault(value = "false")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
     public CommonPost() {
     }
@@ -76,7 +76,8 @@ public class CommonPost extends ReactionColumns {
         try {
             modelMapper.createTypeMap(this, responseDto)
                     .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
-        } catch (IllegalStateException ignored) {}
+        } catch (IllegalStateException ignored) {
+        }
 
         return modelMapper.map(this, responseDto);
     }

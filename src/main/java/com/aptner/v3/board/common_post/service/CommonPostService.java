@@ -23,7 +23,8 @@ import java.util.List;
 @Primary
 @Service
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-public class CommonPostService<E extends CommonPost,
+public class CommonPostService<
+        E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response>
         extends CountOfReactionAndCommentApplyService<CommonPost> {
@@ -105,4 +106,32 @@ public class CommonPostService<E extends CommonPost,
                 .orElseGet(() -> CategoryCode.공통)
                 .getDtype();
     }
+
+    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
+        String dtype = getDtype(request);
+        List<E> list;
+        if (categoryId == null) {
+            list = commonPostRepository.findByDtype(dtype);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        } else {
+            list = commonPostRepository.findByCategoryId(categoryId);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        }
+
+    }
+
+    /*public List<Category> getCategoryList(Long postId, HttpServletRequest request) {
+        String dtype = getDtype(request);
+        Menu menu = (Menu) menuRepository.findByName(dtype);
+        List<Category> categoryList = categoryRepository.findByMenuId(menu.getId());
+        return categoryList;
+    }*/
+
+
 }
