@@ -20,8 +20,8 @@ import java.util.List;
 @Service
 @Transactional
 public class CommonPostService<E extends CommonPost,
-        Q extends CommonPostDto.Request,
-        S extends CommonPostDto.Response> {
+        Q extends CommonPostDto.CommonRequest,
+        S extends CommonPostDto.CommonResponse> {
     private final CommonPostRepository<E> commonPostRepository;
     private final CountOfReactionAndCommentApplyService<E> countOfReactionAndCommentApplyService;
 

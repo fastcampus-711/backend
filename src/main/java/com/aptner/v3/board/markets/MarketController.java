@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name="나눔 게시판")
 @RequestMapping("/boards/markets")
-public class MarketController extends CommonPostController<Market, MarketDto.Request, MarketDto.Response> {
-    public MarketController(CommonPostService<Market, MarketDto.Request, MarketDto.Response> commonPostService) {
+public class MarketController extends CommonPostController<Market, MarketDto.MarketRequest, MarketDto.MarketResponse> {
+    public MarketController(CommonPostService<Market, MarketDto.MarketRequest, MarketDto.MarketResponse> commonPostService) {
         super(commonPostService);
     }
 }

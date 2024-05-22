@@ -6,7 +6,7 @@ import com.aptner.v3.board.complains.dto.ComplainDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ComplainService extends CommonPostService<Complain, ComplainDto.Request, ComplainDto.Response> {
+public class ComplainService extends CommonPostService<Complain, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> {
     public ComplainService(CommonPostRepository<Complain> commonPostRepository) {
         super(commonPostRepository);
     }

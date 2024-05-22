@@ -15,8 +15,8 @@ import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 @Tag(name="자유 게시판")
 @SecurityRequirement(name = Accesskey)
 @RequestMapping("/boards/frees")
-public class FreePostController extends CommonPostController<FreePost, FreePostDto.Request, FreePostDto.Response> {
-    public FreePostController(CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService) {
+public class FreePostController extends CommonPostController<FreePost, FreePostDto.FreeCommonRequest, FreePostDto.FreeCommonResponse> {
+    public FreePostController(CommonPostService<FreePost, FreePostDto.FreeCommonRequest, FreePostDto.FreeCommonResponse> commonPostService) {
         super(commonPostService);
     }
 }

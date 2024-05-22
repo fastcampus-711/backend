@@ -16,19 +16,19 @@ import lombok.Getter;
 
 @Getter
 public enum CategoryCode {
-    공통("", CommonPost.class, CommonPostDto.Response.class),
-    공지사항("notices", NoticePost.class, NoticePostDto.Response.class),
-    자유게시판("frees", FreePost.class, FreePostDto.Response.class),
-    QNA("qnas", Qna.class, QnaDto.Response.class),
-    나눔장터("markets", Market.class, MarketDto.Response.class),
-    민원게시판("complains", Complain.class, ComplainDto.Response.class);
+    공통("", CommonPost.class, CommonPostDto.CommonResponse.class),
+    공지사항("notices", NoticePost.class, NoticePostDto.CommonResponse.class),
+    자유게시판("frees", FreePost.class, FreePostDto.FreeCommonResponse.class),
+    QNA("qnas", Qna.class, QnaDto.QnaResponse.class),
+    나눔장터("markets", Market.class, MarketDto.MarketResponse.class),
+    민원게시판("complains", Complain.class, ComplainDto.ComplainResponse.class);
 
     private final String URI;
     private final Class<?> domain;
     private final String dtype;
-    private final Class<? extends CommonPostDto.Response> dtoForResponse;
+    private final Class<? extends CommonPostDto.CommonResponse> dtoForResponse;
 
-    CategoryCode(String uri, Class<?> domain, Class<? extends CommonPostDto.Response> dtoForResponse) {
+    CategoryCode(String uri, Class<?> domain, Class<? extends CommonPostDto.CommonResponse> dtoForResponse) {
         this.URI = uri;
         this.domain = domain;
         this.dtoForResponse = dtoForResponse;

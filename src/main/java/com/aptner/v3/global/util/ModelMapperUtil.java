@@ -25,7 +25,7 @@ public class ModelMapperUtil {
                 .setFieldMatchingEnabled(true)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
-        modelMapper.createTypeMap(CommonPost.class, CommonPostDto.Response.class, "skipComments")
-                .addMappings(mapping -> mapping.skip(CommonPostDto.Response::setComments));
+        modelMapper.createTypeMap(CommonPost.class, CommonPostDto.CommonResponse.class, "skipComments")
+                .addMappings(mapping -> mapping.skip(CommonPostDto.CommonResponse::setComments));
     }
 }

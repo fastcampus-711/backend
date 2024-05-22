@@ -1,12 +1,12 @@
 package com.aptner.v3.board.commons.domain;
 
+import com.aptner.v3.board.commons.CommonPostDto;
 import com.aptner.v3.category.CategoryCode;
 import com.aptner.v3.comment.Comment;
-import com.aptner.v3.reaction.domain.ReactionColumns;
-import com.aptner.v3.reaction.service.ReactionAndCommentCalculator;
-import com.aptner.v3.board.commons.CommonPostDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.ModelMapperUtil;
+import com.aptner.v3.reaction.domain.ReactionColumns;
+import com.aptner.v3.reaction.service.ReactionAndCommentCalculator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,43 +28,64 @@ import java.util.List;
 public class CommonPost extends BaseTimeEntity
 implements ReactionAndCommentCalculator {
 
+    /* 게시글 ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long userId;
-
+    /* 제목 */
     private String title;
 
+    /* 내용 */
     @Column(length = 500)
     private String content;
 
+    /* 첨부 파일 */
+    @ElementCollection
+    List<String> imageUrls;
+
+    /* 작성자(BaseTimeEntity) */
+    private long userId;
+
+    /*=====================*/
+
+    /* 조회 수 */
     @ColumnDefault(value = "0")
     private long hits;
 
+    /* 공감 수 */
     @Embedded
     private ReactionColumns reactionColumns = new ReactionColumns();
 
+    /* 댓글 수 */
     @ColumnDefault(value = "0")
     private long countOfComments;
-    //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
-    @Column(insertable = false, updatable = false)
-    private String dtype;
 
-    @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-
+    /* 노출 여부 */
     @Column(columnDefinition = "boolean default true")
     private Boolean visible;
 
+    /* 삭제 여부 */
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted = false;
 
+    /* 카테고리 ID */
     @Column
     private Long categoryId;
 
+    /* 게시판 구분 ID */
     @Column
     private Long BoardGroupId;
+
+    /*========= 연관 관계 =========*/
+
+    /* JOIN 항목 (COMPLAIN|MARKETS|QNAS) */
+    @Column(insertable = false, updatable = false)
+    private String dtype;
+
+    /* 댓글 */
+    @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     public CommonPost() {
     }
@@ -74,35 +95,35 @@ implements ReactionAndCommentCalculator {
         this.content = content;
     }
 
-    public <Q extends CommonPostDto.Request> CommonPost updateByUpdateRequest(Q updateRequest) {
+    public <Q extends CommonPostDto.CommonRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         modelMapper.map(updateRequest, this);
         return this;
     }
 
-    public CommonPostDto.Response toResponseDtoWithoutComments() {
+    public CommonPostDto.CommonResponse toResponseDtoWithoutComments() {
         ModelMapper modelMapper = (ModelMapperUtil.getModelMapper());
 
-        Class<? extends CommonPostDto.Response> responseDtoClass = getResponseDtoClassType();
+        Class<? extends CommonPostDto.CommonResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.Response responseDto =
+        CommonPostDto.CommonResponse commonResponseDto =
                 modelMapper.map(this, responseDtoClass, "skipComments");
 
-        return responseDto.blindPostAlgorithm();
+        return commonResponseDto.blindPostAlgorithm();
     }
 
-    public CommonPostDto.Response toResponseDtoWithComments() {
+    public CommonPostDto.CommonResponse toResponseDtoWithComments() {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        Class<? extends CommonPostDto.Response> responseDtoClass = getResponseDtoClassType();
+        Class<? extends CommonPostDto.CommonResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.Response responseDto =  modelMapper.map(this, responseDtoClass);
+        CommonPostDto.CommonResponse commonResponseDto =  modelMapper.map(this, responseDtoClass);
 
-        return responseDto.blindPostAlgorithm();
+        return commonResponseDto.blindPostAlgorithm();
     }
 
-    private Class<? extends CommonPostDto.Response> getResponseDtoClassType() {
+    private Class<? extends CommonPostDto.CommonResponse> getResponseDtoClassType() {
         return Arrays.stream(CategoryCode.values())
                 .filter(s -> s.getDomain().equals(this.getClass()))
                 .findFirst()

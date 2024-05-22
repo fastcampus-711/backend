@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name="민원 게시판")
 @RequestMapping("/boards/qnas")
-public class ComplainController extends CommonPostController<Complain, ComplainDto.Request, ComplainDto.Response> {
-    public ComplainController(CommonPostService<Complain, ComplainDto.Request, ComplainDto.Response> commonPostService) {
+public class ComplainController extends CommonPostController<Complain, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> {
+    public ComplainController(CommonPostService<Complain, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> commonPostService) {
         super(commonPostService);
     }
 }

@@ -2,11 +2,10 @@ package com.aptner.v3.board.qnas;
 
 import com.aptner.v3.board.commons.CommonPostRepository;
 import com.aptner.v3.board.commons.CommonPostService;
-import com.aptner.v3.board.markets.Market;
-import com.aptner.v3.board.markets.dto.MarketDto;
+import com.aptner.v3.board.qnas.dto.QnaDto;
 
-public class QnaService extends CommonPostService<Market, MarketDto.Request, MarketDto.Response> {
-    public QnaService(CommonPostRepository<Market> commonPostRepository) {
+public class QnaService extends CommonPostService<Qna, QnaDto.QnaRequest, QnaDto.QnaResponse> {
+    public QnaService(CommonPostRepository<Qna> commonPostRepository) {
         super(commonPostRepository);
     }
 }

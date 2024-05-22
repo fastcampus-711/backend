@@ -6,13 +6,15 @@ import com.aptner.v3.board.notices.domain.NoticePost;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 public class NoticePostDto {
 
     @Getter
-    public static class Request extends CommonPostDto.Request {
+    @SuperBuilder
+    public static class CommonRequest extends CommonPostDto.CommonRequest {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime postAt;
 
@@ -23,10 +25,10 @@ public class NoticePostDto {
 
     @Getter
     @NoArgsConstructor
-    public static class Response extends CommonPostDto.Response {
+    public static class CommonResponse extends CommonPostDto.CommonResponse {
         private LocalDateTime postAt;
 
-        public <E extends CommonPost> Response(E entity) {
+        public <E extends CommonPost> CommonResponse(E entity) {
             super(entity);
         }
     }

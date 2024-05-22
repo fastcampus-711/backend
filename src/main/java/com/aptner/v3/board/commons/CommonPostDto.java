@@ -7,6 +7,7 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
@@ -15,11 +16,17 @@ import java.util.List;
 public class CommonPostDto {
     @Getter
     @ToString
-    public static class Request {
+    @SuperBuilder
+    public static class CommonRequest {
+        /* 게시판 구분 ID */
+        private long boardGroupId;
+        /* 카테고리 ID */
         @NotBlank
         private long categoryId;
+        /* 제목 */
         @NotBlank
         private String title;
+        /* 내용 */
         @NotBlank
         private String content;
 
@@ -35,7 +42,7 @@ public class CommonPostDto {
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class Response {
+    public static class CommonResponse {
         private long id;
         private long userId;
         private long postUserId;
@@ -48,13 +55,13 @@ public class CommonPostDto {
         private long countOfComments;
         private List<CommentDto.Response> comments;
 
-        public <E extends CommonPost> Response(E entity) {
+        public <E extends CommonPost> CommonResponse(E entity) {
             ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
             modelMapper.map(entity, this);
         }
 
-        public CommonPostDto.Response blindPostAlgorithm() {
+        public CommonResponse blindPostAlgorithm() {
             if (!visible && MemberUtil.getMemberId() != userId) {
                 this.title = "비밀 게시글입니다.";
                 this.content = "비밀 게시글입니다.";

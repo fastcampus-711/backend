@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
-        Q extends CommonPostDto.Request,
-        S extends CommonPostDto.Response> {
+        Q extends CommonPostDto.CommonRequest,
+        S extends CommonPostDto.CommonResponse> {
     private final CommonPostService<E, Q, S> commonPostService;
 
     @GetMapping("/categories/{category-id}")

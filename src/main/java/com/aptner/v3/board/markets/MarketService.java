@@ -6,7 +6,7 @@ import com.aptner.v3.board.markets.dto.MarketDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarketService extends CommonPostService<Market, MarketDto.Request, MarketDto.Response> {
+public class MarketService extends CommonPostService<Market, MarketDto.MarketRequest, MarketDto.MarketResponse> {
     public MarketService(CommonPostRepository<Market> commonPostRepository) {
         super(commonPostRepository);
     }

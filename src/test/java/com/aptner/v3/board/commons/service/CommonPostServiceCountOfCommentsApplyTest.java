@@ -76,7 +76,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
         );
 
         //then
-        CommonPostDto.Response commonPost =
+        CommonPostDto.CommonResponse commonPost =
                 ((CommonPost) commonPostRepository.findById(1).orElseThrow())
                 .toResponseDtoWithoutComments();
         long countOfComments = commonPost.getCountOfComments();
@@ -103,7 +103,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
         );
 
         //then
-        CommonPostDto.Response commonPost =
+        CommonPostDto.CommonResponse commonPost =
                 ((CommonPost) commonPostRepository.findById(1).orElseThrow())
                         .toResponseDtoWithoutComments();
         long countOfComments = commonPost.getCountOfComments();
@@ -126,7 +126,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
         );
 
         //then
-        CommonPostDto.Response commonPost =
+        CommonPostDto.CommonResponse commonPost =
                 ((CommonPost) commonPostRepository.findById(1).orElseThrow())
                         .toResponseDtoWithoutComments();
         long countOfComments = commonPost.getCountOfComments();

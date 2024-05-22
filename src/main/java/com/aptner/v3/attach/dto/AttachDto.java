@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 
 public class AttachDto {
 
@@ -26,11 +24,6 @@ public class AttachDto {
         private String contentType;
         private Long size;
         private CommonPost post;
-        private LocalDateTime createdAt;
-        private LocalDateTime modifiedAt;
-        private String createdBy;
-        private String modifiedBy;
-
     }
 
     public static AttachResponse from(Attach attach) {
@@ -41,11 +34,7 @@ public class AttachDto {
                 attach.getUrl(),
                 attach.getContentType(),
                 attach.getSize(),
-                attach.getPost(),
-                attach.getCreatedAt(),
-                attach.getModifiedAt(),
-                attach.getCreatedBy(),
-                attach.getModifiedBy()
+                attach.getPost()
         );
     }
 
