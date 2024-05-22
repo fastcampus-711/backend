@@ -21,18 +21,18 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
 public class CommonPost extends BaseTimeEntity
 implements ReactionAndCommentCalculator {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private long userId;
-
-    private long categoryId;
 
     private String title;
 
@@ -54,11 +54,17 @@ implements ReactionAndCommentCalculator {
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @ColumnDefault(value = "true")
+    @Column(columnDefinition = "boolean default true")
     private Boolean visible;
 
-    @ColumnDefault(value = "false")
-    private Boolean deleted;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+
+    @Column
+    private Long categoryId;
+
+    @Column
+    private Long BoardGroupId;
 
     public CommonPost() {
     }

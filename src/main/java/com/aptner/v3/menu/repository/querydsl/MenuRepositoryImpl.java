@@ -4,16 +4,18 @@ import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.QMenu;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 
+@Qualifier
 public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
     @Autowired
     private JPAQueryFactory queryFactory;
 
     @Override
-    public List<Menu> findByIdOrParentIdUsingQuerydsl(Long id, Long parentId) {
+    public List<Menu> findByIdOrParentId(Long id, Long parentId) {
         QMenu menu = QMenu.menu;
         return queryFactory
                 .selectFrom(menu)
@@ -23,16 +25,19 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     @Override
-    public List<Menu> findAllActiveWithActiveParentUsingQuerydsl() {
+    public List<Menu> findAllActiveWithActiveParent() {
 
         QMenu menu = QMenu.menu;
-        QMenu other = QMenu.menu; // alias
 
         return queryFactory
                 .selectFrom(menu)
-                .leftJoin(other).on(other.id.eq(menu.parentId))
-                .where(menu.deleted.isFalse()
-                        .and(other.deleted.isFalse().or(menu.parentId.isNull())))
+                .where(menu.deleted.eq(false)
+                        .and(menu.parentId.isNotNull())
+                        .and(menu.id.in(
+                                queryFactory.select(menu.parentId)
+                                        .from(menu)
+                                        .where(menu.deleted.eq(false))
+                        )))
                 .fetch();
     }
 }

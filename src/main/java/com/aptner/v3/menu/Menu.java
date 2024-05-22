@@ -18,8 +18,8 @@ import java.util.Objects;
         @Index(columnList = "code"),
 })
 @Entity
-@SQLDelete(sql = "UPDATE menu SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLDelete(sql = "UPDATE menu SET deleted = 1 WHERE id = ?")
+@Where(clause = "deleted = 0")
 public class Menu {
 
     @Id

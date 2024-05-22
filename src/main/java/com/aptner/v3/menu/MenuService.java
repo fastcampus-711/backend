@@ -70,9 +70,7 @@ public class MenuService {
 
         // check parent Menu
         if (request.parentId() != null) {
-            if (!isExistsMenu(request.parentId())) {
-                throw new MenuException(_NOT_FOUND);
-            }
+            getMenuById(request.parentId());
         }
     }
 

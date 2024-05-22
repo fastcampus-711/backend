@@ -14,8 +14,8 @@ import java.util.Objects;
         @Index(columnList = "code"),
 })
 @Entity
-@SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLDelete(sql = "UPDATE categories SET deleted = 1 WHERE id = ?")
+@Where(clause = "deleted = 0")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
