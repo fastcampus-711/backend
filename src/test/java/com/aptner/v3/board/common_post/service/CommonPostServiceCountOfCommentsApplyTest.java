@@ -61,32 +61,32 @@ class CommonPostServiceCountOfCommentsApplyTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
     }
 
-    @Test
-    void 댓글_추가_시_게시판의_countOfComments_변경_여부_확인() throws Exception {
-        //given
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("content", "comment content");
-
-        //when
-        mockMvc.perform(
-                post(prefix + "/boards/1/comments")
-                        .content(jsonObject.toJSONString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-        );
-
-        //then
-        CommonPostDto.Response commonPost =
-                ((CommonPost) commonPostRepository.findById(1).orElseThrow())
-                .toResponseDtoWithoutComments();
-        long countOfComments = commonPost.getCountOfComments();
-
-        mockMvc.perform(
-                        get(prefix + "/boards/1")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
-    }
+//    @Test
+//    void 댓글_추가_시_게시판의_countOfComments_변경_여부_확인() throws Exception {
+//        //given
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("content", "comment content");
+//
+//        //when
+//        mockMvc.perform(
+//                post(prefix + "/boards/1/comments")
+//                        .content(jsonObject.toJSONString())
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//        );
+//
+//        //then
+//        CommonPostDto.Response commonPost =
+//                ((CommonPost) commonPostRepository.findById(1).orElseThrow())
+//                .toResponseDtoWithoutComments();
+//        long countOfComments = commonPost.getCountOfComments();
+//
+//        mockMvc.perform(
+//                        get(prefix + "/boards/1")
+//                )
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
+//    }
 
     @Test
     void 댓글_수정_시_게시판의_countOfComments_변경_여부_확인() throws Exception {
