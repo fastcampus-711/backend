@@ -1,7 +1,7 @@
 package com.aptner.v3.board.free_post.controller;
 
-import com.aptner.v3.board.common_post.controller.CommonPostController;
-import com.aptner.v3.board.common_post.service.CommonPostService;
+import com.aptner.v3.board.common_post.CommonPostController;
+import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

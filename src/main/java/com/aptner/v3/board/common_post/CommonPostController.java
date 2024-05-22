@@ -1,9 +1,7 @@
-package com.aptner.v3.board.common_post.controller;
+package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.common_post.service.CommonPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +17,6 @@ public class CommonPostController<E extends CommonPost,
         S extends CommonPostDto.Response> {
     private final CommonPostService<E, Q, S> commonPostService;
 
-    /*@GetMapping("/categories")
-    @Operation(summary = "게시판 조회")
-    public ResponseEntity<?> getCategoryList(@PathVariable(name = "post-id") Long postId, HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getCategoryList(postId,request), HttpStatus.OK);
-    }*/
     @GetMapping("/categories/{category-id}")
     @Operation(summary = "분류 선택 게시판 조회")
     public ResponseEntity<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId, HttpServletRequest request) {
@@ -38,10 +31,10 @@ public class CommonPostController<E extends CommonPost,
 
     @GetMapping
     @Operation(summary = "게시판 조회")
-    public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword,
-                                              @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                              @RequestParam(required = false, defaultValue = "1") Integer page,
-                                              @RequestParam(required = false, defaultValue = "RECENT") SortType sort,
+    public ResponseEntity<?> getRequestMapper(@RequestParam(name = "keyword", required = false) String keyword,
+                                              @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                              @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+                                              @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
             return getPostList(request);

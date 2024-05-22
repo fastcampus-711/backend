@@ -1,7 +1,7 @@
 package com.aptner.v3.board.category;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.complain.Complain;
 import com.aptner.v3.board.complain.dto.ComplainDto;
 import com.aptner.v3.board.free_post.domain.FreePost;
@@ -13,7 +13,6 @@ import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import com.aptner.v3.board.qna.Qna;
 import com.aptner.v3.board.qna.dto.QnaDto;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum CategoryCode {

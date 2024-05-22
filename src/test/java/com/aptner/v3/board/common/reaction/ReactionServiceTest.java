@@ -1,6 +1,7 @@
 package com.aptner.v3.board.common.reaction;
 
 import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.comment.CommentRepository;
 import com.aptner.v3.board.comment.CommentService;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
@@ -9,9 +10,10 @@ import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common.reaction.service.CommentReactionService;
 import com.aptner.v3.board.common.reaction.service.PostReactionService;
 import com.aptner.v3.board.common.reaction.service.ReactionService;
+import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.common_post.service.CommonPostService;
+import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.CommonPostService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -41,12 +43,12 @@ class ReactionServiceTest {
     @Autowired
     ReactionServiceTest(ReactionRepository<PostReaction> postReactionRepository,
                         ReactionRepository<CommentReaction> commentReactionRepository,
-                        CommonPostService<CommonPost, CommonPostDto.Request, CommonPostDto.Response> commonPostService,
-                        CommentService commentService) {
+                        CommonPostRepository<CommonPost> commonPostRepository,
+                        CommentRepository commentRepository) {
         this.postReactionRepository = postReactionRepository;
         this.commentReactionRepository = commentReactionRepository;
-        this.postReactionService = new PostReactionService(commonPostService, postReactionRepository);
-        this.commentReactionService = new CommentReactionService(commentService, commentReactionRepository);
+        this.postReactionService = new PostReactionService(commonPostRepository, postReactionRepository);
+        this.commentReactionService = new CommentReactionService(commentRepository, commentReactionRepository);
     }
 
     @Test
