@@ -26,7 +26,9 @@ public class CommonPostDto {
         private boolean visible;
 
         public CommonPost toEntity() {
-            return new CommonPost(title, content);
+            ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
+
+            return modelMapper.map(this, CommonPost.class);
         }
     }
 
