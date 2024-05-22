@@ -1,7 +1,7 @@
 package com.aptner.v3.global.util;
 
-import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.commons.domain.CommonPost;
+import com.aptner.v3.board.commons.CommonPostDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;

@@ -1,9 +1,8 @@
 package com.aptner.v3.attach.dto;
 
 import com.aptner.v3.attach.Attach;
-import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.commons.domain.CommonPost;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

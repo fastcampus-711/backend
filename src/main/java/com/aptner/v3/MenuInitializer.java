@@ -1,7 +1,7 @@
 package com.aptner.v3;
 
-import com.aptner.v3.board.category.CategoryService;
-import com.aptner.v3.board.category.dto.CategoryDtoRequest;
+import com.aptner.v3.category.CategoryService;
+import com.aptner.v3.category.dto.CategoryDtoRequest;
 import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuCode;
