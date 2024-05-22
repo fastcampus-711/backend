@@ -30,10 +30,10 @@ public abstract class ReactionService<T extends ReactionColumns, E extends React
     }
 
     private void applyReactionCount(long targetId) {
-        long countReactiondTypeGood = countAllByTargetIdAndReactionType(targetId, ReactionType.GOOD);
+        long countReactionTypeGood = countAllByTargetIdAndReactionType(targetId, ReactionType.GOOD);
         long countReactionTypeBad = countAllByTargetIdAndReactionType(targetId, ReactionType.BAD);
 
-        countOfReactionAndCommentApplyService.applyReactionCount(targetId, countReactiondTypeGood, countReactionTypeBad);
+        countOfReactionAndCommentApplyService.applyReactionCount(targetId, countReactionTypeGood, countReactionTypeBad);
     }
 
     private long countAllByTargetIdAndReactionType(long targetId, ReactionType reactionType) {
