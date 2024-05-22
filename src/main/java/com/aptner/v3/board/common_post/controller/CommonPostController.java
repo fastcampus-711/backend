@@ -38,19 +38,19 @@ public class CommonPostController<E extends CommonPost,
 
     @GetMapping
     @Operation(summary = "게시판 조회")
-    public ResponseEntity<?> getRequestMapper(@RequestParam(required = false) String keyword,
-                                              @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                              @RequestParam(required = false, defaultValue = "1") Integer page,
-                                              @RequestParam(required = false, defaultValue = "RECENT") SortType sort,
+    public ResponseEntity<?> getRequestMapper(@RequestParam(name = "keyword",required = false) String keyword,
+                                              @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                              @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+                                              @RequestParam(name= "sort", required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
-            return getPostList(request);
+            return getPostList(request,page);
         else
             return searchPost(request, keyword, limit, page, sort);
     }
 
-    public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPostList(request), HttpStatus.OK);
+    public ResponseEntity<?> getPostList(HttpServletRequest request, Integer page) {
+        return new ResponseEntity<>(commonPostService.getPostList(request,page), HttpStatus.OK);
     }
 
     public ResponseEntity<?> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {

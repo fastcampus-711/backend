@@ -43,6 +43,7 @@ public class CommonPostDto {
         private long countReactionTypeGood;
         private long countReactionTypeBad;
         private long countOfComments;
+        private String dtype;
         private List<CommentDto.Response> comments;
 
         public <E extends CommonPost> Response(E entity) {
