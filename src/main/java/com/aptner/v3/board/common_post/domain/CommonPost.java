@@ -9,6 +9,7 @@ import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -19,8 +20,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Inheritance(strategy = InheritanceType.JOINED)
-@SQLDelete(sql = "UPDATE commonpost SET deleted = true where id = ?")
+@SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
 public class CommonPost extends BaseTimeEntity
 implements ReactionAndCommentCalculator {
@@ -41,7 +43,7 @@ implements ReactionAndCommentCalculator {
     private long hits;
 
     @Embedded
-    private ReactionColumns reactionColumns;
+    private ReactionColumns reactionColumns = new ReactionColumns();
 
     @ColumnDefault(value = "0")
     private long countOfComments;
