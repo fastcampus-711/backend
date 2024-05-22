@@ -1,6 +1,7 @@
 package com.aptner.v3.board.common.reaction.domain;
 
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
+import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;

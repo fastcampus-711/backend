@@ -2,26 +2,29 @@ package com.aptner.v3.board.comment;
 
 import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.repository.CommonPostRepository;
+import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
+import com.aptner.v3.global.util.MemberUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class CommentService extends CountOfReactionAndCommentApplyService<Comment> {
+public class CommentService {
     private final CommentRepository commentRepository;
     private final CommonPostRepository<CommonPost> commonPostRepository;
-
+    private final CountOfReactionAndCommentApplyService<Comment> countOfReactionAndCommentApplyService;
     public CommentService(CommentRepository commentRepository, CommonPostRepository<CommonPost> commonPostRepository) {
-        super(commentRepository);
         this.commentRepository = commentRepository;
         this.commonPostRepository = commonPostRepository;
+        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commentRepository);
     }
 
     public CommentDto.Response addComment(long postId, Long commentId, CommentDto.Request requestDto) {
         CommonPost commonPost = commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new);
+
+        requestDto.setUserId(MemberUtil.getMemberId());
 
         Comment comment;
         if (commentId == null) {
@@ -29,12 +32,14 @@ public class CommentService extends CountOfReactionAndCommentApplyService<Commen
         } else {
             Comment parentComment = commentRepository.findById(commentId)
                     .orElseThrow(InvalidTableIdException::new);
-
+            requestDto.setPostUserId(commonPost.getUserId());
             comment = Comment.of(parentComment, requestDto);
         }
         comment = commentRepository.save(comment);
 
-        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+        commonPost.updateCountOfComments(
+                countOfReactionAndCommentApplyService.countComments(commonPost.getComments())
+        );
 
         return comment.toResponseDto();
     }
@@ -49,7 +54,9 @@ public class CommentService extends CountOfReactionAndCommentApplyService<Commen
 
         commentRepository.save(comment);
 
-        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+        commonPost.updateCountOfComments(
+                countOfReactionAndCommentApplyService.countComments(commonPost.getComments()))
+        ;
 
         return comment.toResponseDto();
     }
@@ -60,7 +67,9 @@ public class CommentService extends CountOfReactionAndCommentApplyService<Commen
 
         commentRepository.deleteById(commentId);
 
-        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+        commonPost.updateCountOfComments(
+                countOfReactionAndCommentApplyService.countComments(commonPost.getComments())
+        );
 
         return commentId;
     }

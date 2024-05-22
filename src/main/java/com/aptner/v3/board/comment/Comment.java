@@ -1,5 +1,6 @@
 package com.aptner.v3.board.comment;
 
+import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.global.util.ModelMapperUtil;
@@ -16,12 +17,17 @@ import java.util.List;
 @Getter
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
 @NoArgsConstructor
-public class Comment extends ReactionColumns {
+public class Comment implements ReactionAndCommentCalculator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private long userId;
+
     private String content;
+
+    @Embedded
+    private ReactionColumns reactionColumns;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "common_post_id")
@@ -35,7 +41,10 @@ public class Comment extends ReactionColumns {
     private Comment parentComment;
 
     @ColumnDefault(value = "true")
-    private Boolean visible;
+    private boolean visible;
+
+    @ColumnDefault(value = "false")
+    private boolean admin = false;
 
     @ColumnDefault(value = "false")
     private Boolean deleted;

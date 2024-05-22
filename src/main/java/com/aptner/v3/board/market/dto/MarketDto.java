@@ -1,6 +1,6 @@
 package com.aptner.v3.board.market.dto;
 
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.market.Market;
 import lombok.Getter;

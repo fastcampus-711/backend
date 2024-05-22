@@ -1,6 +1,6 @@
 package com.aptner.v3.board.free_post.dto;
 
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -1,11 +1,9 @@
-package com.aptner.v3.board.common_post.service;
+package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.common_post.repository.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Primary;
@@ -14,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -22,30 +19,33 @@ import java.util.List;
 
 @Primary
 @Service
-@Transactional(isolation = Isolation.READ_UNCOMMITTED)
-public class CommonPostService<
-        E extends CommonPost,
+@Transactional
+public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
-        S extends CommonPostDto.Response>
-        extends CountOfReactionAndCommentApplyService<CommonPost> {
+        S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
+    private final CountOfReactionAndCommentApplyService<E> countOfReactionAndCommentApplyService;
 
     public CommonPostService(CommonPostRepository<E> commonPostRepository) {
-        super((JpaRepository<CommonPost, Long>) commonPostRepository);
+        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
     }
 
     public S getPost(long postId) {
+        //Logic: 조회수 +1
         E commonPost = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
                                 .orElseThrow(InvalidTableIdException::new)
                 );
+        commonPost.plusHits();
 
-        commonPost.updateCountOfComments(countComments(commonPost.getComments()));
+        //Logic: 댓글 수 갱신
+        commonPost.updateCountOfComments(
+                countOfReactionAndCommentApplyService.countComments(commonPost.getComments())
+        );
 
         return (S) commonPost.toResponseDtoWithComments();
-
     }
 
     public List<S> getPostList(HttpServletRequest request) {
@@ -60,6 +60,24 @@ public class CommonPostService<
         return list.stream()
                 .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
+    }
+
+    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
+        String dtype = getDtype(request);
+        List<E> list;
+        if (categoryId == null) {
+            list = commonPostRepository.findByDtype(dtype);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        } else {
+            list = commonPostRepository.findByCategoryId(categoryId);
+
+            return list.stream()
+                    .map(e -> (S) e.toResponseDtoWithoutComments())
+                    .toList();
+        }
     }
 
     public List<S> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
@@ -95,7 +113,7 @@ public class CommonPostService<
         return id;
     }
 
-    private String getDtype(HttpServletRequest request) {
+    private static String getDtype(HttpServletRequest request) {
         String[] URIs = request.getRequestURI()
                 .split("/");
         String target = URIs.length <= 2 ? "" : URIs[2];
@@ -106,32 +124,4 @@ public class CommonPostService<
                 .orElseGet(() -> CategoryCode.공통)
                 .getDtype();
     }
-
-    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
-        String dtype = getDtype(request);
-        List<E> list;
-        if (categoryId == null) {
-            list = commonPostRepository.findByDtype(dtype);
-
-            return list.stream()
-                    .map(e -> (S) e.toResponseDtoWithoutComments())
-                    .toList();
-        } else {
-            list = commonPostRepository.findByCategoryId(categoryId);
-
-            return list.stream()
-                    .map(e -> (S) e.toResponseDtoWithoutComments())
-                    .toList();
-        }
-
-    }
-
-    /*public List<Category> getCategoryList(Long postId, HttpServletRequest request) {
-        String dtype = getDtype(request);
-        Menu menu = (Menu) menuRepository.findByName(dtype);
-        List<Category> categoryList = categoryRepository.findByMenuId(menu.getId());
-        return categoryList;
-    }*/
-
-
 }

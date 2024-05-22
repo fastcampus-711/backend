@@ -1,6 +1,6 @@
 package com.aptner.v3.board.qna.dto;
 
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.common_post.CommonPostDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
