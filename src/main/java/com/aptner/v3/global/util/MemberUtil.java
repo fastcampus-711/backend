@@ -15,6 +15,6 @@ public class MemberUtil {
     public static long getMemberId() {
         authentication = SecurityContextHolder.getContext().getAuthentication();
 //        return ((CustomUserDetails)(authentication.getPrincipal())).getId();
-        return 2;
+        return 1;
     }
 }

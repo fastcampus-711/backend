@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public class ArticleException extends GlobalException {
+public class PostException extends GlobalException {
 
-    public ArticleException(ErrorCode responseCode) {
+    public PostException(ErrorCode responseCode) {
         super("게시글", responseCode);
     }
 

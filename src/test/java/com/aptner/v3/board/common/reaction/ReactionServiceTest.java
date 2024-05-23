@@ -136,7 +136,7 @@ class ReactionServiceTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user_id", 1);
         jsonObject.put("reaction_target", "COMMENT");
-        jsonObject.put("reaction_type", "GOOD");
+        jsonObject.put("reaction_type", ReactionType.GOOD);
         jsonObject.put("target_id", 1);
 
         ReactionDto.Request request = objectMapper.readValue(jsonObject.toString(), ReactionDto.Request.class);

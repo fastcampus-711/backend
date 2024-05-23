@@ -6,6 +6,7 @@ import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,8 +21,8 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dtype")
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
 public class CommonPost extends BaseTimeEntity
@@ -39,13 +40,11 @@ implements ReactionAndCommentCalculator {
     @Column(length = 500)
     private String content;
 
-    @ColumnDefault(value = "0")
     private long hits;
 
     @Embedded
     private ReactionColumns reactionColumns = new ReactionColumns();
 
-    @ColumnDefault(value = "0")
     private long countOfComments;
     //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
     @Column(insertable = false, updatable = false)
@@ -54,11 +53,9 @@ implements ReactionAndCommentCalculator {
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @ColumnDefault(value = "true")
-    private Boolean visible;
+    private boolean visible = true;
 
-    @ColumnDefault(value = "false")
-    private Boolean deleted;
+    private boolean deleted;
 
     public CommonPost() {
     }
@@ -113,6 +110,19 @@ implements ReactionAndCommentCalculator {
     public CommonPost plusHits() {
         this.hits++;
 
+        return this;
+    }
+
+    public boolean checkIsDtypeIsEquals(String dtype) {
+        return this.getClass().getSimpleName().equals(dtype);
+    }
+
+    public boolean validUpdateOrDeleteAuthority() {
+        return this.userId == MemberUtil.getMemberId();
+    }
+
+    public CommonPost setUserId() {
+        this.userId = MemberUtil.getMemberId();
         return this;
     }
 }

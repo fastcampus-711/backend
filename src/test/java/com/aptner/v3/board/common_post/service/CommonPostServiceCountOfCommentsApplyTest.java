@@ -58,7 +58,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count_of_comments").exists());
     }
 
     @Test
@@ -85,7 +85,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
                         get(prefix + "/boards/1")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 
     @Test
@@ -111,7 +111,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
         mockMvc.perform(
                 get(prefix + "/boards/1")
         )
-                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 
     @Test
@@ -134,6 +134,6 @@ class CommonPostServiceCountOfCommentsApplyTest {
         mockMvc.perform(
                         get(prefix + "/boards/1")
                 )
-                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 }

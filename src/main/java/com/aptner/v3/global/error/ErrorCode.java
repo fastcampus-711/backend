@@ -15,6 +15,8 @@ public enum ErrorCode {
     INCORRECT_CODE(BAD_REQUEST, "잘못된 인증번호입니다."),
     EMAIL_REQUIRED(BAD_REQUEST, "이메일을 입력해 주세요."),
     INVALID_PASSWORD_FORMAT(BAD_REQUEST, "비밀번호는 대소문자 영문과 숫자 조합으로 8자 이상 15자 이하로 입력해주세요."),
+    INCORRECT_TARGET_BOARD(BAD_REQUEST, "다른 게시판에 대한 수정/삭제 요청입니다."),
+    INSUFFICIENT_AUTHORITY(BAD_REQUEST, "본인의 게시글이 아닌 게시글에 대한 수정/삭제 요청입니다."),
 
     // 409 Conflict
     DUPLICATE_RESOURCE(CONFLICT, "중복된 이메일 또는 닉네임입니다."),

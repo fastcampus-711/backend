@@ -19,9 +19,6 @@ public class CommentDto {
         @NotBlank
         private String content;
         private boolean visible;
-        private CommonPost commonPost;
-        private Comment parentComment;
-
     }
 
     @Getter

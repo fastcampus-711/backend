@@ -12,13 +12,9 @@ import java.time.LocalDateTime;
 public class FreePostDto {
     @Getter
     public static class Request extends CommonPostDto.Request {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime blindAt;
         private String blindBy;
-
-        public FreePost toEntity() {
-            return new FreePost(getTitle(), getContent(), blindAt, blindBy);
-        }
     }
 
     @Getter
@@ -26,9 +22,5 @@ public class FreePostDto {
     public static class Response extends CommonPostDto.Response {
         private LocalDateTime blindAt;
         private String blindBy;
-
-        public <E extends CommonPost> Response(E entity) {
-            super(entity);
-        }
     }
 }

@@ -1,5 +1,6 @@
 package com.aptner.v3.board.common_post;
 
+import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common_post.domain.CommonPost;
@@ -10,6 +11,7 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommonPostDto {
@@ -23,12 +25,22 @@ public class CommonPostDto {
         @NotBlank
         private String content;
 
-        private boolean visible;
+        private Boolean visible;
 
         public CommonPost toEntity() {
             ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-            return modelMapper.map(this, CommonPost.class);
+            Class<? extends CommonPost> entityClass = getEntityClassType();
+
+            return modelMapper.map(this, entityClass);
+        }
+
+        private Class<? extends CommonPost> getEntityClassType() {
+            return Arrays.stream(CategoryCode.values())
+                    .filter(s -> s.getDtoForRequest().equals(this.getClass()))
+                    .findFirst()
+                    .orElseThrow()
+                    .getDomain();
         }
     }
 
@@ -46,6 +58,7 @@ public class CommonPostDto {
         private int hits;
         private ReactionColumns reactionColumns;
         private long countOfComments;
+        private String dtype;
         private List<CommentDto.Response> comments;
 
         public <E extends CommonPost> Response(E entity) {
@@ -55,6 +68,7 @@ public class CommonPostDto {
         }
 
         public CommonPostDto.Response blindPostAlgorithm() {
+            System.out.println("MemberId : " + MemberUtil.getMemberId() + " " + userId);
             if (!visible && MemberUtil.getMemberId() != userId) {
                 this.title = "비밀 게시글입니다.";
                 this.content = "비밀 게시글입니다.";

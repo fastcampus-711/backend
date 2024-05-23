@@ -10,10 +10,8 @@ import org.hibernate.annotations.ColumnDefault;
 @Embeddable
 @Getter
 public class ReactionColumns {
-    @ColumnDefault(value = "0")
     private long countReactionTypeGood;
 
-    @ColumnDefault(value = "0")
     private long countReactionTypeBad;
 
     public ReactionColumns() {

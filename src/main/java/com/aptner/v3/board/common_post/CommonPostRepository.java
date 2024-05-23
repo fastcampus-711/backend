@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
-    List<T> findByDtype(String dtype);
+    Page<T> findByDtype(String dtype, Pageable pageable);
 
-    Page<T> findByTitleContaining(String keyword, Pageable pageable);
+    Page<T> findByTitleContainingIgnoreCaseAndVisible(String keyword, Pageable pageable, boolean visible);
 
-    Page<T> findByTitleContainingAndDtype(String keyword, String dtype, Pageable pageable);
+    Page<T> findByTitleContainingIgnoreCaseAndDtypeAndVisible(String keyword, String dtype, Pageable pageable, boolean visible);
 
     Optional<T> findByComments_CommonPostId(long postId);
 
