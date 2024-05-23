@@ -66,12 +66,12 @@ public class MenuJpaTest {
         menuRepository.delete(child);
 
         // Then
-        assertThat(menuRepository.count()).isEqualTo(previousCount + 1);
+        assertThat(menuRepository.count()).isEqualTo(previousCount + 2);
     }
 
     @Test
-    @DisplayName("상위 메뉴 삭제 테스트")
-    void givenData_whenTopMenuDelete_thenDeleted() {
+    @DisplayName("상위 메뉴 실제 삭제 여부 테스트")
+    void givenData_whenTopMenuDeleted_thenDeleted() {
         // Given
         long previousCount = menuRepository.count();
         Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
@@ -83,7 +83,24 @@ public class MenuJpaTest {
         menuRepository.delete(parent);
 
         // Then
-        assertThat(menuRepository.count()).isEqualTo(previousCount + 1);
+        assertThat(menuRepository.count()).isEqualTo(previousCount + 2);
+    }
+
+    @Test
+    @DisplayName("상위 메뉴 삭제 테스트")
+    void givenData_whenTopMenuDelete_thenDeleted() {
+        // Given
+        int foundedCount = menuRepository.findAll().size();
+        Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
+        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
+        menuRepository.save(parent);
+        menuRepository.save(child);
+
+        // delete
+        menuRepository.delete(parent);
+
+        // Then
+        assertThat(menuRepository.findAll().size()).isEqualTo(foundedCount + 2);
     }
 
     @Test

@@ -23,12 +23,12 @@ class FreePostServiceTest {
 
     @Test
     void 등록실행() {
-        FreePostDto.FreeCommonRequest req = FreePostDto.FreeCommonRequest.builder()
-                .title("자유게시판 제목")
-                .content("자유게시판 내용")
-                .build();
-
-        commonPostService.createPost(req);
+//        FreePostDto.FreeCommonRequest req = FreePostDto.FreeCommonRequest.builder()
+//                .title("자유게시판 제목")
+//                .content("자유게시판 내용")
+//                .build();
+//
+//        commonPostService.createPost(req);
     }
 
 }

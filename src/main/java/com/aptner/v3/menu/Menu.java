@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE menu SET deleted = 1 WHERE id = ?")
-@Where(clause = "deleted = 0")
 public class Menu {
 
     @Id

@@ -24,8 +24,7 @@ import static com.aptner.v3.CommunityApplication.modelMapper;
 @Setter
 @DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
-@SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
-@Where(clause = "deleted is false")
+@SQLDelete(sql = "UPDATE common_post SET deleted = 1 where id = ?")
 public class CommonPost extends BaseTimeEntity
         implements ReactionAndCommentCalculator {
 

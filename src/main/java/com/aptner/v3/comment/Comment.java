@@ -16,7 +16,7 @@ import static com.aptner.v3.CommunityApplication.modelMapper;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
+@SQLDelete(sql = "UPDATE comment SET deleted = 1 where id = ?")
 public class Comment implements ReactionAndCommentCalculator {
 
     /* ID */
