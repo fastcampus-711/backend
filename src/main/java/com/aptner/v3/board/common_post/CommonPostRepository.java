@@ -1,4 +1,4 @@
-package com.aptner.v3.board.common_post.repository;
+package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import org.springframework.data.domain.Page;

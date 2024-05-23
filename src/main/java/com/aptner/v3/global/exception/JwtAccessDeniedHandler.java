@@ -16,8 +16,8 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
-    //TODO : HandlerExceptionResolver @Qualifier("handlerExceptionResolver") 의존성 주입, final이 선언되어있으면 에러 발생
-    @Qualifier("handlerExceptionResolver")
+
+    @Qualifier(value = "handleExceptionResolver")
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override

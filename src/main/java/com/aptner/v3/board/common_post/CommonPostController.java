@@ -1,9 +1,7 @@
-package com.aptner.v3.board.common_post.controller;
+package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.common_post.service.CommonPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
