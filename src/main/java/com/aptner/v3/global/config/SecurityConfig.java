@@ -53,10 +53,11 @@ public class SecurityConfig {
                         "/api-docs.html",
                         "/api-docs/**",
                         "/swagger-ui/**",
-                        "/actuator/**",
-                        "/boards/**").permitAll()
+                        "/actuator/**"
+                        ).permitAll()
                 .requestMatchers(
                         "/**",
+                        "/boards/**",
                         "/auth/**"
                 ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")

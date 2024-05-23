@@ -112,15 +112,10 @@ insert into common_post (title, user_id, content, created_by, created_at, hits, 
 insert into common_post (title, user_id, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Dr', 3, 'Contact with hot household appliances', 'Normanvell', '2023-05-01', 43, true, false, 'FreePost', 14);
 insert into common_post (title, user_id, content, created_by, created_at, hits, visible, deleted, dtype, category_id) values ('Dr', 3, 'War operations involving other forms of conventional warfare, military personnel', 'Treweek', '2023-05-28', 9, true, false, 'FreePost', 16);
 
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (1, 1, 'parent comment1', 1, null, false);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (2, 2, 'parent comment2', 1, null, true);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (3, 3, 'parent comment3', 1, null, true);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (4, 4, 'parent comment4', 1, null, true);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (5, 3, 'child comment1', null, 1, false);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (6, 1, 'child comment2', null, 1, true);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (7, 3, 'child comment1', null, 3, false);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, admin) values (8, 4, 'admin comment', 1, null, true, true);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (9, 3, 'child comment1', null, 8, false);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible) values (10, 3, 'child comment1', null, 8, false);
-
-insert into users(id, username, password) values (1, 'username', 'password');
+insert into comment(id, user_id, content, common_post_id, comment_id) values (1, 1, 'parent comment1', 1, null);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (2, 1, 'parent comment2', 1, null);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (3, 1, 'parent comment3', 1, null);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (4, 1, 'parent comment4', 1, null);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (5, 1, 'child comment1', null, 1);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (6, 1, 'child comment2', null, 1);
+insert into comment(id, user_id, content, common_post_id, comment_id) values (7, 1, 'child comment1', null, 3);

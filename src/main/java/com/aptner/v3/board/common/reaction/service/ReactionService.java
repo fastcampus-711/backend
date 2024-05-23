@@ -5,7 +5,6 @@ import com.aptner.v3.board.common.reaction.domain.Reaction;
 import com.aptner.v3.board.common.reaction.dto.CountOfReactionTypeDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
-import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +14,7 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
     private final ReactionRepository<E> reactionRepository;
 
     protected ReactionService(JpaRepository<T, Long> jpaRepository,
-            ReactionRepository<E> reactionRepository) {
+                              ReactionRepository<E> reactionRepository) {
         this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(jpaRepository);
         this.reactionRepository = reactionRepository;
     }
