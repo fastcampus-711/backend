@@ -1,4 +1,4 @@
-package com.aptner.v3.board.qnas;
+package com.aptner.v3.board.markets;
 
 import com.aptner.v3.board.commons.domain.CommonPost;
 import jakarta.persistence.DiscriminatorValue;
@@ -9,16 +9,20 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@DiscriminatorValue("QNAS")
-public class Qna extends CommonPost {
+@DiscriminatorValue("MarketPost")
+public class MarketPost extends CommonPost {
 
     public enum Status {
-        WAITING_FOR_ANSWER,
-        ANSWERED,
-        ACCEPTED
+        RESERVED,
+        SELLING,
+        SOLD
     }
 
     /* 상태값 */
     @Enumerated(EnumType.STRING)
-    private Status status = Qna.Status.WAITING_FOR_ANSWER;
+    private Status status = MarketPost.Status.SELLING;
+
+    /* 가격 */
+    private int price;
+
 }

@@ -1,11 +1,14 @@
 package com.aptner.v3.board.commons;
 
-import com.aptner.v3.category.CategoryCode;
-import com.aptner.v3.reaction.service.CountOfReactionAndCommentApplyService;
 import com.aptner.v3.board.commons.domain.CommonPost;
 import com.aptner.v3.board.commons.domain.SortType;
+import com.aptner.v3.category.CategoryCode;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.member.repository.MemberRepository;
+import com.aptner.v3.reaction.service.CountOfReactionAndCommentApplyService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,29 +16,38 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Primary
 @Service
 @Transactional
-public class CommonPostService<E extends CommonPost,
+public class CommonPostService<
+        E extends CommonPost,
         Q extends CommonPostDto.CommonRequest,
-        S extends CommonPostDto.CommonResponse> {
+        S extends CommonPostDto.CommonResponse,
+        T extends CommonPostDto> {
+    private final MemberRepository memberRepository;
     private final CommonPostRepository<E> commonPostRepository;
     private final CountOfReactionAndCommentApplyService<E> countOfReactionAndCommentApplyService;
 
-    public CommonPostService(CommonPostRepository<E> commonPostRepository) {
+    public CommonPostService(CommonPostRepository<E> commonPostRepository,
+                             MemberRepository memberRepository) {
         this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
+        this.memberRepository = memberRepository;
     }
+
 
     public S getPost(long postId) {
         //Logic: 조회수 +1
         E commonPost = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
-                                .orElseThrow(InvalidTableIdException::new)
+                                .orElseThrow(InvalidTableIdException::new) //@todo Exception
                 );
         commonPost.plusHits();
 
@@ -47,36 +59,31 @@ public class CommonPostService<E extends CommonPost,
         return (S) commonPost.toResponseDtoWithComments();
     }
 
-    public List<S> getPostList(HttpServletRequest request) {
+
+    private LocalDateTime getSevenDayAgo(){
+        return LocalDateTime.now().minus(7, ChronoUnit.DAYS);
+    }
+
+    @Transactional
+    public List<E> updateTopPosts() {
+        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfter(getSevenDayAgo(), PageRequest.of(0, 3));
+                //.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(PageRequest.of(0, 3));
+        return topPosts;
+    }
+
+    public List<S> getPostList(HttpServletRequest request, Integer page) {
         String dtype = getDtype(request);
 
         List<E> list;
-        if (dtype.equals("CommonPost"))
+        if (dtype.equals("CommonPost")) {
             list = commonPostRepository.findAll();
-        else
+        } else {
             list = commonPostRepository.findByDtype(dtype);
+        }
 
         return list.stream()
                 .map(e -> (S) e.toResponseDtoWithoutComments())
                 .toList();
-    }
-
-    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
-        String dtype = getDtype(request);
-        List<E> list;
-        if (categoryId == null) {
-            list = commonPostRepository.findByDtype(dtype);
-
-            return list.stream()
-                    .map(e -> (S) e.toResponseDtoWithoutComments())
-                    .toList();
-        } else {
-            list = commonPostRepository.findByCategoryId(categoryId);
-
-            return list.stream()
-                    .map(e -> (S) e.toResponseDtoWithoutComments())
-                    .toList();
-        }
     }
 
     public List<S> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
@@ -94,16 +101,23 @@ public class CommonPostService<E extends CommonPost,
                 .toList();
     }
 
-    public S createPost(Q requestDto) {
-        E entity = (E) requestDto.toEntity();
-        commonPostRepository.save(entity);
-        return (S) entity.toResponseDtoWithoutComments();
+    public S createPost(Q request) {
+
+        Member member = memberRepository.getReferenceById(request.getUserId());
+        T dto = (T) request.toDto(member);
+        E entity = (E) dto.toEntity();
+        E saved = commonPostRepository.save(entity);
+        log.debug("saved : {}", saved);
+        return (S) saved.toResponseDtoWithoutComments();
     }
 
     public S updatePost(long postId, Q requestDto) {
-        return (S) commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new)
-                .updateByUpdateRequest(requestDto)
+        E e = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
+        // @todo Exception & verify
+        // @일단 머리아퍼 넣어둬...
+        return (S) e.updateByUpdateRequest(requestDto)
                 .toResponseDtoWithoutComments();
     }
 

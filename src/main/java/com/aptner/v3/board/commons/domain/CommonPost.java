@@ -4,8 +4,8 @@ import com.aptner.v3.board.commons.CommonPostDto;
 import com.aptner.v3.category.CategoryCode;
 import com.aptner.v3.comment.Comment;
 import com.aptner.v3.global.domain.BaseTimeEntity;
-import com.aptner.v3.global.util.ModelMapperUtil;
-import com.aptner.v3.reaction.domain.ReactionColumns;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.reaction.domain.Reactions;
 import com.aptner.v3.reaction.service.ReactionAndCommentCalculator;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,10 +13,11 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.aptner.v3.CommunityApplication.modelMapper;
 
 @Entity
 @Getter
@@ -26,7 +27,7 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @Where(clause = "deleted is false")
 public class CommonPost extends BaseTimeEntity
-implements ReactionAndCommentCalculator {
+        implements ReactionAndCommentCalculator {
 
     /* 게시글 ID */
     @Id
@@ -44,8 +45,9 @@ implements ReactionAndCommentCalculator {
     @ElementCollection
     List<String> imageUrls;
 
-    /* 작성자(BaseTimeEntity) */
-    private long userId;
+    /* 작성자 */
+    @ManyToOne(optional = false)
+    private Member member;
 
     /*=====================*/
 
@@ -55,7 +57,7 @@ implements ReactionAndCommentCalculator {
 
     /* 공감 수 */
     @Embedded
-    private ReactionColumns reactionColumns = new ReactionColumns();
+    private Reactions reactions = new Reactions();
 
     /* 댓글 수 */
     @ColumnDefault(value = "0")
@@ -90,35 +92,41 @@ implements ReactionAndCommentCalculator {
     public CommonPost() {
     }
 
-    public CommonPost(String title, String content) {
+    public CommonPost(String title, String content, List<String> imageUrls, Member member, Boolean visible, Long categoryId, Long boardGroupId) {
         this.title = title;
         this.content = content;
+        this.imageUrls = imageUrls;
+        this.member = member;
+        this.visible = visible;
+        this.categoryId = categoryId;
+        this.BoardGroupId = boardGroupId;
     }
 
-    public <Q extends CommonPostDto.CommonRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
+    public static CommonPost of(Long boardGroupId, Long CategoryId, Member member, String title, String content, List<String> imageUrls, boolean visible) {
+        return new CommonPost(title, content, imageUrls, member, visible, CategoryId, boardGroupId);
+    }
 
-        modelMapper.map(updateRequest, this);
+
+    public <Q extends CommonPostDto.CommonRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
+        modelMapper().map(updateRequest, this);
         return this;
     }
 
     public CommonPostDto.CommonResponse toResponseDtoWithoutComments() {
-        ModelMapper modelMapper = (ModelMapperUtil.getModelMapper());
 
         Class<? extends CommonPostDto.CommonResponse> responseDtoClass = getResponseDtoClassType();
 
         CommonPostDto.CommonResponse commonResponseDto =
-                modelMapper.map(this, responseDtoClass, "skipComments");
+                modelMapper().map(this, responseDtoClass, "skipComments");
 
         return commonResponseDto.blindPostAlgorithm();
     }
 
     public CommonPostDto.CommonResponse toResponseDtoWithComments() {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         Class<? extends CommonPostDto.CommonResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.CommonResponse commonResponseDto =  modelMapper.map(this, responseDtoClass);
+        CommonPostDto.CommonResponse commonResponseDto = modelMapper().map(this, responseDtoClass);
 
         return commonResponseDto.blindPostAlgorithm();
     }
@@ -139,7 +147,6 @@ implements ReactionAndCommentCalculator {
 
     public CommonPost plusHits() {
         this.hits++;
-
         return this;
     }
 }

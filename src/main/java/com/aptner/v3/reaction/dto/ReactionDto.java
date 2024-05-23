@@ -1,10 +1,10 @@
 package com.aptner.v3.reaction.dto;
 
 import com.aptner.v3.reaction.domain.Reaction;
-import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import org.modelmapper.ModelMapper;
+
+import static com.aptner.v3.CommunityApplication.modelMapper;
 
 public class ReactionDto {
     @Getter
@@ -19,8 +19,7 @@ public class ReactionDto {
         private ReactionType reactionType;
 
         public Reaction toEntity() {
-            ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-            return (Reaction) modelMapper.map(this, reactionTarget.getReactionClazz());
+            return (Reaction) modelMapper().map(this, reactionTarget.getReactionClazz());
         }
     }
 }

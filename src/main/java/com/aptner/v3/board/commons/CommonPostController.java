@@ -14,39 +14,40 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
         Q extends CommonPostDto.CommonRequest,
-        S extends CommonPostDto.CommonResponse> {
-    private final CommonPostService<E, Q, S> commonPostService;
+        S extends CommonPostDto.CommonResponse,
+        T extends CommonPostDto> {
+    private final CommonPostService<E, Q, S, T> commonPostService;
 
-    @GetMapping("/categories/{category-id}")
-    @Operation(summary = "분류 선택 게시판 조회")
-    public ResponseEntity<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId, HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPostListByCategoryId(categoryId, request), HttpStatus.OK);
-    }
+    /*@GetMapping("/categories")
+    @Operation(summary = "게시판 조회")
+    public ResponseEntity<?> getCategoryList(@PathVariable(name = "post-id") Long postId, HttpServletRequest request) {
+        return new ResponseEntity<>(commonPostService.getCategoryList(postId,request), HttpStatus.OK);
+    }*/
 
     @GetMapping("/{post-id}")
-    @Operation(summary = "게시판 조회")
+    @Operation(summary = "게시판 상세 조회")
     public ResponseEntity<?> getPost(@PathVariable(name = "post-id") Long postId) {
         return new ResponseEntity<>(commonPostService.getPost(postId), HttpStatus.OK);
     }
 
     @GetMapping
     @Operation(summary = "게시판 조회")
-    public ResponseEntity<?> getRequestMapper(@RequestParam(name = "keyword", required = false) String keyword,
+    public ResponseEntity<?> getRequestMapper(@RequestParam(name = "keyword",required = false) String keyword,
                                               @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
                                               @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                              @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
+                                              @RequestParam(name= "sort", required = false, defaultValue = "RECENT") SortType sort,
                                               HttpServletRequest request) {
         if (keyword == null)
-            return getPostList(request);
+            return getPostList(request,page);
         else
             return searchPost(request, keyword, limit, page, sort);
     }
 
-    public ResponseEntity<?> getPostList(HttpServletRequest request) {
-        return new ResponseEntity<>(commonPostService.getPostList(request), HttpStatus.OK);
+    private ResponseEntity<?> getPostList(HttpServletRequest request, Integer page) {
+        return new ResponseEntity<>(commonPostService.getPostList(request,page), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
+    private ResponseEntity<?> searchPost(HttpServletRequest request, String keyword, Integer limit, Integer page, SortType sort) {
         return new ResponseEntity<>(commonPostService.searchPost(request, keyword, limit, page, sort), HttpStatus.OK);
     }
 

@@ -1,6 +1,6 @@
 package com.aptner.v3.reaction.dto;
 
-import com.aptner.v3.reaction.domain.ReactionColumns;
+import com.aptner.v3.reaction.domain.Reactions;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class CountOfReactionTypeDto {
-    private ReactionColumns reactionColumns;
+    private Reactions reactions;
 
     public CountOfReactionTypeDto(long countReactionTypeGood, long countReactionTypeBad) {
-       this.reactionColumns = new ReactionColumns(countReactionTypeGood, countReactionTypeBad);
+       this.reactions = new Reactions(countReactionTypeGood, countReactionTypeBad);
     }
 }

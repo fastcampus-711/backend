@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Feature commentRequest
 about: feature issue template
 title: ''
 labels: ''

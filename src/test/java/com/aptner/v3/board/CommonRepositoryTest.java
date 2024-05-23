@@ -1,11 +1,11 @@
 package com.aptner.v3.board;
 
 import com.aptner.v3.board.commons.CommonPostRepository;
-import com.aptner.v3.board.complains.Complain;
+import com.aptner.v3.board.complains.ComplainPost;
 import com.aptner.v3.board.frees.domain.FreePost;
-import com.aptner.v3.board.markets.Market;
+import com.aptner.v3.board.markets.MarketPost;
 import com.aptner.v3.board.notices.domain.NoticePost;
-import com.aptner.v3.board.qnas.Qna;
+import com.aptner.v3.board.qnas.QnaPost;
 import com.aptner.v3.global.config.JpaConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,25 +38,25 @@ public class CommonRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger(CommonRepositoryTest.class);
 
     @Autowired
-    private CommonPostRepository<Complain> complainPostRepository;
+    private CommonPostRepository<ComplainPost> complainPostRepository;
 
     @Autowired
     private CommonPostRepository<FreePost> freePostRepository;
 
     @Autowired
-    private CommonPostRepository<Market> marketPostRepository;
+    private CommonPostRepository<MarketPost> marketPostRepository;
 
     @Autowired
     private CommonPostRepository<NoticePost> noticePostRepository;
 
     @Autowired
-    private CommonPostRepository<Qna> qnaPostRepository;
+    private CommonPostRepository<QnaPost> qnaPostRepository;
 
     @BeforeEach
     public void setUp() {
 
         for (int i = 0; i < 1; i++) {
-            Complain post1 = new Complain();
+            ComplainPost post1 = new ComplainPost();
             post1.setTitle("Spring Boot Test");
             post1.setContent("Content 1");
             post1.setCategoryId(1L);
@@ -74,7 +74,7 @@ public class CommonRepositoryTest {
         }
 
         for (int i = 0; i < 1; i++) {
-            Market post1 = new Market();
+            MarketPost post1 = new MarketPost();
             post1.setTitle("Spring Boot Test");
             post1.setContent("Content 1");
             post1.setCategoryId(1L);
@@ -92,7 +92,7 @@ public class CommonRepositoryTest {
         }
 
         for (int i = 0; i < 1; i++) {
-            Qna post1 = new Qna();
+            QnaPost post1 = new QnaPost();
             post1.setTitle("Spring Boot Test");
             post1.setContent("Content 1");
             post1.setCategoryId(1L);
@@ -107,7 +107,7 @@ public class CommonRepositoryTest {
     public void testComplainSaveAndFindById() {
 
         // when
-        Complain post = new Complain();
+        ComplainPost post = new ComplainPost();
         post.setTitle(post.getClass().getSimpleName() + " Title");
         post.setContent(post.getClass().getSimpleName() + " Content");
         post.setCategoryId(1L);
@@ -115,7 +115,7 @@ public class CommonRepositoryTest {
         complainPostRepository.save(post);
 
         // given
-        Optional<Complain> foundPost = complainPostRepository.findById(post.getId());
+        Optional<ComplainPost> foundPost = complainPostRepository.findById(post.getId());
 
         // then
         assertTrue(foundPost.isPresent());
@@ -127,7 +127,7 @@ public class CommonRepositoryTest {
     public void testFindByDtype() {
 
         // when
-        Complain post = new Complain();
+        ComplainPost post = new ComplainPost();
         post.setTitle(post.getClass().getSimpleName() + " Title");
         post.setContent(post.getClass().getSimpleName() + " Content");
         post.setCategoryId(1L);
@@ -135,10 +135,10 @@ public class CommonRepositoryTest {
         complainPostRepository.save(post);
 
         // then
-        List<Complain> all = complainPostRepository.findAll();
+        List<ComplainPost> all = complainPostRepository.findAll();
         assertTrue(!all.isEmpty());
 
-        List<Complain> complain = complainPostRepository.findByDtype("COMPLAIN");
+        List<ComplainPost> complain = complainPostRepository.findByDtype("COMPLAIN");
         assertTrue(!complain.isEmpty());
     }
 
@@ -146,7 +146,7 @@ public class CommonRepositoryTest {
     public void testFindByTitleContaining() {
         // given
         Pageable pageable = PageRequest.of(0, 3);
-        Page<Complain> result = complainPostRepository.findByTitleContaining("Test", pageable);
+        Page<ComplainPost> result = complainPostRepository.findByTitleContaining("Test", pageable);
 
         // then
         assertTrue(result.getTotalElements() > 3);
@@ -158,7 +158,7 @@ public class CommonRepositoryTest {
     public void testFindByTitleContainingAndDtype() {
 
         // when
-        Market post = new Market();
+        MarketPost post = new MarketPost();
         post.setTitle(post.getClass().getSimpleName() + " Title");
         post.setContent(post.getClass().getSimpleName() + " Content");
         post.setCategoryId(1L);
@@ -167,7 +167,7 @@ public class CommonRepositoryTest {
 
         // given
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Market> result = marketPostRepository.findByTitleContainingAndDtype("Test", "MARKETS", pageable); // Adjust the dtype value based on your entities
+        Page<MarketPost> result = marketPostRepository.findByTitleContainingAndDtype("Test", "MARKETS", pageable); // Adjust the dtype value based on your entities
 
         // then
         assertEquals(1, result.getTotalElements());
@@ -178,14 +178,14 @@ public class CommonRepositoryTest {
     public void testFindByComments_CommonPostId() {
 
         // when
-        Qna post = new Qna();
+        QnaPost post = new QnaPost();
         post.setTitle(post.getClass().getSimpleName() + " Title");
         post.setContent(post.getClass().getSimpleName() + " Content");
         post.setCategoryId(1L);
         post.setBoardGroupId(1L);
         qnaPostRepository.save(post);
 
-        Optional<Qna> result = qnaPostRepository.findByComments_CommonPostId(post.getId());
+        Optional<QnaPost> result = qnaPostRepository.findByComments_CommonPostId(post.getId());
         assertTrue(result.isPresent());
     }
 
@@ -193,21 +193,21 @@ public class CommonRepositoryTest {
     @Test
     @DisplayName("카테고리ID 조회")
     public void testFindByCategoryId() {
-        Complain post = new Complain();
+        ComplainPost post = new ComplainPost();
         post.setTitle(post.getClass().getSimpleName() + " Title");
         post.setContent(post.getClass().getSimpleName() + " Content");
         post.setCategoryId(1L);
         post.setBoardGroupId(1L);
         complainPostRepository.save(post);
 
-        Complain post1 = new Complain();
+        ComplainPost post1 = new ComplainPost();
         post1.setTitle(post.getClass().getSimpleName() + " Title");
         post1.setContent(post.getClass().getSimpleName() + " Content");
         post1.setCategoryId(2L);
         post1.setBoardGroupId(1L);
         complainPostRepository.save(post1);
 
-        List<Complain> foundPosts = complainPostRepository.findByCategoryId(1L);
+        List<ComplainPost> foundPosts = complainPostRepository.findByCategoryId(1L);
         assertThat(foundPosts.size()).isGreaterThan(1);
     }
 }

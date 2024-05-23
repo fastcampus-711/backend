@@ -4,7 +4,6 @@ import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +15,6 @@ import java.util.Objects;
 @ToString
 @Builder
 @Entity(name = "users")
-@EntityListeners(AuditingEntityListener.class)
 public class Member extends BaseTimeEntity {
 
     @Id

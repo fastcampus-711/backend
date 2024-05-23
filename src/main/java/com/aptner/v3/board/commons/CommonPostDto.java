@@ -1,42 +1,72 @@
 package com.aptner.v3.board.commons;
 
-import com.aptner.v3.comment.CommentDto;
-import com.aptner.v3.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.commons.domain.CommonPost;
+import com.aptner.v3.comment.CommentDto;
 import com.aptner.v3.global.util.MemberUtil;
-import com.aptner.v3.global.util.ModelMapperUtil;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.reaction.domain.Reactions;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.aptner.v3.CommunityApplication.modelMapper;
+
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommonPostDto {
+    Long id;
+    Long boardGroupId;
+    Long categoryId;
+    Member member;
+    String title;
+    String content;
+    List<String> imageUrls;
+    boolean visible;
+
+    public static CommonPostDto of(Member member, String title, String content, List<String> imageUrls, boolean visible) {
+        return new CommonPostDto(null, null, null, member, title, content, imageUrls, visible);
+    }
+
+    public CommonPost toEntity() {
+        return CommonPost.of(
+            this.boardGroupId,
+            this.categoryId,
+            this.member,
+            this.title,
+            this.content,
+            this.imageUrls,
+            this.visible
+        );
+    }
+
     @Getter
     @ToString
-    @SuperBuilder
     public static class CommonRequest {
-        /* 게시판 구분 ID */
-        private long boardGroupId;
-        /* 카테고리 ID */
-        @NotBlank
-        private long categoryId;
         /* 제목 */
         @NotBlank
-        private String title;
+        String title;
         /* 내용 */
         @NotBlank
-        private String content;
+        String content;
+        /* 이미지 저장 */
+        List<String> imageUrls;
+        /* 노출 여부 */
+        boolean visible = true;
+        /* 작성자 */
+        Long userId;
 
-        private boolean visible;
-
-        public CommonPost toEntity() {
-            ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-            return modelMapper.map(this, CommonPost.class);
+        public CommonPostDto toDto(Member member) { /* 여기에 principal */
+            return CommonPostDto.of(
+                    member,
+                    title,
+                    content,
+                    imageUrls,
+                    visible
+            );
         }
+
     }
 
     @Getter
@@ -44,28 +74,28 @@ public class CommonPostDto {
     @NoArgsConstructor
     public static class CommonResponse {
         private long id;
-        private long userId;
-        private long postUserId;
         private long categoryId;
         private String title;
         private String content;
+        private List<String> imageUrls;
+        private long userId;
+        private long postUserId;
         private boolean visible;
         private int hits;
-        private ReactionColumns reactionColumns;
+        private Reactions reactions;
         private long countOfComments;
-        private List<CommentDto.Response> comments;
+        private List<CommentDto.CommentResponse> comments;
 
         public <E extends CommonPost> CommonResponse(E entity) {
-            ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-            modelMapper.map(entity, this);
+            modelMapper().map(entity, this);
         }
 
         public CommonResponse blindPostAlgorithm() {
             if (!visible && MemberUtil.getMemberId() != userId) {
-                this.title = "비밀 게시글입니다.";
-                this.content = "비밀 게시글입니다.";
-                this.reactionColumns.blindColumns();
+                String secretPhaseOfPost = "비밀 게시글입니다.";
+                this.title = secretPhaseOfPost;
+                this.content = secretPhaseOfPost;
+                this.reactions.blindColumns();
                 this.comments = new ArrayList<>();
             }
             blindCommentAlgorithm(comments);
@@ -73,12 +103,12 @@ public class CommonPostDto {
             return this;
         }
 
-        private void blindCommentAlgorithm(List<CommentDto.Response> comments) {
+        private void blindCommentAlgorithm(List<CommentDto.CommentResponse> comments) {
             if (comments == null)
                 return;
 
             for (int i = 0; i < comments.size(); i++) {
-                CommentDto.Response comment = comments.get(i);
+                CommentDto.CommentResponse comment = comments.get(i);
                 if (comment.isAdmin()) {
                     comments.add(0, comments.remove(i));
                 }
@@ -86,8 +116,9 @@ public class CommonPostDto {
                 if (!comment.isVisible() &&
                         MemberUtil.getMemberId() != userId &&
                         MemberUtil.getMemberId() != postUserId) {
-                    comment.setContent("비밀 댓글입니다.");
-                    comment.getReactionColumns().blindColumns();
+                    String secretPhaseOfComment = "비밀 댓글입니다.";
+                    comment.setContent(secretPhaseOfComment);
+                    comment.getReactions().blindColumns();
                 }
                 blindCommentAlgorithm(comment.getChildComments());
             }

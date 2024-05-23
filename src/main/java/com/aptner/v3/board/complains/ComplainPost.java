@@ -9,8 +9,8 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@DiscriminatorValue("COMPLAIN")
-public class Complain extends CommonPost {
+@DiscriminatorValue("ComplainPost")
+public class ComplainPost extends CommonPost {
 
     public enum Status {
         RECEIVED,
@@ -19,5 +19,5 @@ public class Complain extends CommonPost {
     }
 
     @Enumerated(EnumType.STRING)
-    private Status status = Complain.Status.RECEIVED;
+    private Status status = ComplainPost.Status.RECEIVED;
 }

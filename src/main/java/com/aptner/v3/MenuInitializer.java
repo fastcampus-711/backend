@@ -2,20 +2,14 @@ package com.aptner.v3;
 
 import com.aptner.v3.category.CategoryService;
 import com.aptner.v3.category.dto.CategoryDtoRequest;
-import com.aptner.v3.member.MemberRole;
+import com.aptner.v3.member.repository.MemberRepository;
 import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuCode;
 import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDtoRequest;
-import com.aptner.v3.member.Member;
-import com.aptner.v3.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
 @Component
 @RequiredArgsConstructor
@@ -28,8 +22,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER, MemberRole.ADMIN)));
+//        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER)));
+//        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER, MemberRole.ADMIN)));
 
         // intro
         Menu intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));

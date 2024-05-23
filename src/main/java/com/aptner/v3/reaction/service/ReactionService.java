@@ -14,7 +14,7 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
     private final ReactionRepository<E> reactionRepository;
 
     protected ReactionService(JpaRepository<T, Long> jpaRepository,
-            ReactionRepository<E> reactionRepository) {
+                              ReactionRepository<E> reactionRepository) {
         this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(jpaRepository);
         this.reactionRepository = reactionRepository;
     }

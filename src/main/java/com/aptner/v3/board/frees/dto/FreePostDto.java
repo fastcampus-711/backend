@@ -3,23 +3,22 @@ package com.aptner.v3.board.frees.dto;
 import com.aptner.v3.board.commons.CommonPostDto;
 import com.aptner.v3.board.commons.domain.CommonPost;
 import com.aptner.v3.board.frees.domain.FreePost;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class FreePostDto {
+import static com.aptner.v3.CommunityApplication.modelMapper;
+
+@AllArgsConstructor
+public class FreePostDto extends CommonPostDto {
+
     @Getter
-    @SuperBuilder
     public static class FreeCommonRequest extends CommonPostDto.CommonRequest {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime blindAt;
-        private String blindBy;
-
         public FreePost toEntity() {
-            return new FreePost(getTitle(), getContent(), blindAt, blindBy);
+            return modelMapper().map(this, FreePost.class);
         }
     }
 
@@ -28,6 +27,7 @@ public class FreePostDto {
     public static class FreeCommonResponse extends CommonPostDto.CommonResponse {
         private LocalDateTime blindAt;
         private String blindBy;
+        private List<String> imageUrls;
 
         public <E extends CommonPost> FreeCommonResponse(E entity) {
             super(entity);

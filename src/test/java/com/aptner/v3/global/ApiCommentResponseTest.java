@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)}
 )
 @ContextConfiguration(classes = {CommunityApplication.class})
-public class ApiResponseTest {
+public class ApiCommentResponseTest {
 
     @Autowired
     private MockMvc mockMvc;
