@@ -8,18 +8,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class NoticePostDto {
 
     @Getter
     public static class Request extends CommonPostDto.Request {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime postAt;
+
+        private List<String> imageUrls;
     }
 
     @Getter
     @NoArgsConstructor
     public static class Response extends CommonPostDto.Response {
         private LocalDateTime postAt;
+        private List<String> imageUrls;
     }
 }

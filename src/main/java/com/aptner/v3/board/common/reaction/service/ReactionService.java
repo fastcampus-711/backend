@@ -14,7 +14,7 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
     private final ReactionRepository<E> reactionRepository;
 
     protected ReactionService(JpaRepository<T, Long> jpaRepository,
-            ReactionRepository<E> reactionRepository) {
+                              ReactionRepository<E> reactionRepository) {
         this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(jpaRepository);
         this.reactionRepository = reactionRepository;
     }
@@ -23,8 +23,8 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
         reactionRepository.findByUserIdAndTargetId(reactionDto.getUserId(), reactionDto.getTargetId())
                 .ifPresentOrElse(reaction ->
                                 reactionRepository.save(
-                        (E)reaction.updateReactionType(reactionDto.getReactionType())),
-                        () -> reactionRepository.save((E)reactionDto.toEntity())
+                                        (E) reaction.updateReactionType(reactionDto.getReactionType())),
+                        () -> reactionRepository.save((E) reactionDto.toEntity())
                 );
 
         applyReactionCount(reactionDto.getTargetId());

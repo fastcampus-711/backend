@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class FreePostDto {
     @Getter
     public static class Request extends CommonPostDto.Request {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime blindAt;
         private String blindBy;
     }
@@ -22,5 +23,10 @@ public class FreePostDto {
     public static class Response extends CommonPostDto.Response {
         private LocalDateTime blindAt;
         private String blindBy;
+        private List<String> imageUrls;
+
+        public <E extends CommonPost> Response(E entity) {
+            super(entity);
+        }
     }
 }

@@ -54,7 +54,7 @@ class BlindPostAndCommentTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count_of_comments").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
     }
 
     @Test

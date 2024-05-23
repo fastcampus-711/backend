@@ -13,30 +13,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostService<E, Q, S> commonPostService;
 
-    public CommonPostController(CommonPostService<E, Q, S> commonPostService) {
-        this.commonPostService = commonPostService;
-    }
-
     @GetMapping("/categories/{category-id}")
     @Operation(summary = "분류 선택 게시판 조회")
-    public ApiResponse<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId,
-                                                  @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                                  @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                                  @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
-                                                  HttpServletRequest request) {
-        return ResponseUtil.ok(commonPostService.getPostListByCategoryId(categoryId, request, limit, page, sort));
+    public ResponseEntity<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId, HttpServletRequest request) {
+        return new ResponseEntity<>(commonPostService.getPostListByCategoryId(categoryId, request), HttpStatus.OK);
     }
 
     @GetMapping("/{post-id}")
     @Operation(summary = "게시판 조회")
-    public ApiResponse<?> getPost(@PathVariable(name = "post-id") Long postId) {
-        return ResponseUtil.create(commonPostService.getPost(postId));
+    public ResponseEntity<?> getPost(@PathVariable(name = "post-id") Long postId) {
+        return new ResponseEntity<>(commonPostService.getPost(postId), HttpStatus.OK);
     }
 
     @GetMapping
