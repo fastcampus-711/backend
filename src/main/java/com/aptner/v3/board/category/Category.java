@@ -32,19 +32,19 @@ public class Category {
 
     @Setter
     @Column(updatable = false)
-    private Long menuId;  // 단방형 연결을 위해 객체가 아닌 Long 타입 선언
+    private Long boardGroup;
 
     private Boolean deleted = Boolean.FALSE;
 
     protected Category() {}
-    public Category(String name, String code, Long menuId) {
+    public Category(String name, String code, Long boardGroup) {
         this.code = code;
         this.name = name;
-        this.menuId = menuId;
+        this.boardGroup = boardGroup;
     }
 
-    public static Category of(String code, String name, Long menuId) {
-        return new Category(code, name, menuId);
+    public static Category of(String code, String name, Long boardGroup) {
+        return new Category(code, name, boardGroup);
     }
 
     @Override
