@@ -102,7 +102,6 @@ implements ReactionAndCommentCalculator {
     }
 
     public CommonPost updateCountOfComments(long countOfComments) {
-        System.out.println("countOfComments = " + countOfComments);
         this.countOfComments = countOfComments;
         return this;
     }

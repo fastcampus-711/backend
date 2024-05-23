@@ -54,7 +54,7 @@ class BlindPostAndCommentTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count_of_comments").exists());
     }
 
     @Test
@@ -69,7 +69,12 @@ class BlindPostAndCommentTest {
     }
 
     @Test
-    void visible이_false일_경우_게시글_blind처리() {
-
+    void visible이_false일_경우_게시글_blind처리() throws Exception {
+        mockMvc.perform(
+            get(prefix + "/boards")
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.visible").value(false));
     }
 }

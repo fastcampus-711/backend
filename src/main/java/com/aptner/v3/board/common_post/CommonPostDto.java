@@ -68,7 +68,6 @@ public class CommonPostDto {
         }
 
         public CommonPostDto.Response blindPostAlgorithm() {
-            System.out.println("MemberId : " + MemberUtil.getMemberId() + " " + userId);
             if (!visible && MemberUtil.getMemberId() != userId) {
                 this.title = "비밀 게시글입니다.";
                 this.content = "비밀 게시글입니다.";

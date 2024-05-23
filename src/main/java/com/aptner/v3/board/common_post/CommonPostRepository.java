@@ -29,6 +29,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     //@Query("SELECT * FROM common_post WHERE created_at > NOW() - 7 ORDER BY hits DESC")
     //@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= local datetime - 7 ORDER BY p.hits DESC")
-    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo ORDER BY p.hits DESC")
-    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfter(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, PageRequest of);
+    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo And p.dtype = :dtype ORDER BY p.hits DESC")
+    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, @Param("dtype") String dtype, PageRequest of);
 }

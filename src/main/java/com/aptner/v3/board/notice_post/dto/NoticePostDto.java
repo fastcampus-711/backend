@@ -14,7 +14,7 @@ public class NoticePostDto {
 
     @Getter
     public static class Request extends CommonPostDto.Request {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime postAt;
 
         private List<String> imageUrls;

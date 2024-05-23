@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -222,6 +223,7 @@ class CommonPostControllerTest {
                                 .content(jsonObject.toJSONString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
+                                .characterEncoding(StandardCharsets.UTF_8)
                 ).andDo(print())
                 .andReturn();
 

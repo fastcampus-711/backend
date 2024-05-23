@@ -58,9 +58,8 @@ public class CommonPostService<E extends CommonPost,
         return LocalDateTime.now().minus(7, ChronoUnit.DAYS);
     }
     @Scheduled(cron = "0 0 0 ? * MON") // 0초/ 0분/ 0시/ 아무날짜/ 모든월/ 월요일/ 년도생략시 현재 년도 적용
-    @Transactional
     public List<E> updateTopPosts() {
-        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfter(getSevenDayAgo(), PageRequest.of(0, 3));
+        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(getSevenDayAgo(), "FreePost",PageRequest.of(0, 3));
                 //.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(PageRequest.of(0, 3));
         return topPosts;
     }
@@ -78,12 +77,13 @@ public class CommonPostService<E extends CommonPost,
             //자유게시판의 1페이지일 경우 7일 이내의 조회수+공감수가 가장 높은 3개의 글을 조회
             if (page == 1) {
                 topPostsList = updateTopPosts();
+                pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
                 //인기글3개와 나머지 글 7개를 합쳐서 반환해야함
                 /*topPostsList.addAll(commonPostRepository.findByDtype(dtype));
                 return topPostsList.stream()
                         .map(e -> (S) e.toResponseDtoWithoutComments())
                         .toList();*/
-                List<E> mergedList = Stream.concat(topPostsList.stream(), commonPostRepository.findByDtype(dtype).stream()).toList();
+                List<E> mergedList = Stream.concat(topPostsList.stream(), commonPostRepository.findByDtype(dtype, pageable).stream()).toList();
                 return mergedList.stream()
                         .map(e -> (S) e.toResponseDtoWithoutComments())
                         .toList();
@@ -99,11 +99,13 @@ public class CommonPostService<E extends CommonPost,
                 .toList();
     }
 
-    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
+    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request, Integer limit, Integer page, SortType sort) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+
         String dtype = getDtype(request);
         List<E> list;
         if (categoryId == null) {
-            list = commonPostRepository.findByDtype(dtype);
+            list = commonPostRepository.findByDtype(dtype, pageable).getContent();
 
             return list.stream()
                     .map(e -> (S) e.toResponseDtoWithoutComments())

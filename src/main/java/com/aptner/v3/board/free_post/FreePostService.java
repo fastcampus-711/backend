@@ -15,11 +15,8 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto.Req
     }
 
     public FreePostDto.Response createPost(FreePostDto.Request requestDto) {
-        if (!requestDto.getImageUrls().isEmpty()) {
-            FreePost freePost = requestDto.toEntity(requestDto.getImageUrls());
+            FreePost freePost = (FreePost) requestDto.toEntity();
             return new FreePostDto.Response(commonPostRepository.save(freePost));
-        }
-        return new FreePostDto.Response(commonPostRepository.save(requestDto.toEntity()));
     }
 
    /* public FreePostDto.Response updatePost(long postId, FreePostDto.Request requestDto) {
