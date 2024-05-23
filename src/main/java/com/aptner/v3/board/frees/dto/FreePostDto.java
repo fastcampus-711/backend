@@ -6,6 +6,7 @@ import com.aptner.v3.board.frees.domain.FreePost;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ import static com.aptner.v3.CommunityApplication.modelMapper;
 public class FreePostDto extends CommonPostDto {
 
     @Getter
+    @SuperBuilder
     public static class FreeCommonRequest extends CommonPostDto.CommonRequest {
         public FreePost toEntity() {
             return modelMapper().map(this, FreePost.class);

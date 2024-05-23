@@ -7,6 +7,7 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.reaction.domain.Reactions;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class CommonPostDto {
 
     @Getter
     @ToString
+    @SuperBuilder
     public static class CommonRequest {
         /* 제목 */
         @NotBlank
@@ -53,7 +55,7 @@ public class CommonPostDto {
         /* 이미지 저장 */
         List<String> imageUrls;
         /* 노출 여부 */
-        boolean visible = true;
+        final boolean visible = true;
         /* 작성자 */
         Long userId;
 

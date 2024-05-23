@@ -2,6 +2,7 @@ package com.aptner.v3.menu.dto;
 
 import com.aptner.v3.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.function.Function;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 /**
  * The type Menu dto response.
  */
+@Slf4j
 public record MenuDtoResponse(
         Long id,
         Long parentId,
@@ -70,6 +72,7 @@ public record MenuDtoResponse(
      * @return the set
      */
     public static Set<MenuDtoResponse> toList(List<Menu> menus) {
+        log.debug("menus: {}", menus);
         Map<Long, MenuDtoResponse> map = menus.stream()
                 .map(MenuDtoResponse::from)
                 .collect(Collectors.toMap(MenuDtoResponse::id, Function.identity())); // @todo

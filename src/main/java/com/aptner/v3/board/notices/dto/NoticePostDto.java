@@ -5,12 +5,14 @@ import com.aptner.v3.board.commons.domain.CommonPost;
 import com.aptner.v3.board.notices.domain.NoticePost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import static com.aptner.v3.CommunityApplication.modelMapper;
 
 public class NoticePostDto extends CommonPostDto {
 
     @Getter
+    @SuperBuilder
     public static class NoticeRequest extends CommonPostDto.CommonRequest {
 
         public NoticePost toEntity() {

@@ -5,11 +5,13 @@ import com.aptner.v3.board.commons.domain.CommonPost;
 import com.aptner.v3.board.markets.MarketPost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import static com.aptner.v3.CommunityApplication.modelMapper;
 
 public class MarketDto extends CommonPostDto{
     @Getter
+    @SuperBuilder
     public static class MarketRequest extends CommonPostDto.CommonRequest {
         private String type;
         private String status;

@@ -15,7 +15,7 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     private JPAQueryFactory queryFactory;
 
     @Override
-    public List<Menu> findByIdOrParentId(Long id, Long parentId) {
+    public List<Menu> findByIdOrParentId2(Long id, Long parentId) {
         QMenu menu = QMenu.menu;
         return queryFactory
                 .selectFrom(menu)
@@ -25,7 +25,7 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     @Override
-    public List<Menu> findAllActiveWithActiveParent() {
+    public List<Menu> findAllActiveWithActiveParent2() {
 
         QMenu menu = QMenu.menu;
 

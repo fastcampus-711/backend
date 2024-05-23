@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class FreePostServiceTest {
 
     @InjectMocks
-    CommonPostService<FreePost, FreePostDto.FreeCommonRequest, FreePostDto.FreeCommonResponse> commonPostService;
+    CommonPostService<FreePost, FreePostDto.FreeCommonRequest, FreePostDto.FreeCommonResponse, FreePostDto> commonPostService;
 
     @Mock
     private CommonPostRepository commonPostRepository;
@@ -26,7 +26,6 @@ class FreePostServiceTest {
         FreePostDto.FreeCommonRequest req = FreePostDto.FreeCommonRequest.builder()
                 .title("자유게시판 제목")
                 .content("자유게시판 내용")
-                .categoryId(1L)
                 .build();
 
         commonPostService.createPost(req);
