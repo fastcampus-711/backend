@@ -1,5 +1,6 @@
 package com.aptner.v3.category.dto;
 
+import com.aptner.v3.category.BoardGroup;
 import com.aptner.v3.category.Category;
 
 import java.util.Comparator;
@@ -12,8 +13,9 @@ import java.util.stream.Collectors;
  * The type Category dto response.
  */
 public record CategoryDtoResponse(
+
         Long id,
-        Long menuId,
+        BoardGroup boardGroup,
         String code,
         String name
 ) {
@@ -33,18 +35,18 @@ public record CategoryDtoResponse(
     /**
      * Of category dto response.
      *
-     * @param id     the id
-     * @param menuId the menu id
-     * @param code   the code
-     * @param name   the name
+     * @param id         the id
+     * @param boardGroup the board group
+     * @param code       the code
+     * @param name       the name
      * @return the category dto response
      */
-    public static CategoryDtoResponse of(Long id, Long menuId, String code, String name) {
+    public static CategoryDtoResponse of(Long id, BoardGroup boardGroup, String code, String name) {
 
         Comparator<CategoryDtoResponse> comparator = Comparator
                 .comparing(CategoryDtoResponse::id);
 
-        return new CategoryDtoResponse(id, menuId, code, name);
+        return new CategoryDtoResponse(id, boardGroup, code, name);
     }
 
     /**
@@ -57,7 +59,7 @@ public record CategoryDtoResponse(
 
         return CategoryDtoResponse.of(
                 category.getId(),
-                category.getMenuId(),
+                BoardGroup.getById(category.getBoardGroup()),
                 category.getCode(),
                 category.getName()
         );
@@ -79,7 +81,7 @@ public record CategoryDtoResponse(
         Map<Long, List<CategoryDtoResponse>> groupByMenuId = categories.stream()
                 .collect(
                         Collectors.groupingBy(
-                                Category::getMenuId,
+                                Category::getBoardGroup,
                                 Collectors.mapping(
                                         category -> map.get(category.getId()),
                                         Collectors.toList()
@@ -87,18 +89,10 @@ public record CategoryDtoResponse(
                         )
                 );
 
-        if(groupByMenuId.size() == 1) {
+        if (groupByMenuId.size() == 1) {
             return groupByMenuId.values().iterator().next(); // List<CategoryDtoResponse>
         }
         return groupByMenuId;                                // Map<Long, List<CategoryDtoResponse>>
     }
 
-    /**
-     * Has parent boolean.
-     *
-     * @return the boolean
-     */
-    public boolean hasMenu() {
-        return this.menuId != null;
-    }
 }

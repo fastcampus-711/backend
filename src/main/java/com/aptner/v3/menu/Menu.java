@@ -1,5 +1,6 @@
 package com.aptner.v3.menu;
 
+import com.aptner.v3.category.BoardGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +38,7 @@ public class Menu {
 
     @Setter
     @Column
-    private String url;
+    private BoardGroup boardGroup;
 
     @Setter
     @Column(updatable = false)
@@ -53,15 +54,15 @@ public class Menu {
     protected Menu() {
     }
 
-    protected Menu(String code, String name, String url, Long parentId) {
+    protected Menu(String code, String name, BoardGroup boardGroup, Long parentId) {
         this.code = code;
         this.name = name;
-        this.url = url;
+        this.boardGroup = boardGroup;
         this.parentId = parentId;
     }
 
-    public static Menu of(String code, String name, String url, Long parentId) {
-        return new Menu(code, name, url, parentId);
+    public static Menu of(String code, String name, BoardGroup boardGroup, Long parentId) {
+        return new Menu(code, name, boardGroup, parentId);
     }
 
     @Override

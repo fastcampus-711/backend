@@ -3,7 +3,6 @@ package com.aptner.v3.category;
 import com.aptner.v3.category.dto.CategoryDtoRequest;
 import com.aptner.v3.category.repository.CategoryRepository;
 import com.aptner.v3.global.exception.CategoryException;
-import com.aptner.v3.global.exception.MenuException;
 import com.aptner.v3.menu.MenuService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
@@ -23,20 +22,19 @@ import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final MenuService menuService;
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository, MenuService menuService) {
         this.categoryRepository = categoryRepository;
-        this.menuService = menuService;
     }
 
-    public List<Category> search(Long menuId) {
+    public List<Category> search(BoardGroup boardGroup) {
 
-        if (menuId != null) {
-            return categoryRepository.findByMenuId(menuId);
+        log.debug("boardGroup: {},{}", boardGroup, boardGroup.getDomain());
+        if (boardGroup.ALL == boardGroup) {
+            return categoryRepository.findAll();
         }
-        return categoryRepository.findAll();
+        return categoryRepository.findByBoardGroup(boardGroup.getId());
     }
 
     public Category createCategory(CategoryDtoRequest request) {
@@ -81,12 +79,6 @@ public class CategoryService {
     }
 
     private void verifyCreate(CategoryDtoRequest request) {
-        // menuId
-        if (request.menuId() != null) {
-            if (!menuService.isExistsMenu(request.menuId())) {
-                throw new MenuException(_NOT_FOUND);
-            }
-        }
         // code
         if (StringUtils.isNotEmpty(request.code())) {
             checkDuplicatedCode(request);

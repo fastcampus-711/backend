@@ -1,8 +1,8 @@
 package com.aptner.v3.menu.dto;
 
+import com.aptner.v3.category.BoardGroup;
 import com.aptner.v3.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.function.Function;
@@ -11,12 +11,13 @@ import java.util.stream.Collectors;
 /**
  * The type Menu dto response.
  */
-@Slf4j
 public record MenuDtoResponse(
         Long id,
         Long parentId,
         String code,
         String name,
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        BoardGroup boardGroup,
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         Set<MenuDtoResponse> list
 ) {
@@ -28,8 +29,8 @@ public record MenuDtoResponse(
      * @param name the name
      * @return the menu dto response
      */
-    public static MenuDtoResponse of(Long id, String code, String name) {
-        return MenuDtoResponse.of(id, code, name);
+    public static MenuDtoResponse of(Long id, String code, String name, BoardGroup boardGroup) {
+        return MenuDtoResponse.of(id, code, name, boardGroup);
     }
 
     /**
@@ -41,12 +42,12 @@ public record MenuDtoResponse(
      * @param name     the name
      * @return the menu dto response
      */
-    public static MenuDtoResponse of(Long id, Long parentId, String code, String name) {
+    public static MenuDtoResponse of(Long id, Long parentId, String code, String name, BoardGroup boardGroup) {
 
         Comparator<MenuDtoResponse> comparator = Comparator
                 .comparing(MenuDtoResponse::id);
 
-        return new MenuDtoResponse(id, parentId, code, name, new TreeSet<>(comparator));
+        return new MenuDtoResponse(id, parentId, code, name, boardGroup, new TreeSet<>(comparator));
     }
 
     /**
@@ -61,7 +62,8 @@ public record MenuDtoResponse(
                 menu.getId(),
                 menu.getParentId(),
                 menu.getCode(),
-                menu.getName()
+                menu.getName(),
+                menu.getBoardGroup()
         );
     }
 
@@ -72,7 +74,6 @@ public record MenuDtoResponse(
      * @return the set
      */
     public static Set<MenuDtoResponse> toList(List<Menu> menus) {
-        log.debug("menus: {}", menus);
         Map<Long, MenuDtoResponse> map = menus.stream()
                 .map(MenuDtoResponse::from)
                 .collect(Collectors.toMap(MenuDtoResponse::id, Function.identity())); // @todo
