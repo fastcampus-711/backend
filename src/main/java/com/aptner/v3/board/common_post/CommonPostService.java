@@ -1,7 +1,7 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
+import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.global.error.ErrorCode;
@@ -25,10 +25,10 @@ public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
-    private final CountOfReactionAndCommentApplyService<E> countOfReactionAndCommentApplyService;
+    private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
 
     public CommonPostService(CommonPostRepository<E> commonPostRepository) {
-        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commonPostRepository);
+        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
     }
 

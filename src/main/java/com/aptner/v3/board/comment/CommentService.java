@@ -1,6 +1,6 @@
 package com.aptner.v3.board.comment;
 
-import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
+import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommonPostRepository<CommonPost> commonPostRepository;
-    private final CountOfReactionAndCommentApplyService<Comment> countOfReactionAndCommentApplyService;
+    private final CountCommentsAndReactionApplyService<Comment> countOfReactionAndCommentApplyService;
     public CommentService(CommentRepository commentRepository, CommonPostRepository<CommonPost> commonPostRepository) {
         this.commentRepository = commentRepository;
         this.commonPostRepository = commonPostRepository;
-        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commentRepository);
+        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commentRepository);
     }
 
     public CommentDto.Response addComment(long postId, Long commentId, CommentDto.Request requestDto) {
