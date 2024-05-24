@@ -14,8 +14,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,7 +54,7 @@ class BlindPostAndCommentTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count_of_comments").exists());
     }
 
     @Test
@@ -64,12 +65,16 @@ class BlindPostAndCommentTest {
         )
                 .andExpect(status().isOk())
                 .andDo(print())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.comments[0:1].admin").value(true))
-        ;
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.comments[0:1].admin").value(true));
     }
 
     @Test
-    void visible이_false일_경우_게시글_blind처리() {
-
+    void visible이_false일_경우_게시글_blind처리() throws Exception {
+        mockMvc.perform(
+            get(prefix + "/boards")
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.visible").value(false));
     }
 }

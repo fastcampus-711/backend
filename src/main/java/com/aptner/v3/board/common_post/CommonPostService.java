@@ -1,9 +1,11 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.category.CategoryCode;
-import com.aptner.v3.board.common.reaction.service.CountOfReactionAndCommentApplyService;
+import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
+import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Primary;
@@ -28,10 +30,10 @@ public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
-    private final CountOfReactionAndCommentApplyService<E> countOfReactionAndCommentApplyService;
+    private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
 
     public CommonPostService(CommonPostRepository<E> commonPostRepository) {
-        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(commonPostRepository);
+        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
     }
 
@@ -56,38 +58,40 @@ public class CommonPostService<E extends CommonPost,
         return LocalDateTime.now().minus(7, ChronoUnit.DAYS);
     }
     @Scheduled(cron = "0 0 0 ? * MON") // 0초/ 0분/ 0시/ 아무날짜/ 모든월/ 월요일/ 년도생략시 현재 년도 적용
-    @Transactional
     public List<E> updateTopPosts() {
-        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfter(getSevenDayAgo(), PageRequest.of(0, 3));
+        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(getSevenDayAgo(), "FreePost",PageRequest.of(0, 3));
                 //.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(PageRequest.of(0, 3));
         return topPosts;
     }
 
-    public List<S> getPostList(HttpServletRequest request, Integer page) {
+    public List<S> getPostList(HttpServletRequest request, Integer limit, Integer page, SortType sort) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+
         String dtype = getDtype(request);
 
         List<E> list;
         List<E> topPostsList;
         if (dtype.equals("CommonPost")) {
-            list = commonPostRepository.findAll();
+            list = commonPostRepository.findAll(pageable).getContent();
         }else if (dtype.equals("FreePost")) {
             //자유게시판의 1페이지일 경우 7일 이내의 조회수+공감수가 가장 높은 3개의 글을 조회
             if (page == 1) {
                 topPostsList = updateTopPosts();
+                pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
                 //인기글3개와 나머지 글 7개를 합쳐서 반환해야함
                 /*topPostsList.addAll(commonPostRepository.findByDtype(dtype));
                 return topPostsList.stream()
                         .map(e -> (S) e.toResponseDtoWithoutComments())
                         .toList();*/
-                List<E> mergedList = Stream.concat(topPostsList.stream(), commonPostRepository.findByDtype(dtype).stream()).toList();
+                List<E> mergedList = Stream.concat(topPostsList.stream(), commonPostRepository.findByDtype(dtype, pageable).stream()).toList();
                 return mergedList.stream()
                         .map(e -> (S) e.toResponseDtoWithoutComments())
                         .toList();
             } else {
-                list = commonPostRepository.findByDtype(dtype);
+                list = commonPostRepository.findByDtype(dtype, pageable).getContent();;
             }
         } else {
-            list = commonPostRepository.findByDtype(dtype);
+            list = commonPostRepository.findByDtype(dtype, pageable).getContent();;
         }
 
         return list.stream()
@@ -95,11 +99,13 @@ public class CommonPostService<E extends CommonPost,
                 .toList();
     }
 
-    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request) {
+    public List<S> getPostListByCategoryId(Long categoryId, HttpServletRequest request, Integer limit, Integer page, SortType sort) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+
         String dtype = getDtype(request);
         List<E> list;
         if (categoryId == null) {
-            list = commonPostRepository.findByDtype(dtype);
+            list = commonPostRepository.findByDtype(dtype, pageable).getContent();
 
             return list.stream()
                     .map(e -> (S) e.toResponseDtoWithoutComments())
@@ -119,9 +125,9 @@ public class CommonPostService<E extends CommonPost,
 
         List<E> list;
         if (dtype.equals("CommonPost"))
-            list = commonPostRepository.findByTitleContaining(keyword, pageable).getContent();
+            list = commonPostRepository.findByTitleContainingIgnoreCaseAndVisible(keyword, pageable, true).getContent();
         else
-            list = commonPostRepository.findByTitleContainingAndDtype(keyword, dtype, pageable).getContent();
+            list = commonPostRepository.findByTitleContainingIgnoreCaseAndDtypeAndVisible(keyword, dtype, pageable, true).getContent();
 
         return list.stream()
                 .map(e -> (S) e.toResponseDtoWithoutComments())
@@ -129,21 +135,25 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public S createPost(Q requestDto) {
-        E entity = (E) requestDto.toEntity();
+        E entity = (E) requestDto.toEntity().setUserId();
         commonPostRepository.save(entity);
+
         return (S) entity.toResponseDtoWithoutComments();
     }
 
-    public S updatePost(long postId, Q requestDto) {
-        return (S) commonPostRepository.findById(postId)
-                .orElseThrow(InvalidTableIdException::new)
-                .updateByUpdateRequest(requestDto)
+    public S updatePost(HttpServletRequest request, long postId, Q requestDto) {
+        E entity = validUpdateOrDeleteRequestIsPossible(request, postId);
+
+        return (S) entity.updateByUpdateRequest(requestDto)
                 .toResponseDtoWithoutComments();
     }
 
-    public long deletePost(long id) {
-        commonPostRepository.deleteById(id);
-        return id;
+    public long deletePost(HttpServletRequest request, long postId) {
+        validUpdateOrDeleteRequestIsPossible(request, postId);
+
+        commonPostRepository.deleteById(postId);
+
+        return postId;
     }
 
     private static String getDtype(HttpServletRequest request) {
@@ -156,5 +166,18 @@ public class CommonPostService<E extends CommonPost,
                 .findFirst()
                 .orElseGet(() -> CategoryCode.공통)
                 .getDtype();
+    }
+
+    private E validUpdateOrDeleteRequestIsPossible(HttpServletRequest request, long postId) {
+        E entity = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
+
+        if (!entity.validUpdateOrDeleteAuthority())
+            throw new PostException(ErrorCode.INSUFFICIENT_AUTHORITY);
+
+        if (!entity.checkIsDtypeIsEquals(getDtype(request)))
+            throw new PostException(ErrorCode.INCORRECT_TARGET_BOARD);
+
+        return entity;
     }
 }

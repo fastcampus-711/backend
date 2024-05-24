@@ -1,20 +1,18 @@
 package com.aptner.v3.board.free_post.domain;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
 public class FreePost extends CommonPost {
     private String blindBy;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime blindAt;
-
-    private List<String> imageUrls;
-
 
     public FreePost() {}
 
@@ -22,11 +20,5 @@ public class FreePost extends CommonPost {
         super(title, content);
         this.blindBy = blindBy;
         this.blindAt = blindAt;
-    }
-    public FreePost(String title, String content, LocalDateTime blindAt, String blindBy, List<String> imageUrls) {
-        super(title, content);
-        this.blindBy = blindBy;
-        this.blindAt = blindAt;
-        this.imageUrls = imageUrls;
     }
 }

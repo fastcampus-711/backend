@@ -1,7 +1,6 @@
 package com.aptner.v3.board.notice_post.controller;
 
 import com.aptner.v3.board.common_post.CommonPostController;
-import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.notice_post.NoticePostService;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.aptner.v3.board.notice_post.dto.NoticePostDto;
@@ -15,22 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "공지 사항")
+@Tag(name="공지 사항")
 @RequestMapping("/boards/notices")
 public class NoticePostController extends CommonPostController<NoticePost, NoticePostDto.Request, NoticePostDto.Response> {
-    public NoticePostController(CommonPostService<NoticePost, NoticePostDto.Request, NoticePostDto.Response> commonPostService,
-                                NoticePostService noticePostService) {
-        super(commonPostService);
-        this.noticePostService = noticePostService;
-    }
-
     private final NoticePostService noticePostService;
-
-    @PostMapping(value = "/attach")
-    @Operation(summary = "첨부 파일 업로드")
-    public ResponseEntity<?> createNoticePost(@RequestBody NoticePostDto.Request requestDto) {
-        return new ResponseEntity<>(noticePostService.createNoticePost(requestDto), HttpStatus.CREATED);
+    public NoticePostController(NoticePostService noticePostService) {
+        super(noticePostService);
+        this.noticePostService = (NoticePostService) commonPostService;
     }
+//    @PostMapping(value = "/attach")
+//    @Operation(summary = "첨부 파일 업로드")
+//    public ResponseEntity<?> createNoticePost(@RequestBody NoticePostDto.Request requestDto) {
+//        return new ResponseEntity<>(noticePostService.createNoticePost(requestDto), HttpStatus.CREATED);
+//    }
 
     /*@PutMapping("/{post-id}/update")
     @Operation(summary = "게시판 수정")

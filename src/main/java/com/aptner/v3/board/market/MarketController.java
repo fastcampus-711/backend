@@ -3,6 +3,8 @@ package com.aptner.v3.board.market;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
+import com.aptner.v3.global.error.response.ApiResponse;
+import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -26,8 +28,8 @@ public class MarketController extends CommonPostController<Market, MarketDto.Req
 
     @PostMapping(value = "/attach")
     @Operation(summary = "첨부 파일 업로드")
-    public ResponseEntity<?> createPost(@RequestBody MarketDto.Request requestDto) {
-        return new ResponseEntity<>(marketService.createPost(requestDto), HttpStatus.CREATED);
+    public ApiResponse<?> createPost(@RequestBody MarketDto.Request requestDto) {
+        return ResponseUtil.create(marketService.createPost(requestDto));
         //return ResponseEntity.ok(marketService.createPost(requestDto));
     }
 

@@ -78,6 +78,10 @@ dependencies {
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+	// https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
+	implementation 'org.hibernate.validator:hibernate-validator'
+
+
 }
 
 tasks.named('test') {

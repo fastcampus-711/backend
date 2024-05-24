@@ -5,6 +5,8 @@ import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.free_post.FreePostService;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
+import com.aptner.v3.global.error.response.ApiResponse;
+import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +28,18 @@ import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 public class FreePostController extends CommonPostController<FreePost, FreePostDto.Request, FreePostDto.Response> {
     private final FreePostService freePostService;
 
+    public FreePostController(
+            CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,
+            FreePostService freePostService) {
+        super(commonPostService);
+        this.freePostService = freePostService;
+    }
+
     @PostMapping(value = "/attach")
     @Operation(summary = "첨부 파일 URL 업로드")
-    public ResponseEntity<?> createPost(@RequestBody FreePostDto.Request requestDto) {
+    public ApiResponse<?> createPost(@RequestBody FreePostDto.Request requestDto) {
         log.info("@@@@@@ Controller.requestDto = " + requestDto.toString());
-        return new ResponseEntity<>(freePostService.createPost(requestDto), HttpStatus.CREATED);
+        return ResponseUtil.create(freePostService.createPost(requestDto));
     }
 
     /*@PutMapping("/{post-id}/update")
@@ -44,11 +53,4 @@ public class FreePostController extends CommonPostController<FreePost, FreePostD
     public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
         return new ResponseEntity<>(freePostService.deletePost(postId), HttpStatus.OK);
     }*/
-
-    public FreePostController(
-            CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,
-            FreePostService freePostService) {
-        super(commonPostService);
-        this.freePostService = freePostService;
-    }
 }

@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
-    List<T> findByDtype(String dtype);
+    Page<T> findByDtype(String dtype, Pageable pageable);
 
-    Page<T> findByTitleContaining(String keyword, Pageable pageable);
+    Page<T> findByTitleContainingIgnoreCaseAndVisible(String keyword, Pageable pageable, boolean visible);
 
-    Page<T> findByTitleContainingAndDtype(String keyword, String dtype, Pageable pageable);
+    Page<T> findByTitleContainingIgnoreCaseAndDtypeAndVisible(String keyword, String dtype, Pageable pageable, boolean visible);
 
     Optional<T> findByComments_CommonPostId(long postId);
 
@@ -29,6 +29,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     //@Query("SELECT * FROM common_post WHERE created_at > NOW() - 7 ORDER BY hits DESC")
     //@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= local datetime - 7 ORDER BY p.hits DESC")
-    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo ORDER BY p.hits DESC")
-    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfter(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, PageRequest of);
+    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo And p.dtype = :dtype ORDER BY p.hits DESC")
+    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, @Param("dtype") String dtype, PageRequest of);
 }

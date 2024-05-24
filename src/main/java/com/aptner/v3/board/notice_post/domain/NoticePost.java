@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 @Getter
 public class NoticePost extends CommonPost {
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime postAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime postAt = LocalDateTime.now();
 
     private List<String> imageUrls;
     public NoticePost() {

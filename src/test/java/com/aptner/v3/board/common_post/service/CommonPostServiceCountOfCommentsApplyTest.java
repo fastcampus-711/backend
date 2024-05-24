@@ -1,8 +1,8 @@
 package com.aptner.v3.board.common_post.service;
 
+import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -57,7 +58,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.count_of_comments").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count_of_comments").exists());
     }
 
     @Test
@@ -70,6 +71,8 @@ class CommonPostServiceCountOfCommentsApplyTest {
         mockMvc.perform(
                 post(prefix + "/boards/1/comments")
                         .content(jsonObject.toJSONString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
         );
 
         //then
@@ -82,8 +85,7 @@ class CommonPostServiceCountOfCommentsApplyTest {
                         get(prefix + "/boards/1")
                 )
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.count_of_comments").value(countOfComments))
-        ;
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 
     @Test
@@ -96,19 +98,20 @@ class CommonPostServiceCountOfCommentsApplyTest {
         mockMvc.perform(
                 put(prefix + "/boards/1/comments/1")
                         .content(jsonObject.toJSONString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
         );
 
         //then
         CommonPostDto.Response commonPost =
                 ((CommonPost) commonPostRepository.findById(1).orElseThrow())
-                        .toResponseDtoWithComments();
+                        .toResponseDtoWithoutComments();
         long countOfComments = commonPost.getCountOfComments();
 
         mockMvc.perform(
                 get(prefix + "/boards/1")
         )
-//                .andExpect(jsonPath("$.count_of_comments").value(countOfComments))
-        ;
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 
     @Test
@@ -118,8 +121,8 @@ class CommonPostServiceCountOfCommentsApplyTest {
         //when
         mockMvc.perform(
                 delete(prefix + "/boards/1/comments/1")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
         );
 
         //then
@@ -131,6 +134,6 @@ class CommonPostServiceCountOfCommentsApplyTest {
         mockMvc.perform(
                         get(prefix + "/boards/1")
                 )
-                .andExpect(jsonPath("$.count_of_comments").value(countOfComments));
+                .andExpect(jsonPath("$.data.count_of_comments").value(countOfComments));
     }
 }

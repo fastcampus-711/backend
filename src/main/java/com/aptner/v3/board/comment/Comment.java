@@ -27,7 +27,7 @@ public class Comment implements ReactionAndCommentCalculator {
     private String content;
 
     @Embedded
-    private ReactionColumns reactionColumns;
+    private ReactionColumns reactionColumns = new ReactionColumns();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "common_post_id")
@@ -52,17 +52,15 @@ public class Comment implements ReactionAndCommentCalculator {
     public static Comment of(CommonPost commonPost, CommentDto.Request request) {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        request.setCommonPost(commonPost);
 
         return modelMapper
-                .map(request, Comment.class);
+                .map(request, Comment.class).setCommonPost(commonPost);
     }
 
     public static Comment of(Comment comment, CommentDto.Request request) {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        request.setParentComment(comment);
-        return modelMapper.map(request, Comment.class);
+        return modelMapper.map(request, Comment.class).setParentComment(comment);
     }
 
     public Comment updateByRequestDto(CommentDto.Request requestDto) {
@@ -76,5 +74,15 @@ public class Comment implements ReactionAndCommentCalculator {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         return modelMapper.map(this, CommentDto.Response.class);
+    }
+
+    private Comment setCommonPost(CommonPost commonPost) {
+        this.commonPost = commonPost;
+        return this;
+    }
+
+    private Comment setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+        return this;
     }
 }

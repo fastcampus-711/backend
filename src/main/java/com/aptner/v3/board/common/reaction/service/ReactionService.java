@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public abstract class ReactionService<T extends ReactionAndCommentCalculator, E extends Reaction> {
-    private final CountOfReactionAndCommentApplyService<T> countOfReactionAndCommentApplyService;
+    private final CountCommentsAndReactionApplyService<T> countOfReactionAndCommentApplyService;
     private final ReactionRepository<E> reactionRepository;
 
     protected ReactionService(JpaRepository<T, Long> jpaRepository,
                               ReactionRepository<E> reactionRepository) {
-        this.countOfReactionAndCommentApplyService = new CountOfReactionAndCommentApplyService<>(jpaRepository);
+        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(jpaRepository);
         this.reactionRepository = reactionRepository;
     }
 
@@ -23,8 +23,8 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
         reactionRepository.findByUserIdAndTargetId(reactionDto.getUserId(), reactionDto.getTargetId())
                 .ifPresentOrElse(reaction ->
                                 reactionRepository.save(
-                        (E)reaction.updateReactionType(reactionDto.getReactionType())),
-                        () -> reactionRepository.save((E)reactionDto.toEntity())
+                                        (E) reaction.updateReactionType(reactionDto.getReactionType())),
+                        () -> reactionRepository.save((E) reactionDto.toEntity())
                 );
 
         applyReactionCount(reactionDto.getTargetId());
