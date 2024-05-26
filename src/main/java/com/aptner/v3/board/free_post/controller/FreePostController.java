@@ -35,22 +35,4 @@ public class FreePostController extends CommonPostController<FreePost, FreePostD
         this.freePostService = freePostService;
     }
 
-    @PostMapping(value = "/attach")
-    @Operation(summary = "첨부 파일 URL 업로드")
-    public ApiResponse<?> createPost(@RequestBody FreePostDto.Request requestDto) {
-        log.info("@@@@@@ Controller.requestDto = " + requestDto.toString());
-        return ResponseUtil.create(freePostService.createPost(requestDto));
-    }
-
-    /*@PutMapping("/{post-id}/update")
-    @Operation(summary = "게시판 수정")
-    public ResponseEntity<?> updateFreePost(@PathVariable(name = "post-id") long postId, @RequestBody FreePostDto.Request requestDto) {
-        return new ResponseEntity<>(freePostService.updatePost(postId, requestDto), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{post-id}")
-    @Operation(summary = "게시판 삭제")
-    public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
-        return new ResponseEntity<>(freePostService.deletePost(postId), HttpStatus.OK);
-    }*/
 }

@@ -50,7 +50,7 @@ public class CommonPostController<E extends CommonPost,
             return ResponseUtil.ok(commonPostService.searchPost(request, keyword, limit, page, sort));
     }
 
-    @PostMapping
+    @PostMapping("/")
     @Operation(summary = "게시판 등록")
     public ApiResponse<?> createPost(@RequestBody Q requestDto) {
         return ResponseUtil.create(commonPostService.createPost(requestDto));

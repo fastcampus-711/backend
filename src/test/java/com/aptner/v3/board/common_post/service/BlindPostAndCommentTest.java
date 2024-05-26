@@ -75,6 +75,6 @@ class BlindPostAndCommentTest {
         )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.visible").value(false));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0:1].visible").value(false));
     }
 }

@@ -194,7 +194,7 @@ class CommonPostControllerTest {
         jsonObject.put("blind_at", "2024-05-12T17:00:12");
 
         MvcResult mvcResult = mockMvc.perform(
-                        post(prefix + "/boards/frees")
+                        post(prefix + "/boards/frees/")
                                 .content(jsonObject.toJSONString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -219,7 +219,7 @@ class CommonPostControllerTest {
         jsonObject.put("post_at", "2024-05-12T17:00:12");
 
         MvcResult mvcResult = mockMvc.perform(
-                        post(prefix + "/boards/notices")
+                        post(prefix + "/boards/notices/")
                                 .content(jsonObject.toJSONString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
