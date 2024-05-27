@@ -1,13 +1,13 @@
 package com.aptner.v3.menu;
 
-import com.aptner.v3.category.BoardGroup;
+import com.aptner.v3.board.category.BoardGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE menu SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLRestriction("deleted is false")
 public class Menu {
 
     @Id
@@ -70,7 +70,7 @@ public class Menu {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Menu menu = (Menu) o;
-        return id == menu.id;
+        return Objects.equals(id, menu.id);
     }
 
     @Override

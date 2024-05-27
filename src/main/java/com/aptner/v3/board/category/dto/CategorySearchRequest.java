@@ -1,6 +1,6 @@
 package com.aptner.v3.board.category.dto;
 
-import com.aptner.v3.category.BoardGroup;
+import com.aptner.v3.board.category.BoardGroup;
 import jakarta.validation.constraints.NotNull;
 
 public record CategorySearchRequest(

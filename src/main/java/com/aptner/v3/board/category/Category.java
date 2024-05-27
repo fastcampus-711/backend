@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLRestriction("deleted is false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +52,7 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return id == category.id;
+        return Objects.equals(id, category.id);
     }
 
     @Override

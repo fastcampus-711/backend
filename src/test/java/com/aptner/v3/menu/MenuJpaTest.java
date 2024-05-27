@@ -1,7 +1,7 @@
 package com.aptner.v3.menu;
 
 import com.aptner.v3.global.config.JpaConfig;
-import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,18 +21,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MenuJpaTest {
 
     @Autowired
-    private TestEntityManager entityManager;
+    TestEntityManager entityManager;
 
     @Autowired
-    private MenuRepository menuRepository;
+    MenuRepository menuRepository;
 
     @Test
     @DisplayName("생성 테스트")
     void givenData_whenInsert_thenCreated() {
         // Given
         long previousCount = menuRepository.count();
-        Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
+        Menu parent = MenuDto.MenuDtoRequest.of("parent", "parent", null).toEntity();
+        Menu child = MenuDto.MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
 
         menuRepository.save(parent);
         menuRepository.save(child);
@@ -45,7 +45,7 @@ public class MenuJpaTest {
     @DisplayName("생성 테스트 - 에러 발생")
     void givenData_whenInsertDuplicatedKey_thenThrowException() {
         // Given
-        Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
+        Menu parent = MenuDto.MenuDtoRequest.of("parent", "parent", null).toEntity();
 
         Menu saved = menuRepository.save(parent);
         Menu duplicated = menuRepository.save(parent);
@@ -57,8 +57,8 @@ public class MenuJpaTest {
     void givenData_whenSubMenuDelete_thenDeleted() {
         // Given
         long previousCount = menuRepository.count();
-        Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
+        Menu parent = MenuDto.MenuDtoRequest.of("parent", "parent", null).toEntity();
+        Menu child = MenuDto.MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
         menuRepository.save(parent);
         menuRepository.save(child);
 
@@ -74,8 +74,8 @@ public class MenuJpaTest {
     void givenData_whenTopMenuDelete_thenDeleted() {
         // Given
         long previousCount = menuRepository.count();
-        Menu parent = MenuDtoRequest.of("parent", "parent", null).toEntity();
-        Menu child = MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
+        Menu parent = MenuDto.MenuDtoRequest.of("parent", "parent", null).toEntity();
+        Menu child = MenuDto.MenuDtoRequest.of("child", "child", parent.getId()).toEntity();
         menuRepository.save(parent);
         menuRepository.save(child);
 

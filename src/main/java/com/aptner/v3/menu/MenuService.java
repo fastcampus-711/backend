@@ -1,7 +1,7 @@
 package com.aptner.v3.menu;
 
 import com.aptner.v3.global.exception.MenuException;
-import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.menu.repository.MenuRepository;
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class MenuService {
         return menuRepository.findAllActiveWithActiveParent();
     }
 
-    public Menu createMenu(MenuDtoRequest request) {
+    public Menu createMenu(MenuDto.MenuDtoRequest request) {
         // verify
         verifyCreate(request);
 
@@ -41,14 +41,14 @@ public class MenuService {
         }
     }
 
-    public Menu deleteMenu(Long id) {
+    public Menu deleteMenu(long id) {
         Menu menu = getMenuById(id);
 
         menuRepository.deleteById(id);
         return menu;
     }
 
-    public Menu updateMenu(Long id, MenuDtoRequest request) {
+    public Menu updateMenu(Long id, MenuDto.MenuDtoRequest request) {
         Menu menu = getMenuById(id);
 
         // verify
@@ -58,19 +58,19 @@ public class MenuService {
         return menu;
     }
 
-    private void verifyUpdate(MenuDtoRequest request, Menu menu) {
+    private void verifyUpdate(MenuDto.MenuDtoRequest request, Menu menu) {
         // update
-        if(StringUtils.isNotEmpty(request.code())) {
-            menu.setCode(request.code());}
-        if(StringUtils.isNotEmpty(request.name())) {
-            menu.setName(request.name());}
+        if(StringUtils.isNotEmpty(request.getCode())) {
+            menu.setCode(request.getCode());}
+        if(StringUtils.isNotEmpty(request.getName())) {
+            menu.setName(request.getName());}
     }
 
-    private void verifyCreate(MenuDtoRequest request) {
+    private void verifyCreate(MenuDto.MenuDtoRequest request) {
 
         // check parent Menu
-        if (request.parentId() != null) {
-            if (!isExistsMenu(request.parentId())) {
+        if (request.getParentId() != null) {
+            if (!isExistsMenu(request.getParentId())) {
                 throw new MenuException(_NOT_FOUND);
             }
         }
