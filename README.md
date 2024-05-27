@@ -1,5 +1,16 @@
 ![header](https://capsule-render.vercel.app/api?type=wave&color=auto&height=300&section=header&text=WELCOME%20readme&fontSize=90)
 
+# 입주민 생활 편의 서비스 <아파트너>
+
+<a > 
+    <h3><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Eyes.png" alt="Eyes" width="2%" /> 아파트너 소개 영상 </h3>
+</a>
+    <br>
+    [![s-g7WuYYAG0](https://img.youtube.com/vi/s-g7WuYYAG0/0.jpg)](https://youtu.be/s-g7WuYYAG0)
+<br>
+<br>
+<br>
+
 [![Docker Build 🚀](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml/badge.svg)](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml) 
 
 ![java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -19,11 +30,11 @@
 # Git Flow
     1. 배포 브랜치    master
     2. 개발 브랜치    develop
-    3. 개발 브랜치    feature/#{issue-no}
+    3. 피쳐 브랜치    feature/#{issue-no}
 
 <details>
 <summary>
-  <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Eyes.png" alt="Eyes" width="2%" /> 개인 Github
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Eyes.png" alt="Eyes" width="2%" /> 개인 Github
 </summary>
    유연수 <br>
     민장규 <br>
