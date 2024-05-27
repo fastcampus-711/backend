@@ -23,12 +23,11 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     List<T> findByCategoryId(Long categoryId);
 
-    //7일 이내의 조회수+공감수가 가장 높은 3개의 글을 조회
-    /*@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= CURRENT_DATE - 7 ORDER BY (p.hits + p.countReactionTypeGood) DESC")
-    List<T> findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(Pageable pageable);*/
-
-    //@Query("SELECT * FROM common_post WHERE created_at > NOW() - 7 ORDER BY hits DESC")
-    //@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= local datetime - 7 ORDER BY p.hits DESC")
-    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo And p.dtype = :dtype ORDER BY p.hits DESC")
-    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, @Param("dtype") String dtype, PageRequest of);
+    @Query("SELECT p FROM CommonPost p " +
+            "WHERE p.dtype = 'FreePost' " +
+            "AND p.createdAt >= :sevenDaysAgo " +
+            "AND p.visible = true " +
+            "AND p.deleted = false " +
+            "ORDER BY (p.hits + p.reactionColumns.countReactionTypeGood) DESC")
+    List<T> findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, PageRequest of);
 }

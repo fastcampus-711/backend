@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -53,14 +54,15 @@ public class CommonPostService<E extends CommonPost,
 
         return (S) commonPost.toResponseDtoWithComments();
     }
+
     //7일 전 날짜를 commonPostRepository 에 반환하는 메소드
-    public LocalDateTime getSevenDayAgo(){
+    public LocalDateTime getSevenDayAgo() {
         return LocalDateTime.now().minus(7, ChronoUnit.DAYS);
     }
-    @Scheduled(cron = "0 0 0 ? * MON") // 0초/ 0분/ 0시/ 아무날짜/ 모든월/ 월요일/ 년도생략시 현재 년도 적용
+
     public List<E> updateTopPosts() {
-        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(getSevenDayAgo(), "FreePost",PageRequest.of(0, 3));
-                //.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(PageRequest.of(0, 3));
+        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(getSevenDayAgo(), PageRequest.of(0, 3));
+        System.out.println("updateTopPosts" + topPosts);
         return topPosts;
     }
 
@@ -73,25 +75,39 @@ public class CommonPostService<E extends CommonPost,
         List<E> topPostsList;
         if (dtype.equals("CommonPost")) {
             list = commonPostRepository.findAll(pageable).getContent();
-        }else if (dtype.equals("FreePost")) {
+        } else if (dtype.equals("FreePost")) {
             //자유게시판의 1페이지일 경우 7일 이내의 조회수+공감수가 가장 높은 3개의 글을 조회
+            topPostsList = updateTopPosts();
             if (page == 1) {
-                topPostsList = updateTopPosts();
                 pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
                 //인기글3개와 나머지 글 7개를 합쳐서 반환해야함
-                /*topPostsList.addAll(commonPostRepository.findByDtype(dtype));
+                list = commonPostRepository.findByDtype(dtype, pageable).getContent();
+
+                list = list.subList(0, list.size()-topPostsList.size());
+
+                topPostsList.addAll(list);
+                //List<E> mergedList = Stream.concat(topPostsList.stream(), list.stream()).toList();
+
                 return topPostsList.stream()
-                        .map(e -> (S) e.toResponseDtoWithoutComments())
-                        .toList();*/
-                List<E> mergedList = Stream.concat(topPostsList.stream(), commonPostRepository.findByDtype(dtype, pageable).stream()).toList();
-                return mergedList.stream()
                         .map(e -> (S) e.toResponseDtoWithoutComments())
                         .toList();
             } else {
-                list = commonPostRepository.findByDtype(dtype, pageable).getContent();;
+                Pageable beforePage = PageRequest.of(page - 2, limit, Sort.by(sort.getColumnName()).descending());
+                Pageable afterPage = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+
+                List<E> list1 = commonPostRepository.findByDtype(dtype, beforePage).getContent();
+                List<E> list2 = commonPostRepository.findByDtype(dtype, afterPage).getContent();
+
+                List<E> resultList = new ArrayList<>();
+                resultList.addAll(list1.subList(7, 10)); // 789
+                resultList.addAll(list2.subList(0, Math.min(list2.size(), 7))); // 0123456
+
+                return resultList.stream()
+                        .map(e -> (S) e.toResponseDtoWithoutComments())
+                        .toList();
             }
         } else {
-            list = commonPostRepository.findByDtype(dtype, pageable).getContent();;
+            list = commonPostRepository.findByDtype(dtype, pageable).getContent();
         }
 
         return list.stream()
