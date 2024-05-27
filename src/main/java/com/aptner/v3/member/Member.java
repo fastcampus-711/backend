@@ -10,25 +10,25 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Builder
 @Entity(name = "users")
-@EntityListeners(AuditingEntityListener.class)
-public class Member extends BaseTimeEntity {
+public class Member {
 
     @Id
+    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @NotNull(message = "필수 입력값입니다.")
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 50, updatable = false)
     private String username;
 
+    @Setter
     @Column(length = 50)
-    private String name;
+    private String nickname;
 
     @NotNull(message = "필수 입력값입니다.")
     @Column(nullable = false)
@@ -37,12 +37,14 @@ public class Member extends BaseTimeEntity {
     @Setter
     private String image;
 
+    @Setter
     @Column(length = 50)
     private String phone;
 
+    @Setter
     @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = { @JoinColumn(name = "USER_ID") })
+    @CollectionTable(name = "user_roles", joinColumns = { @JoinColumn(name = "user_id") })
     @Column(name = "user_role")
     private List<MemberRole> roles;
 

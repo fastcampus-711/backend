@@ -28,8 +28,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.USER, MemberRole.ADMIN)));
+        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER)));
+        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
 
         // intro
         Menu intro = menuService.createMenu(MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));

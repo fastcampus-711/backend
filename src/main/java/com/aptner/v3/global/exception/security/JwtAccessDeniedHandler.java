@@ -1,4 +1,4 @@
-package com.aptner.v3.global.exception;
+package com.aptner.v3.global.exception.security;
 
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;

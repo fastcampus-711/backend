@@ -1,6 +1,9 @@
 package com.aptner.v3.member.controller;
 
-import com.aptner.v3.member.dto.MemberDto;
+import com.aptner.v3.global.error.response.ApiResponse;
+import com.aptner.v3.global.util.ResponseUtil;
+import com.aptner.v3.member.dto.MemberCreateDto;
+import com.aptner.v3.member.dto.MemberUpdateDto;
 import com.aptner.v3.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -8,12 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 
@@ -29,10 +27,19 @@ public class MemberController {
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
-    public ResponseEntity<?> signUp(@Valid @RequestBody MemberDto.MemberRequest request){
-        log.debug("signUp request: {}", request);
-        userService.signUp(request);
-        return new ResponseEntity<>("SIGNUP SUCCESS",HttpStatus.OK); //응답 양식 미정
+    public ApiResponse<?> signUp(@Valid @RequestBody MemberCreateDto.MemberRequest request) {
+
+        return ResponseUtil.create(
+                MemberCreateDto.MemberResponse.of(userService.signUp(request))
+        );
+    }
+
+    @PutMapping("/{user_id}")
+    @Operation(summary = "회원 정보 수정")
+    public ApiResponse<?> update(@RequestParam(value = "user_id") Long userId, @Valid @RequestBody MemberUpdateDto.MemberUpdateRequest request) {
+        return ResponseUtil.update(
+                MemberCreateDto.MemberResponse.of(userService.update(userId, request))
+        );
     }
 
 }

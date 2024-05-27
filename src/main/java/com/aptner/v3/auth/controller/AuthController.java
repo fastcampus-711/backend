@@ -60,16 +60,4 @@ public class AuthController {
         return authorizationHeader.substring(7);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin/test")
-    public ApiResponse<?> adminOnly() {
-        return ResponseUtil.ok("어드민 접속 완료");
-    }
-
-    /* 이거 허용 되면 안됨 */
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    @GetMapping("/admin/user")
-    public ApiResponse<?> userOnly() {
-        return ResponseUtil.ok("회원 접속 완료");
-    }
 }

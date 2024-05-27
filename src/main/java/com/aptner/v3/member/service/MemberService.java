@@ -2,12 +2,16 @@ package com.aptner.v3.member.service;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.global.error.ErrorCode;
-import com.aptner.v3.global.exception.custom.CustomException;
+import com.aptner.v3.global.exception.CustomException;
+import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
-import com.aptner.v3.member.dto.MemberDto;
+import com.aptner.v3.member.dto.MemberCreateDto;
+import com.aptner.v3.member.dto.MemberUpdateDto;
 import com.aptner.v3.member.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
@@ -36,34 +41,29 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public void signUp(MemberDto.MemberRequest memberRequest) {
+    public Member signUp(MemberCreateDto.MemberRequest memberRequest) {
 
-        String username = memberRequest.getUsername();
-        String password = memberRequest.getPassword();
         verifySignUp(memberRequest);
 
         List<MemberRole> memberRoles = memberRequest.getRoles().stream()
-                .map(role -> MemberRole.valueOf("ROLE_" + role.name()))
+                .map(role -> MemberRole.valueOf(role.name()))
                 .collect(Collectors.toList());
 
-        Member memberEntity = Member.builder()
-                .username(username)
-                .password(passwordEncoder().encode(password))
-                .roles(memberRoles)
-                .build();
+        memberRequest.setPassword(passwordEncoder().encode( memberRequest.getPassword()));
+        memberRequest.setRoles(memberRoles);
+        Member mapped = ModelMapperUtil.getModelMapper().map(memberRequest, Member.class);
 
-        memberRepository.save(memberEntity);
+        return memberRepository.save(mapped);
     }
 
-    private void verifySignUp(MemberDto.MemberRequest memberRequest) {
+    private void verifySignUp(MemberCreateDto.MemberRequest memberRequest) {
 
         String username = memberRequest.getUsername();
         String password = memberRequest.getPassword();
         String passwordConfirm = memberRequest.getPasswordConfirm();
 
         // check password
-        if (StringUtils.equals(password, passwordConfirm)) {
-            // password.equals : BCryptPasswordEncoder (Encoded password does not look like BCrypt password.equals)
+        if (!StringUtils.equals(password, passwordConfirm)) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH_EXCEPTION);
         }
 
@@ -73,6 +73,29 @@ public class MemberService implements UserDetailsService {
                     throw new CustomException(ErrorCode.ALREADY_REGISTERED_USER_EXCEPTION);
                 });
 
+    }
+
+    @Transactional
+    public Member update(Long memberId, MemberUpdateDto.MemberUpdateRequest memberUpdateRequest) {
+        try {
+            // nickname
+            Member member = memberRepository.getReferenceById(memberId);
+            if (!StringUtils.isEmpty(memberUpdateRequest.getNickname())) {
+                member.setNickname(memberUpdateRequest.getNickname());
+            }
+
+            // image
+            if (!StringUtils.isEmpty(memberUpdateRequest.getImage())) {
+                member.setImage(member.getImage());
+            }
+
+            if (!StringUtils.isEmpty(memberUpdateRequest.getPhone())) {
+                member.setPhone(memberUpdateRequest.getPhone());
+            }
+            return member;
+        } catch (EntityNotFoundException e) {
+            throw new CustomException(ErrorCode._NOT_FOUND);
+        }
     }
 
 }

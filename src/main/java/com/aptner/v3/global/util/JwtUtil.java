@@ -1,18 +1,15 @@
 package com.aptner.v3.global.util;
 
-import com.aptner.v3.auth.RefreshToken;
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.global.exception.AuthException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
-import com.aptner.v3.member.dto.MemberDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -245,6 +242,7 @@ public class JwtUtil {
      * @return the member
      */
     public Member claimsToMember(Map<String, Object> claims) {
+        // @todo DTO로 전환?
         Member member = new Member();
         member.setId(((Number) claims.get("id")).longValue());
         member.setUsername((String) claims.get("username"));

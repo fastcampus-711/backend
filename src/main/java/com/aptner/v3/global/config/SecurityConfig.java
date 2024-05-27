@@ -2,7 +2,8 @@ package com.aptner.v3.global.config;
 
 
 import com.aptner.v3.auth.repository.RefreshTokenRepository;
-import com.aptner.v3.global.exception.JwtAccessDeniedHandler;
+import com.aptner.v3.global.exception.security.JwtAccessDeniedHandler;
+import com.aptner.v3.global.exception.security.JwtAuthenticationEntryPoint;
 import com.aptner.v3.global.jwt.JwtFilter;
 import com.aptner.v3.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -55,13 +56,14 @@ public class SecurityConfig {
                         "/api-docs.html",
                         "/api-docs/**",
                         "/swagger-ui/**",
-                        "/actuator/**",
-                        "/boards/**"
+                        "/actuator/**"
                         ).permitAll()
+                .requestMatchers(
+                        "/**"
+                ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/**", "/user/signup").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
-
 
         http.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

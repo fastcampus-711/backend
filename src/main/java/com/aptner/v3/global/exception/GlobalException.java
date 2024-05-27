@@ -9,6 +9,18 @@ public class GlobalException extends RuntimeException {
     private final String subject;
     private final ErrorCode errorCode;
 
+    GlobalException(String message) {
+        super(message);
+        this.subject = null;
+        this.errorCode = null;
+    }
+
+    GlobalException(ErrorCode errorCode) {
+        super();
+        this.subject = null;
+        this.errorCode = errorCode;
+    }
+
     public GlobalException(String subject, ErrorCode errorCode) {
         super();
         this.subject = subject;

@@ -1,6 +1,7 @@
 package com.aptner.v3.menu;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@Disabled("QueryDsl 기능 제거")
 @SpringBootTest
 @Transactional
 public class MenuQuerydslTest {
