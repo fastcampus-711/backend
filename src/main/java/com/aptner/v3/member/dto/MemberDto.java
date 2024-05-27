@@ -43,7 +43,6 @@ public class MemberDto extends BaseTimeEntity {
         private long id;
         private String username;
         private String name;
-        private String password;
         private String phone;
         private List<MemberRole> roles;
 

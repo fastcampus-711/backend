@@ -1,6 +1,7 @@
 package com.aptner.v3.global.config;
 
 
+import com.aptner.v3.auth.repository.RefreshTokenRepository;
 import com.aptner.v3.global.exception.JwtAccessDeniedHandler;
 import com.aptner.v3.global.jwt.JwtFilter;
 import com.aptner.v3.global.util.JwtUtil;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,7 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -56,10 +58,7 @@ public class SecurityConfig {
                         "/actuator/**",
                         "/boards/**"
                         ).permitAll()
-                .requestMatchers(
-                        "/**",
-                        "/auth/**"
-                ).permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/**", "/user/signup").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
@@ -70,7 +69,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtFilter AuthenticationFilter() {
-        return new JwtFilter(jwtUtil);
+        return new JwtFilter(jwtUtil, refreshTokenRepository);
     }
 
     @Bean

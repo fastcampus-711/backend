@@ -1,22 +1,23 @@
 package com.aptner.v3.auth.service;
 
 import com.aptner.v3.auth.RefreshToken;
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.auth.dto.LoginDto;
 import com.aptner.v3.auth.dto.TokenDto;
 import com.aptner.v3.auth.repository.RefreshTokenRepository;
-import com.aptner.v3.global.exception.AttachException;
+import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.AuthException;
 import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.util.JwtUtil;
+import com.aptner.v3.member.Member;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.NOT_AVAILABLE_TOKEN;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
@@ -42,83 +43,95 @@ public class AuthService {
     @Transactional
     public TokenDto reissue(String accessToken) {
 
-        // 1. Access Token 검증
-        if (!jwtUtil.validateToken(accessToken)) {
+        UsernamePasswordAuthenticationToken token = getUsernamePasswordAuthenticationToken(accessToken);
+        Authentication authentication = attemptAuthentication(token); // DB 조회
+        log.debug("authentication : {}", authentication);
+        if (authentication == null) {
+            return null;
+        }
+        // 5. 새로운 토큰 생성
+        return successfulAuthentication(authentication);
+    }
+
+    private UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(String accessToken) {
+
+        try {
+            // 1. Access Token Parsing 유효 확인
+            Claims claims = jwtUtil.parseClaims(accessToken);
+            if (claims == null) {
+                throw new AuthException(NOT_AVAILABLE_TOKEN);
+            }
+
+            // 2. Token 에서 Member 객체 생성
+            Member member = jwtUtil.claimsToMember(claims);
+
+            // 3. Refresh Token Parsing 유효 확인
+            RefreshToken refreshToken = getRefreshToken(member.getUsername());
+            Claims refreshTokenClaims = jwtUtil.parseClaims(refreshToken.getValue());
+            if (refreshTokenClaims != null) {
+                throw new AuthException(NOT_AVAILABLE_TOKEN);
+            }
+
+            // 4. Refresh Token 만료 여부
+            if (jwtUtil.isExpired(refreshToken.getValue())) {
+                throw new AuthException(ErrorCode.REFRESH_TOKEN_EXPIRED);
+            }
+
+            // 5. 새로운 Access Token 생성
+            CustomUserDetails userDetails = new CustomUserDetails(member);
+            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        } catch (JwtException | IllegalArgumentException e) {
             throw new AuthException(NOT_AVAILABLE_TOKEN);
         }
-
-        // 2. Access Token 에서 Member ID 찾기
-        Authentication authentication = jwtUtil.getAuthentication(accessToken);
-        String username = authentication.getName();
-
-        // 3. Refresh Token 찾기
-        log.debug("{}", authentication);
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(username)
-                .orElseThrow(() -> new UserException(_NOT_FOUND));
-
-        if(!jwtUtil.validateToken(refreshToken.getValue())) {
-            throw new AttachException(NOT_AVAILABLE_TOKEN);
-        }
-
-        // 5. 새로운 토큰 생성
-        return successfulAuthentication(authentication, refreshToken);
     }
 
     @Transactional
     public TokenDto login(LoginDto request) {
 
-//        try {
-            Authentication authentication = attemptAuthentication(request);
-            if (authentication == null) {
-                return null;
-            }
-            log.debug("authentication : {}", authentication);
-            return successfulAuthentication(authentication, null);
-//        } catch (AuthenticationException e) {
-//            throw e;
-//        }
+        Authentication authentication = attemptAuthentication(request.toAuthentication());  // DB 조회
+        log.debug("authentication : {}", authentication);
+        if (authentication == null) {
+            return null;
+        }
+        return successfulAuthentication(authentication);
     }
 
-    private Authentication attemptAuthentication(LoginDto request) {
-
-        // 1. Login ID/PW , AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = request.toAuthentication();
-
-        // 아파트너사 API
-        // userDB를 디비정보를 넣는다.
-        // 2. 실제로 사용자 비밀번호 체크
-        // MemberService.loadUserByUsername (UserDetailService) 실행됨
+    private Authentication attemptAuthentication(UsernamePasswordAuthenticationToken authenticationToken) {
+        // set Authentication
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 
-    private TokenDto successfulAuthentication(Authentication authentication, RefreshToken originRefreshToken) {
-        // 3. 토큰 생성
-        String username = authentication.getName();
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        String accessToken = jwtUtil.createAccessToken(username, authorities);
-        String refreshToken = determineRefreshToken(originRefreshToken, username, authorities);
+    private TokenDto successfulAuthentication(Authentication authentication) {
 
         return TokenDto.builder()
-                .accessToken(accessToken)
-                .accessTokenExpiresIn(jwtUtil.getAccessTokenExpirationInSeconds()) // @todo
-                .refreshToken(refreshToken)
+                .accessToken(jwtUtil.createAccessToken(authentication))
+                .accessTokenExpiresIn(jwtUtil.getAccessTokenExpirationInSeconds())
+                .refreshToken(getOrCreateRefreshToken(authentication))
                 .build();
     }
 
-    private String determineRefreshToken(RefreshToken originRefreshToken, String username, String authorities) {
+    private String getOrCreateRefreshToken(Authentication authentication) {
 
-        if (originRefreshToken == null || jwtUtil.is3DaysLeftFromExpire(originRefreshToken)) {
-            // If originRefreshToken is null or its expiration time is within 1 hour, create a new refresh token
-            String newRefreshToken = jwtUtil.createRefreshToken(username, authorities);
-            refreshTokenRepository.save(new RefreshToken(username, newRefreshToken, jwtUtil.getRefreshTokenExpirationInSeconds()));
+        RefreshToken refreshToken = getRefreshToken(authentication.getName());
+        String refreshTokenValue = refreshToken.getValue();
+        if (refreshTokenValue != null && jwtUtil.is3DaysLeftFromExpire(refreshTokenValue)) {
+            String newRefreshToken = jwtUtil.createRefreshToken(authentication);
+            refreshTokenRepository.save(new RefreshToken(
+                    authentication.getName(),
+                    newRefreshToken,
+                    jwtUtil.getRefreshTokenExpirationInSeconds()
+            ));
             return newRefreshToken;
         } else {
             // Otherwise, use the existing refresh token
-            return originRefreshToken.getValue();
+            return refreshTokenValue;
         }
+    }
+
+    private RefreshToken getRefreshToken(String username) {
+        return refreshTokenRepository.findByKey(username)
+                .orElseThrow(() -> new UserException(_NOT_FOUND));
     }
 
 }

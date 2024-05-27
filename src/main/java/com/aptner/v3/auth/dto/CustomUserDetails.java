@@ -32,6 +32,15 @@ public class CustomUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets member.
+     *
+     * @return the member
+     */
+    public final Member getMember() {
+        return member;
+    }
+
     public long getId() {
         return member.getId();
     }

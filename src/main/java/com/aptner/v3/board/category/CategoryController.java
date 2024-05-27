@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "게시판")
 @RequestMapping("/")
+@RestController
 @RequiredArgsConstructor
 public class CategoryController {
 
