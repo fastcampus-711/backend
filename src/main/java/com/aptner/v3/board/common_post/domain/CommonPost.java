@@ -10,11 +10,8 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
 import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
@@ -23,7 +20,7 @@ import java.util.List;
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "dtype")
+@DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @SQLRestriction("deleted is false")
 public class CommonPost extends BaseTimeEntity
@@ -47,7 +44,7 @@ implements ReactionAndCommentCalculator {
     private ReactionColumns reactionColumns = new ReactionColumns();
 
     private long countOfComments;
-    //상속 관계를 표현하기 위한 Column ex."NoticePost", "FreePost"
+
     @Column(insertable = false, updatable = false)
     private String dtype;
 

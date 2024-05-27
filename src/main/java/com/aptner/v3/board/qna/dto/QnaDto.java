@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-public class QnaDto {
+public class QnaDto extends CommonPostDto {
     public static class Request extends CommonPostDto.Request {
         private String type;
         private String status;

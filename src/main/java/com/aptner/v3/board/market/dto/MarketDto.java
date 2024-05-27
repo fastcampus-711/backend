@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class MarketDto {
+public class MarketDto extends CommonPostDto {
+
     @Getter
     public static class Request extends CommonPostDto.Request {
         private String type;

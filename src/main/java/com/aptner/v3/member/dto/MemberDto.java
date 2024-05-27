@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class MemberCreateDto {
+public class MemberDto {
     private long memberId;
     private String username;
     private String password;
@@ -26,7 +26,7 @@ public class MemberCreateDto {
     private String image;
     private List<MemberRole> roles;
 
-    public MemberCreateDto(Long memberId, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
+    public MemberDto(Long memberId, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
         this.memberId = memberId;
         this.username = username;
         this.password = password;
@@ -36,12 +36,12 @@ public class MemberCreateDto {
         this.roles = roles;
     }
 
-    public static MemberCreateDto of(String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
-        return new MemberCreateDto(null, username, password, nickname, phone, image, roles);
+    public static MemberDto of(Long id, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
+        return new MemberDto(null, username, password, nickname, phone, image, roles);
     }
 
-    public static MemberCreateDto from(Member entity) {
-        return new MemberCreateDto(
+    public static MemberDto from(Member entity) {
+        return new MemberDto(
                 entity.getId(),
                 entity.getUsername(),
                 entity.getPassword(),
@@ -87,8 +87,9 @@ public class MemberCreateDto {
             return password != null && password.equals(passwordConfirm);
         }
 
-        public MemberCreateDto toDto() {
-            return MemberCreateDto.of(
+        public MemberDto toDto() {
+            return MemberDto.of(
+                    null,
                     username,
                     password,
                     nickname,

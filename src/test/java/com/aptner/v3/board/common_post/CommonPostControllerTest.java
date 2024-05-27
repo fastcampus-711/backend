@@ -1,5 +1,6 @@
 package com.aptner.v3.board.common_post;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
@@ -64,7 +65,7 @@ class CommonPostControllerTest {
     WebApplicationContext webApplicationContext;
 
     @Autowired
-    private CommonPostService<CommonPost, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
+    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
 
     @Autowired
     private CommonPostRepository<CommonPost> commonPostRepository;
@@ -383,10 +384,10 @@ class CommonPostControllerTest {
 
         makeComplainPostAndReturnId();
         makeMarketPostAndReturnId();
-        List<?> foundPosts = complainPostRepository.findByDtype("Complain", pageable).getContent();
+        List<?> foundPosts = complainPostRepository.findByDtype(BoardGroup.COMPLAINT.getTable(), pageable).getContent();
         assertFalse(foundPosts.isEmpty());
 
-        foundPosts = marketPostRepository.findByDtype("Market", pageable).getContent();
+        foundPosts = marketPostRepository.findByDtype(BoardGroup.MARKETS.getTable(), pageable).getContent();
         assertFalse(foundPosts.isEmpty());
     }
 

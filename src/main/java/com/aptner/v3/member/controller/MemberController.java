@@ -2,7 +2,7 @@ package com.aptner.v3.member.controller;
 
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
-import com.aptner.v3.member.dto.MemberCreateDto;
+import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.dto.MemberUpdateDto;
 import com.aptner.v3.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,10 +27,10 @@ public class MemberController {
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
-    public ApiResponse<?> signUp(@Valid @RequestBody MemberCreateDto.MemberRequest request) {
+    public ApiResponse<?> signUp(@Valid @RequestBody MemberDto.MemberRequest request) {
 
         return ResponseUtil.create(
-                MemberCreateDto.MemberResponse.of(userService.signUp(request))
+                MemberDto.MemberResponse.of(userService.signUp(request))
         );
     }
 
@@ -38,7 +38,7 @@ public class MemberController {
     @Operation(summary = "회원 정보 수정")
     public ApiResponse<?> update(@RequestParam(value = "user_id") Long userId, @Valid @RequestBody MemberUpdateDto.MemberUpdateRequest request) {
         return ResponseUtil.update(
-                MemberCreateDto.MemberResponse.of(userService.update(userId, request))
+                MemberDto.MemberResponse.of(userService.update(userId, request))
         );
     }
 

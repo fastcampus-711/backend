@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@DiscriminatorValue("FreePost")
 public class FreePost extends CommonPost {
     private String blindBy;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

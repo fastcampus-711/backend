@@ -1,5 +1,6 @@
 package com.aptner.v3;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryService;
 import com.aptner.v3.board.category.dto.CategoryDto;
@@ -12,6 +13,8 @@ import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,7 +32,7 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER)));
+        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER)));
         memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
 
         // intro
@@ -88,5 +91,10 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("살림정보", "21", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("모임/동호회", "22", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "23", BoardGroup.FREES));
+
+        // 가짜 로그인 사용자 지정
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

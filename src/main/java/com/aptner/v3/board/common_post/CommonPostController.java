@@ -1,5 +1,7 @@
 package com.aptner.v3.board.common_post;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.global.error.response.ApiResponse;
@@ -7,60 +9,67 @@ import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
+        T extends CommonPostDto,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
-    protected final CommonPostService<E, Q, S> commonPostService;
 
-    @GetMapping("/categories/{category-id}")
-    @Operation(summary = "분류 선택 게시판 조회")
-    public ApiResponse<?> getPostListByCategoryId(@PathVariable(name = "category-id") Long categoryId,
-                                                     @RequestParam(name = "keyword", required = false) String keyword,
-                                                     @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                                     @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                                     @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
-                                                     HttpServletRequest request) {
-        return ResponseUtil.ok(commonPostService.getPostListByCategoryId(categoryId, request, limit, page, sort));
+    protected final CommonPostService<E, T, Q, S> commonPostService;
+
+    protected BoardGroup boardGroup = BoardGroup.ALL;
+
+    @GetMapping("/search")
+    @Operation(summary = "게시글 검색")
+    public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
+                                                  @RequestParam(name = "withPopular", required = false) Boolean withPopular,
+                                                  @RequestParam(name = "keyword", required = false) String keyword,
+                                                  @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                                  @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+                                                  @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
+                        @AuthenticationPrincipal CustomUserDetails user
+    ) {
+
+
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+        if( keyword != null) {
+            log.debug("keyword search : categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", categoryId, keyword, limit, page, sort);
+            return ResponseUtil.ok(commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable));
+        }
+        log.debug("category search : categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", categoryId, keyword, limit, page, sort);
+        return ResponseUtil.ok(commonPostService.getPostListByCategoryId(boardGroup, categoryId, pageable));
     }
 
     @GetMapping("/{post-id}")
-    @Operation(summary = "게시판 조회")
+    @Operation(summary = "게시글 상세")
     public ApiResponse<?> getPost(@PathVariable(name = "post-id") Long postId) {
         return ResponseUtil.ok(commonPostService.getPost(postId));
     }
 
-    @GetMapping
-    @Operation(summary = "게시판 조회")
-    public ApiResponse<?> getRequestMapper(@RequestParam(name = "keyword", required = false) String keyword,
-                                           @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                           @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                           @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
-                                           HttpServletRequest request) {
-        if (keyword == null)
-            return ResponseUtil.ok(commonPostService.getPostList(request, limit, page, sort));
-        else
-            return ResponseUtil.ok(commonPostService.searchPost(request, keyword, limit, page, sort));
-    }
-
     @PostMapping("/")
-    @Operation(summary = "게시판 등록")
+    @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(@RequestBody Q requestDto) {
         return ResponseUtil.create(commonPostService.createPost(requestDto));
     }
 
     @PutMapping("/{post-id}")
-    @Operation(summary = "게시판 수정")
+    @Operation(summary = "게시글 수정")
     public ApiResponse<?> updatePost(HttpServletRequest request, @PathVariable(name = "post-id") long postId, @RequestBody Q requestDto) {
         return ResponseUtil.update(commonPostService.updatePost(request, postId, requestDto));
     }
 
     @DeleteMapping("/{post-id}")
-    @Operation(summary = "게시판 삭제")
+    @Operation(summary = "게시글 삭제")
     public ApiResponse<?> deletePost(HttpServletRequest request, @PathVariable(name = "post-id") long postId) {
 
         return ResponseUtil.delete(commonPostService.deletePost(request, postId));
