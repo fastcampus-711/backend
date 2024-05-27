@@ -33,6 +33,7 @@ public enum ErrorCode {
 
     NOT_AVAILABLE_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."),
     NOT_MATCHED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰의 유저 정보가 일치하지 않습니다."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
 
     //  500
     TOKEN_CREATION_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "토큰을 생성하는 과정에서 알 수 없는 오류가 발생했습니다."),

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 import org.modelmapper.ModelMapper;
 
@@ -24,7 +25,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "dtype")
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
-@Where(clause = "deleted is false")
+@SQLRestriction("deleted is false")
 public class CommonPost extends BaseTimeEntity
 implements ReactionAndCommentCalculator {
     @Id

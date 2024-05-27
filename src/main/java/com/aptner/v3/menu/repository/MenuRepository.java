@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MenuRepository extends JpaRepository<Menu, Long> , MenuRepositoryCustom {
+public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @Query("SELECT m FROM Menu m WHERE m.id = :id OR m.parentId = :parentId")
     List<Menu> findByIdOrParentId(@Param("id") long id, @Param("parentId") Long parentId);

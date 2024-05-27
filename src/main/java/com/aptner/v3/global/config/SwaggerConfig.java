@@ -1,5 +1,8 @@
 package com.aptner.v3.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -26,7 +29,7 @@ public class SwaggerConfig {
     public static final Map<String, String[]> GROUPS = Stream.of(
             new SimpleEntry<>("메뉴", new String[]{"/menu/**"}),
             new SimpleEntry<>("회원", new String[]{"/user/**", "/auth/**"}),
-            new SimpleEntry<>("게시판", new String[]{"/boards/**", "/reactions/**"}
+            new SimpleEntry<>("게시판", new String[]{"/boards/**", "/reactions/**", "/categories/**"}
             )
     ).collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
 
@@ -101,6 +104,11 @@ public class SwaggerConfig {
                 .pathsToMatch("/**")
                 .pathsToExclude(excludes)
                 .build();
+    }
+
+    @Bean
+    public ModelResolver modelResolver(ObjectMapper objectMapper) {
+        return new ModelResolver(objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE));
     }
 
 }

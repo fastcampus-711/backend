@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long>, CategoryRepositoryCustom {
 
-    List<Category> findByMenuId(Long menuId);
+    List<Category> findByBoardGroup(Long boardGroupId);
 
     Optional<Category> findByCode(String code);
 }

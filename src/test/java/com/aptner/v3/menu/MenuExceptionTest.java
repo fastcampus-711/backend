@@ -3,7 +3,7 @@ package com.aptner.v3.menu;
 
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.MenuException;
-import com.aptner.v3.menu.dto.MenuDtoRequest;
+import com.aptner.v3.menu.dto.MenuDto;
 import com.aptner.v3.menu.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,17 +26,15 @@ public class MenuExceptionTest {
     @Test
     public void WhenUniqueKey_ThenThrowMenuException() {
         // when
-        Menu before = MenuDtoRequest.of(UNIQUE_KEY, "random", null).toEntity();
+        Menu before = MenuDto.MenuDtoRequest.of(UNIQUE_KEY, "random", null).toEntity();
         menuRepository.save(before);
         menuRepository.flush();
 
         // given
-        MenuDtoRequest uniqueRequest = MenuDtoRequest.of(UNIQUE_KEY, "random", null);
+        MenuDto.MenuDtoRequest uniqueRequest = MenuDto.MenuDtoRequest.of(UNIQUE_KEY, "random", null);
 
         // then
-        MenuException menuException = Assertions.assertThrows(MenuException.class, () -> {
-            menuService.createMenu(uniqueRequest);
-        });
+        MenuException menuException = Assertions.assertThrows(MenuException.class, () -> menuService.createMenu(uniqueRequest));
         assertThat(menuException.getErrorCode()).isEqualTo(ErrorCode._ALREADY_EXIST);
     }
 }
