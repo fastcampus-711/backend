@@ -1,41 +1,42 @@
 package com.aptner.v3.board.category;
 
-import com.aptner.v3.board.category.dto.CategoryDtoRequest;
-import com.aptner.v3.board.category.dto.CategoryDtoResponse;
+import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.category.dto.CategorySearchRequest;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "게시판")
-@RequestMapping("/")
+@Tag(name = "분류")
+@RequestMapping("/categories")
+@RestController
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @DeleteMapping("/categories/{id}")
-    @Operation(summary = "게시판 삭제")
-    public ApiResponse<?> deleteCategory(@PathVariable("id") long id) {
-        return ResponseUtil.delete(categoryService.deleteCategory(id));
+    @DeleteMapping("/{category_id}")
+    @Operation(summary = "분류 삭제")
+    public ApiResponse<?> deleteCategory(@PathVariable("category_id") long categoryId) {
+        return ResponseUtil.delete(categoryService.deleteCategory(categoryId));
     }
 
-    @PutMapping("/{categoryId}")
+    @PutMapping("/{category_id}")
     @Operation(summary = "분류 수정")
-    public ApiResponse<?> updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryDtoRequest categoryRequest) {
+    public ApiResponse<?> updateCategory(@PathVariable("category_id") Long categoryId, @RequestBody CategoryDto.CategoryRequest categoryRequest) {
         return ResponseUtil.update(
-                CategoryDtoResponse.from(categoryService.updateCategory(categoryId, categoryRequest))
+                CategoryDto.CategoryResponse.from(categoryService.updateCategory(categoryId, categoryRequest))
         );
     }
 
     @PostMapping("/search")
     @Operation(summary = "분류 조회")
-    public ApiResponse<?> searchCategory(@RequestBody CategorySearchRequest searchRequest) {
+    public ApiResponse<?> searchCategory(@RequestBody @Valid CategorySearchRequest searchRequest) {
         return ResponseUtil.ok(
-                CategoryDtoResponse.toList(categoryService.search(searchRequest.menuId()))
+                CategoryDto.CategoryResponse.toList(categoryService.search(searchRequest.boardGroup()))
         );
     }
 }

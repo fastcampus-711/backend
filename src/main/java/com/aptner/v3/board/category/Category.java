@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLRestriction("deleted is false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,19 +32,19 @@ public class Category {
 
     @Setter
     @Column(updatable = false)
-    private Long menuId;  // 단방형 연결을 위해 객체가 아닌 Long 타입 선언
+    private Long boardGroup;
 
     private Boolean deleted = Boolean.FALSE;
 
     protected Category() {}
-    public Category(String name, String code, Long menuId) {
+    public Category(String name, String code, Long boardGroup) {
         this.code = code;
         this.name = name;
-        this.menuId = menuId;
+        this.boardGroup = boardGroup;
     }
 
-    public static Category of(String code, String name, Long menuId) {
-        return new Category(code, name, menuId);
+    public static Category of(String code, String name, Long boardGroup) {
+        return new Category(code, name, boardGroup);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return id == category.id;
+        return Objects.equals(id, category.id);
     }
 
     @Override

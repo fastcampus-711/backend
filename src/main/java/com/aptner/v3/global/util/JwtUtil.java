@@ -1,14 +1,15 @@
 package com.aptner.v3.global.util;
 
-import com.aptner.v3.auth.RefreshToken;
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.global.exception.AuthException;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.member.MemberRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,12 +18,10 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.aptner.v3.global.error.ErrorCode.NOT_AVAILABLE_TOKEN;
 import static com.aptner.v3.global.error.ErrorCode.TOKEN_CREATION_EXCEPTION;
 
 /**
@@ -34,10 +33,14 @@ import static com.aptner.v3.global.error.ErrorCode.TOKEN_CREATION_EXCEPTION;
 @Component
 public class JwtUtil {
 
+    /**
+     * The constant AUTHORIZATION_HEADER.
+     */
     public static final String AUTHORIZATION_HEADER = "Authorization";
-
+    /**
+     * The constant BEARER_PREFIX.
+     */
     public static final String BEARER_PREFIX = "Bearer ";
-
     private static final String AUTHORITIES_KEY = "auth";
     private final long accessTokenExpirationInSeconds;
     private final long refreshTokenExpirationInSeconds;
@@ -48,7 +51,10 @@ public class JwtUtil {
     /**
      * Instantiates a new Jwt util.
      *
-     * @param secret the secret
+     * @param secret                          the secret
+     * @param accessTokenExpiration           the access token expiration
+     * @param refreshTokenExpirationInSeconds the refresh token expiration in seconds
+     * @param refreshTokenCreateInHours       the refresh token create in hours
      */
     public JwtUtil(
             @Value("${jwt.secret}") String secret,
@@ -86,52 +92,82 @@ public class JwtUtil {
     }
 
     /**
-     * 유효 토큰 검증
+     * Is 3 days left from expire boolean.
      *
-     * @param token token
+     * @param token the token
      * @return the boolean
      */
-    public boolean validateToken(String token) {
-        return parseClaims(token) != null;
+    public boolean is3DaysLeftFromExpire(String token) {
+        Claims claims = parseClaims(token);
+        if (claims == null) {
+            throw new AuthException(NOT_AVAILABLE_TOKEN);
+        }
+
+        Date expiration = claims.getExpiration();
+        Instant threeDaysFromNow = Instant.now().plus(3, ChronoUnit.DAYS);
+        return expiration.toInstant().isBefore(threeDaysFromNow);
+    }
+
+    /**
+     * Is 3 days left from expire boolean.
+     *
+     * @param expireAt the expire at
+     * @return the boolean
+     */
+    public boolean is3DaysLeftFromExpire(long expireAt) {
+        long oneHourFromNow = Instant.now().plus(refreshTokenCreateInHours, ChronoUnit.HOURS).toEpochMilli();
+        return expireAt <= oneHourFromNow;
     }
 
     /**
      * Create token string.
      *
-     * @param username    the username
-     * @param authorities the authorities
+     * @param authentication the authentication
      * @return the string
      */
-    public String createAccessToken(String username, String authorities) {
+    public String createAccessToken(Authentication authentication) {
 
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return BEARER_PREFIX + Jwts.builder()
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .claim("tokenType", "ACCESS")
-                .claim("username", username)
-                .claim(AUTHORITIES_KEY, authorities)
+                .setClaims(
+                        memberToClaims(userDetails.getMember())
+                )
+                .claim(AUTHORITIES_KEY, userDetails.getAuthorities())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(getExpireTime(accessTokenExpirationInSeconds))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
+    /**
+     * Gets access token expiration in seconds.
+     *
+     * @return the access token expiration in seconds
+     */
     public long getAccessTokenExpirationInSeconds() {
         return getExpireTime(accessTokenExpirationInSeconds).getTime();
     }
 
+
     /**
-     * Create token string.
+     * Create refresh token string.
      *
-     * @param username    the username
-     * @param authorities the authorities
+     * @param authentication the authentication
      * @return the string
      */
-    public String createRefreshToken(String username, String authorities) {
+    public String createRefreshToken(Authentication authentication) {
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
         return BEARER_PREFIX + Jwts.builder()
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .claim("tokenType", "REFRESH")
-                .claim("username", username)
+                .setClaims(memberToClaims(userDetails.getMember()))
                 .claim(AUTHORITIES_KEY, authorities)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(getExpireTime(refreshTokenExpirationInSeconds))
@@ -139,37 +175,22 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * Gets refresh token expiration in seconds.
+     *
+     * @return the refresh token expiration in seconds
+     */
     public long getRefreshTokenExpirationInSeconds() {
         return getExpireTime(refreshTokenExpirationInSeconds).getTime();
     }
 
     /**
-     * Gets authentication.
+     * Parse claims claims.
      *
      * @param token the token
-     * @return the authentication
+     * @return the claims
      */
-    public Authentication getAuthentication(String token) {
-
-        try {
-            // 유저 정보
-            Claims claims = parseClaims(token);
-            assert claims != null;
-            String username = getUsername(claims);
-
-            // Authentication 객체
-            Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(getAuthority(claims))
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
-
-            return new UsernamePasswordAuthenticationToken(username, null, authorities);
-        } catch (Exception e) {
-            throw new MalformedJwtException("정보가 올바르지 않은 토큰입니다.");
-        }
-    }
-
-    private Claims parseClaims(String token) {
+    public Claims parseClaims(String token) {
 
         if (token.startsWith(BEARER_PREFIX)) {
             token = token.substring(BEARER_PREFIX.length());
@@ -195,25 +216,42 @@ public class JwtUtil {
     }
 
     /**
-     * username 추출
+     * Member to claims map.
+     *
+     * @param member the member
+     * @return the map
      */
-    private String getUsername(Claims claims) {
-        return claims.getSubject();
+    public Map<String, Object> memberToClaims(Member member) {
+
+        List<SimpleGrantedAuthority> authority = member.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", member.getId());
+        claims.put("username", member.getUsername());
+        claims.put("roles", authority);
+
+        return claims;
     }
 
     /**
-     * Authority 추출
+     * Claims to member member.
+     *
+     * @param claims the claims
+     * @return the member
      */
-    private String getRole(Claims claims) {
-        return claims.get(AUTHORITIES_KEY, String.class);
+    public Member claimsToMember(Map<String, Object> claims) {
+        // @todo DTO로 전환?
+        Member member = new Member();
+        member.setId(((Number) claims.get("id")).longValue());
+        member.setUsername((String) claims.get("username"));
+        // Add other member fields as needed
+        List<MemberRole> roles = Arrays.stream((String[]) claims.get("roles"))
+                .map(MemberRole::valueOf)
+                .collect(Collectors.toList());
+        member.setRoles(roles);
+        return member;
     }
 
-    private String[] getAuthority(Claims claims) {
-        return claims.get(AUTHORITIES_KEY).toString().split(",");
-    }
-
-    public boolean is3DaysLeftFromExpire(RefreshToken originRefreshToken) {
-        long oneHourFromNow = Instant.now().plus(refreshTokenCreateInHours, ChronoUnit.HOURS).toEpochMilli();
-        return originRefreshToken.getExpireAt() <= oneHourFromNow;
-    }
 }

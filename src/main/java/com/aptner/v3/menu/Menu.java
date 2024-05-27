@@ -1,12 +1,13 @@
 package com.aptner.v3.menu;
 
+import com.aptner.v3.board.category.BoardGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE menu SET deleted = true WHERE id = ?")
-@Where(clause = "deleted is false")
+@SQLRestriction("deleted is false")
 public class Menu {
 
     @Id
@@ -37,7 +38,7 @@ public class Menu {
 
     @Setter
     @Column
-    private String url;
+    private BoardGroup boardGroup;
 
     @Setter
     @Column(updatable = false)
@@ -53,15 +54,15 @@ public class Menu {
     protected Menu() {
     }
 
-    protected Menu(String code, String name, String url, Long parentId) {
+    protected Menu(String code, String name, BoardGroup boardGroup, Long parentId) {
         this.code = code;
         this.name = name;
-        this.url = url;
+        this.boardGroup = boardGroup;
         this.parentId = parentId;
     }
 
-    public static Menu of(String code, String name, String url, Long parentId) {
-        return new Menu(code, name, url, parentId);
+    public static Menu of(String code, String name, BoardGroup boardGroup, Long parentId) {
+        return new Menu(code, name, boardGroup, parentId);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class Menu {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Menu menu = (Menu) o;
-        return id == menu.id;
+        return Objects.equals(id, menu.id);
     }
 
     @Override

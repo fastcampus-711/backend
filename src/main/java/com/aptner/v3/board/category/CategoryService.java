@@ -1,9 +1,8 @@
 package com.aptner.v3.board.category;
 
-import com.aptner.v3.board.category.dto.CategoryDtoRequest;
+import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.global.exception.CategoryException;
-import com.aptner.v3.global.exception.MenuException;
 import com.aptner.v3.menu.MenuService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.aptner.v3.global.error.ErrorCode._ALREADY_EXIST;
-import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
+import static com.aptner.v3.global.error.ErrorCode.*;
 
 
 @Slf4j
@@ -31,15 +29,16 @@ public class CategoryService {
         this.menuService = menuService;
     }
 
-    public List<Category> search(Long menuId) {
+    public List<Category> search(BoardGroup boardGroup) {
 
-        if (menuId != null) {
-            return categoryRepository.findByMenuId(menuId);
+        log.debug("boardGroup: {},{}", boardGroup, boardGroup.getDomain());
+        if (BoardGroup.ALL.equals(boardGroup)) {
+            return categoryRepository.findAll();
         }
-        return categoryRepository.findAll();
+        return categoryRepository.findByBoardGroup(boardGroup.getId());
     }
 
-    public Category createCategory(CategoryDtoRequest request) {
+    public Category createCategory(CategoryDto.CategoryRequest request) {
 
         // verify
         verifyCreate(request);
@@ -58,7 +57,7 @@ public class CategoryService {
         return category;
     }
 
-    public Category updateCategory(long categoryId, CategoryDtoRequest request) {
+    public Category updateCategory(long categoryId, CategoryDto.CategoryRequest request) {
         Category category = getCategoryById(categoryId);
 
         // verify
@@ -68,34 +67,36 @@ public class CategoryService {
         return category;
     }
 
-    private void verifyUpdate(CategoryDtoRequest request, Category category) {
+    private void verifyUpdate(CategoryDto.CategoryRequest request, Category category) {
         // code
-        if (StringUtils.isNotEmpty(request.code())) {
+        if (StringUtils.isNotEmpty(request.getCode())) {
             checkDuplicatedCode(request);
-            category.setCode(request.code());
+            category.setCode(request.getCode());
         }
         // name
-        if (StringUtils.isNotEmpty(request.name())) {
-            category.setName(request.name());
+        if (StringUtils.isNotEmpty(request.getName())) {
+            category.setName(request.getName());
+        }
+        // menu check
+        if (!menuService.isExistsMenu(request.getBoardGroup().getMenuId())) {
+            throw new CategoryException(NOT_EXISTS_MENU_ID_EXCEPTION);
         }
     }
 
-    private void verifyCreate(CategoryDtoRequest request) {
-        // menuId
-        if (request.menuId() != null) {
-            if (!menuService.isExistsMenu(request.menuId())) {
-                throw new MenuException(_NOT_FOUND);
-            }
-        }
+    private void verifyCreate(CategoryDto.CategoryRequest request) {
         // code
-        if (StringUtils.isNotEmpty(request.code())) {
+        if (StringUtils.isNotEmpty(request.getCode())) {
             checkDuplicatedCode(request);
         }
+        // menu check
+        if (!menuService.isExistsMenu(request.getBoardGroup().getMenuId())) {
+            throw new CategoryException(NOT_EXISTS_MENU_ID_EXCEPTION);
+        }
     }
 
-    private void checkDuplicatedCode(CategoryDtoRequest request) {
+    private void checkDuplicatedCode(CategoryDto.CategoryRequest request) {
         // duplicate code (constraint)
-        categoryRepository.findByCode(request.code())
+        categoryRepository.findByCode(request.getCode())
                 .ifPresent(c -> {
                     throw new CategoryException(_ALREADY_EXIST);
                 });

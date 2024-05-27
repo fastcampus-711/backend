@@ -6,10 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MemberRole {
-    USER("입주민"),
-    ADMIN("관리자"),
-    RELATED_COMPANY("관계사"),
-    OWNER("소유주");
+    ROLE_USER("입주민"),
+    ROLE_ADMIN("관리자");
 
     private final String description;
 }
