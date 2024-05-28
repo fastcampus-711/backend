@@ -1,7 +1,6 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.error.ErrorCode;
@@ -14,14 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Primary
 @Service
 @Transactional
 public class CommonPostService<E extends CommonPost,
-        T extends CommonPostDto,
+        K extends CommonPostDto,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
@@ -115,17 +113,17 @@ public class CommonPostService<E extends CommonPost,
         return postId;
     }
 
-    private static String getDtype(HttpServletRequest request) {
-        String[] URIs = request.getRequestURI()
-                .split("/");
-        String target = URIs.length <= 2 ? "" : URIs[2];
-
-        return Arrays.stream(CategoryCode.values())
-                .filter(c -> c.getURI().equals(target))
-                .findFirst()
-                .orElseGet(() -> CategoryCode.공통)
-                .getDtype();
-    }
+//    private static String getDtype(HttpServletRequest request) {
+//        String[] URIs = request.getRequestURI()
+//                .split("/");
+//        String target = URIs.length <= 2 ? "" : URIs[2];
+//
+//        return Arrays.stream(CategoryCode.values())
+//                .filter(c -> c.getURI().equals(target))
+//                .findFirst()
+//                .orElseGet(() -> CategoryCode.공통)
+//                .getDtype();
+//    }
 
     private E validUpdateOrDeleteRequestIsPossible(HttpServletRequest request, long postId) {
         E entity = commonPostRepository.findById(postId)
@@ -134,8 +132,8 @@ public class CommonPostService<E extends CommonPost,
         if (!entity.validUpdateOrDeleteAuthority())
             throw new PostException(ErrorCode.INSUFFICIENT_AUTHORITY);
 
-        if (!entity.checkIsDtypeIsEquals(getDtype(request)))
-            throw new PostException(ErrorCode.INCORRECT_TARGET_BOARD);
+//        if (!entity.checkIsDtypeIsEquals(getDtype(request)))
+//            throw new PostException(ErrorCode.INCORRECT_TARGET_BOARD);
 
         return entity;
     }

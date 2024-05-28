@@ -19,27 +19,12 @@ public class NoticePostController extends CommonPostController<
         NoticePostDto.Response> {
     private final NoticePostService noticePostService;
 
-    protected BoardGroup boardGroup = BoardGroup.NOTICES;
-
     public NoticePostController(NoticePostService noticePostService) {
         super(noticePostService);
         this.noticePostService = (NoticePostService) commonPostService;
     }
-//    @PostMapping(value = "/attach")
-//    @Operation(summary = "첨부 파일 업로드")
-//    public ResponseEntity<?> createNoticePost(@RequestBody NoticePostDto.Request requestDto) {
-//        return new ResponseEntity<>(noticePostService.createNoticePost(requestDto), HttpStatus.CREATED);
-//    }
 
-    /*@PutMapping("/{post-id}/update")
-    @Operation(summary = "게시판 수정")
-    public ResponseEntity<?> updateNoticePost(@PathVariable(name = "post-id") long postId, @RequestBody NoticePostDto.Request requestDto) {
-        return new ResponseEntity<>(noticePostService.updatePost(postId, requestDto), HttpStatus.OK);
+    public BoardGroup getBoardGroup() {
+        return BoardGroup.NOTICES;
     }
-
-    @DeleteMapping("/{post-id}")
-    @Operation(summary = "게시판 삭제")
-    public ResponseEntity<?> deletePost(@PathVariable(name = "post-id") long postId) {
-        return new ResponseEntity<>(noticePostService.deletePost(postId), HttpStatus.OK);
-    }*/
 }

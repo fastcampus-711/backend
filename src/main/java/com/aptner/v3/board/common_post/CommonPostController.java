@@ -1,6 +1,5 @@
 package com.aptner.v3.board.common_post;
 
-import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,26 +25,23 @@ public class CommonPostController<E extends CommonPost,
 
     protected final CommonPostService<E, T, Q, S> commonPostService;
 
-    protected BoardGroup boardGroup = BoardGroup.ALL;
-
-    @GetMapping("/search")
+    @GetMapping("")
     @Operation(summary = "게시글 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "withPopular", required = false) Boolean withPopular,
                                                   @RequestParam(name = "keyword", required = false) String keyword,
                                                   @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
                                                   @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                                  @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
-                        @AuthenticationPrincipal CustomUserDetails user
+                                                  @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
 
-
+        BoardGroup boardGroup = getBoardGroup();
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-        if( keyword != null) {
-            log.debug("keyword search : categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", categoryId, keyword, limit, page, sort);
+        if (keyword != null) {
+            log.debug("keyword search : boardGroup: {}, categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, keyword, limit, page, sort);
             return ResponseUtil.ok(commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable));
         }
-        log.debug("category search : categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", categoryId, keyword, limit, page, sort);
+        log.debug("category search : boardGroup: {},  categoryId: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, limit, page, sort);
         return ResponseUtil.ok(commonPostService.getPostListByCategoryId(boardGroup, categoryId, pageable));
     }
 
@@ -58,7 +53,10 @@ public class CommonPostController<E extends CommonPost,
 
     @PostMapping("/")
     @Operation(summary = "게시글 등록")
-    public ApiResponse<?> createPost(@RequestBody Q requestDto) {
+    public ApiResponse<?> createPost(
+            @RequestBody Q requestDto
+    ) {
+
         return ResponseUtil.create(commonPostService.createPost(requestDto));
     }
 
@@ -72,6 +70,11 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시글 삭제")
     public ApiResponse<?> deletePost(HttpServletRequest request, @PathVariable(name = "post-id") long postId) {
 
-        return ResponseUtil.delete(commonPostService.deletePost(request, postId));
+        long deleted = commonPostService.deletePost(request, postId);
+        return ResponseUtil.delete(deleted);
+    }
+
+    public BoardGroup getBoardGroup() {
+        return BoardGroup.ALL;
     }
 }

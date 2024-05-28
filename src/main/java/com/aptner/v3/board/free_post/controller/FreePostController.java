@@ -26,7 +26,6 @@ public class FreePostController extends CommonPostController<
         FreePostDto.Response> {
     private final FreePostService freePostService;
 
-    protected BoardGroup boardGroup = BoardGroup.FREES;
     public FreePostController(
             CommonPostService<FreePost, FreePostDto, FreePostDto.Request, FreePostDto.Response> commonPostService,
             FreePostService freePostService) {
@@ -34,4 +33,8 @@ public class FreePostController extends CommonPostController<
         this.freePostService = freePostService;
     }
 
+    @Override
+    public BoardGroup getBoardGroup() {
+        return BoardGroup.FREES;
+    }
 }
