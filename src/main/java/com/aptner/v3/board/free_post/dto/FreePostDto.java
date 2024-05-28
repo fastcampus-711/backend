@@ -1,9 +1,7 @@
 package com.aptner.v3.board.free_post.dto;
 
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.free_post.domain.FreePost;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.aptner.v3.board.common_post.domain.CommonPost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class FreePostDto {
+public class FreePostDto extends CommonPostDto {
     @Getter
     public static class Request extends CommonPostDto.Request {
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

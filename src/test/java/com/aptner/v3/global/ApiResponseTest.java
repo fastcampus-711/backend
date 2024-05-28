@@ -20,6 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,12 +126,14 @@ public class ApiResponseTest {
     }
 
     @Test
+    @WithMockUser(username = "user", password = "p@ssword", roles = {"USER"})
     @DisplayName("POST /auth/revoke 200 성공 테스트")
     public void logout_success() throws Exception {
         ResultActions resultActions = mockMvc.perform(post("/auth/revoke"));
 
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").doesNotExist());
+                .andDo(print())
+                .andExpect(jsonPath("$.data").value("logout"));
     }
 
 }

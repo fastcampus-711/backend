@@ -6,7 +6,7 @@ import com.aptner.v3.global.exception.CustomException;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
-import com.aptner.v3.member.dto.MemberCreateDto;
+import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.dto.MemberUpdateDto;
 import com.aptner.v3.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -41,7 +41,7 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public Member signUp(MemberCreateDto.MemberRequest memberRequest) {
+    public Member signUp(MemberDto.MemberRequest memberRequest) {
 
         verifySignUp(memberRequest);
 
@@ -56,7 +56,7 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(mapped);
     }
 
-    private void verifySignUp(MemberCreateDto.MemberRequest memberRequest) {
+    private void verifySignUp(MemberDto.MemberRequest memberRequest) {
 
         String username = memberRequest.getUsername();
         String password = memberRequest.getPassword();
