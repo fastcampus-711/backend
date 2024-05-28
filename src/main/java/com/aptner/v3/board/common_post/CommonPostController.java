@@ -42,9 +42,9 @@ public class CommonPostController<E extends CommonPost,
                                            @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
                                            HttpServletRequest request) {
         if (keyword == null)
-            return ResponseUtil.ok(commonPostService.getPostList(request, limit, page, sort));
+            return ResponseUtil.ok(commonPostService.getTotalPage(request),commonPostService.getPostList(request, limit, page, sort));
         else
-            return ResponseUtil.ok(commonPostService.searchPost(request, keyword, limit, page, sort));
+            return ResponseUtil.ok(commonPostService.getTotalPage(request),commonPostService.searchPost(request, keyword, limit, page, sort));
     }
 
     @PostMapping("/")

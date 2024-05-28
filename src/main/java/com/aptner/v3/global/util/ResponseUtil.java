@@ -15,6 +15,10 @@ public class ResponseUtil {
         return new ApiResponse<>(true, 200, null, data, System.currentTimeMillis());
     }
 
+    public static <T> ApiResponse<T> ok(T totalPage, T data) {
+        return new ApiResponse<>(true, 200, null, totalPage, data, System.currentTimeMillis());
+    }
+
     public static ApiResponse<?> ok(SuccessCode successCode) {
         int statusCode = successCode.getHttpStatus().value();
         String msg = successCode.getDetail();

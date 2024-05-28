@@ -62,7 +62,10 @@ public class CommonPostService<E extends CommonPost,
                 //.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(PageRequest.of(0, 3));
         return topPosts;
     }
-
+    public int getTotalPage(HttpServletRequest request){
+        String dtype = getDtype(request);
+        return commonPostRepository.findByDtype(dtype, PageRequest.of(0, 10)).getTotalPages();
+    }
     public List<S> getPostList(HttpServletRequest request, Integer limit, Integer page, SortType sort) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
 

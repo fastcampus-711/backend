@@ -12,6 +12,8 @@ public class ApiResponse<T> {
     private boolean success;
     private int status;
     private String message;
+
+    private T totalPage;
     private T data;
     private long timestamp;
 
@@ -23,4 +25,12 @@ public class ApiResponse<T> {
         this.timestamp = timestamp;
     }
 
+    public ApiResponse(boolean success, int status, String message, T totalPage, T data, long timestamp) {
+        this.success = success;
+        this.status = status;
+        this.message = message;
+        this.totalPage = totalPage;
+        this.data = data;
+        this.timestamp = timestamp;
+    }
 }
