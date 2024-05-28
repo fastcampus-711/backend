@@ -13,7 +13,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
+
+    // 게시판 별 조회
     Page<T> findByDtype(String dtype, Pageable pageable);
+
+    // 게시판 별 + 분류 별 조회
+    Page<T> findByDtypeAndCategoryId(String dtype, Long CategoryId, Pageable pageable);
+
+    // 게시판 별 + 분류 별 + 검색어 조회
+    Page<T> findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(String dtype, Long CategoryId, String title, Pageable pageable);
 
     Page<T> findByTitleContainingIgnoreCaseAndVisible(String keyword, Pageable pageable, boolean visible);
 

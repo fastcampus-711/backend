@@ -1,7 +1,7 @@
 package com.aptner.v3.auth.dto;
 
 import com.aptner.v3.member.Member;
-import lombok.RequiredArgsConstructor;
+import com.aptner.v3.member.dto.MemberDto;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -91,5 +91,17 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public MemberDto toDto() {
+        return MemberDto.of(
+                member.getId(),
+                member.getUsername(),
+                member.getPassword(),
+                member.getNickname(),
+                member.getPhone(),
+                member.getImage(),
+                member.getRoles()
+        );
     }
 }

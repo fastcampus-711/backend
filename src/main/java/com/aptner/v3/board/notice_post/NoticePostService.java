@@ -7,7 +7,7 @@ import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NoticePostService extends CommonPostService<NoticePost, NoticePostDto.Request, NoticePostDto.Response> {
+public class NoticePostService extends CommonPostService<NoticePost, NoticePostDto, NoticePostDto.Request, NoticePostDto.Response> {
     protected final CommonPostRepository<NoticePost> commonPostRepository;
     public NoticePostService(CommonPostRepository<NoticePost> commonPostRepository) {
         super(commonPostRepository);

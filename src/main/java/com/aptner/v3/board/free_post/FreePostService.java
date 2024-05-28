@@ -7,7 +7,7 @@ import com.aptner.v3.board.free_post.dto.FreePostDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FreePostService extends CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> {
+public class FreePostService extends CommonPostService<FreePost, FreePostDto, FreePostDto.Request, FreePostDto.Response> {
     private final CommonPostRepository<FreePost> commonPostRepository;
     public FreePostService(CommonPostRepository<FreePost> commonPostRepository) {
         super(commonPostRepository);

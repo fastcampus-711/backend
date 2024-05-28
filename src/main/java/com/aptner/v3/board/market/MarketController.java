@@ -1,5 +1,6 @@
 package com.aptner.v3.board.market;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
@@ -7,8 +8,6 @@ import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name="나눔 게시판")
 @RequestMapping("/boards/markets")
-public class MarketController extends CommonPostController<Market, MarketDto.Request, MarketDto.Response> {
+public class MarketController extends CommonPostController<
+        Market,
+        MarketDto,
+        MarketDto.Request,
+        MarketDto.Response> {
     private final MarketService marketService;
 
-    public MarketController(CommonPostService<Market, MarketDto.Request, MarketDto.Response> commonPostService,
+    protected BoardGroup boardGroup = BoardGroup.MARKETS;
+
+    public MarketController(CommonPostService<Market, MarketDto, MarketDto.Request, MarketDto.Response> commonPostService,
                             MarketService marketService) {
         super(commonPostService);
         this.marketService = marketService;

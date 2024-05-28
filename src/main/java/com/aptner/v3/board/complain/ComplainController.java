@@ -1,5 +1,6 @@
 package com.aptner.v3.board.complain;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
@@ -10,8 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name="민원 게시판")
 @RequestMapping("/boards/qnas")
-public class ComplainController extends CommonPostController<Complain, ComplainDto.Request, ComplainDto.Response> {
-    public ComplainController(CommonPostService<Complain, ComplainDto.Request, ComplainDto.Response> commonPostService) {
+public class ComplainController extends CommonPostController<
+        Complain,
+        ComplainDto,
+        ComplainDto.Request,
+        ComplainDto.Response> {
+
+    protected BoardGroup boardGroup = BoardGroup.COMPLAINT;
+    public ComplainController(CommonPostService<Complain, ComplainDto, ComplainDto.Request, ComplainDto.Response> commonPostService) {
         super(commonPostService);
     }
 }

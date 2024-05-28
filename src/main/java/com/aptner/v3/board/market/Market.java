@@ -1,6 +1,7 @@
 package com.aptner.v3.board.market;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@DiscriminatorValue("MarketPost")
 public class Market extends CommonPost {
     private String type;
     private String status;
