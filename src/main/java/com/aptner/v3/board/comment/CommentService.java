@@ -32,7 +32,7 @@ public class CommentService {
         } else {
             Comment parentComment = commentRepository.findById(commentId)
                     .orElseThrow(InvalidTableIdException::new);
-            requestDto.setPostUserId(commonPost.getUserId());
+            requestDto.setPostUserId(commonPost.getMemberId());
             comment = Comment.of(parentComment, requestDto);
         }
         comment = commentRepository.save(comment);

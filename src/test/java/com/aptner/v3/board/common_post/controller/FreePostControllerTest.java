@@ -2,7 +2,7 @@ package com.aptner.v3.board.common_post.controller;
 
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
-import com.aptner.v3.board.common_post.CommonPostService;
+import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class FreePostControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
+    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.CommonPostRequest, CommonPostDto.CommonPostResponse> commonPostService;
 
     @Autowired
     private CommonPostRepository<CommonPost> commonPostRepository;
@@ -75,7 +75,7 @@ public class FreePostControllerTest {
         MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/frees"))
                 .andDo(print())
                 .andReturn();
-        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data[*].dtype");
+        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].dtype");
         Assertions.assertThat(list).hasSize(10);
 
         for (String str : list) {

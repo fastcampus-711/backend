@@ -1,5 +1,6 @@
 package com.aptner.v3.board.common_post.domain;
 
+import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
@@ -8,8 +9,10 @@ import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
+import com.aptner.v3.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
@@ -24,25 +27,42 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @SQLRestriction("deleted is false")
 public class CommonPost extends BaseTimeEntity
-implements ReactionAndCommentCalculator {
+        implements ReactionAndCommentCalculator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long userId;
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(optional = false)
+    private Member member;
 
-    private long categoryId;
+    @Column(nullable = true)
+    private Long memberId;
 
+    @JoinColumn(name = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(optional = false)
+    private Category category;
+
+    @Setter
     private String title;
 
+    @Setter
     @Column(length = 500)
     private String content;
 
+    @Setter
+    @ElementCollection
+    @Column(name = "post_images")
+    List<String> imageUrls;
+
+    @Setter
     private long hits;
 
+    @Setter
     @Embedded
     private ReactionColumns reactionColumns = new ReactionColumns();
 
+    @Setter
     private long countOfComments;
 
     @Column(insertable = false, updatable = false)
@@ -63,35 +83,35 @@ implements ReactionAndCommentCalculator {
         this.content = content;
     }
 
-    public <Q extends CommonPostDto.Request> CommonPost updateByUpdateRequest(Q updateRequest) {
+    public <Q extends CommonPostDto.CommonPostRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
         modelMapper.map(updateRequest, this);
         return this;
     }
 
-    public CommonPostDto.Response toResponseDtoWithoutComments() {
+    public CommonPostDto.CommonPostResponse toResponseDtoWithoutComments() {
         ModelMapper modelMapper = (ModelMapperUtil.getModelMapper());
 
-        Class<? extends CommonPostDto.Response> responseDtoClass = getResponseDtoClassType();
+        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.Response responseDto =
+        CommonPostDto.CommonPostResponse commonPostResponseDto =
                 modelMapper.map(this, responseDtoClass, "skipComments");
 
-        return responseDto.blindPostAlgorithm();
+        return commonPostResponseDto.blindPostAlgorithm();
     }
 
-    public CommonPostDto.Response toResponseDtoWithComments() {
+    public CommonPostDto.CommonPostResponse toResponseDtoWithComments() {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
 
-        Class<? extends CommonPostDto.Response> responseDtoClass = getResponseDtoClassType();
+        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.Response responseDto =  modelMapper.map(this, responseDtoClass);
+        CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass);
 
-        return responseDto.blindPostAlgorithm();
+        return commonPostResponseDto.blindPostAlgorithm();
     }
 
-    private Class<? extends CommonPostDto.Response> getResponseDtoClassType() {
+    private Class<? extends CommonPostDto.CommonPostResponse> getResponseDtoClassType() {
         return Arrays.stream(CategoryCode.values())
                 .filter(s -> s.getDomain().equals(this.getClass()))
                 .findFirst()
@@ -115,11 +135,24 @@ implements ReactionAndCommentCalculator {
     }
 
     public boolean validUpdateOrDeleteAuthority() {
-        return this.userId == MemberUtil.getMemberId();
+        return this.memberId == MemberUtil.getMemberId();
     }
 
-    public CommonPost setUserId() {
-        this.userId = MemberUtil.getMemberId();
+    public CommonPost setMemberId() {
+        this.memberId = MemberUtil.getMemberId();
         return this;
+    }
+
+    public CommonPost(Member member, Category category, String title, String content, String dtype, boolean visible) {
+        this.member = member;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.dtype = dtype;
+        this.visible = visible;
+    }
+
+    public static CommonPost of(Member member, Category category, String title, String content, String dtype, boolean visible) {
+        return new CommonPost(member, category, title, content, dtype, visible);
     }
 }

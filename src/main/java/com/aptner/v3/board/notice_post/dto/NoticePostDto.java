@@ -1,27 +1,38 @@
 package com.aptner.v3.board.notice_post.dto;
 
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@ToString(callSuper = true)
+@SuperBuilder
+@NoArgsConstructor
 public class NoticePostDto extends CommonPostDto {
 
     @Getter
-    public static class Request extends CommonPostDto.Request {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    @ToString(callSuper = true)
+    @SuperBuilder
+    @NoArgsConstructor
+    public static class NoticeRequest extends CommonPostDto.CommonPostRequest {
+
         private LocalDateTime postAt;
 
-        private List<String> imageUrls;
+        public NoticeRequest(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls, LocalDateTime postAt) {
+            super(id, categoryId, title, content, visible, imageUrls);
+            this.postAt = postAt;
+        }
     }
 
     @Getter
+    @ToString(callSuper = true)
     @NoArgsConstructor
-    public static class Response extends CommonPostDto.Response {
+    public static class NoticeResponse extends CommonPostDto.CommonPostResponse {
         private LocalDateTime postAt;
-        private List<String> imageUrls;
     }
 }

@@ -3,7 +3,7 @@ package com.aptner.v3.board.common_post.controller;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
-import com.aptner.v3.board.common_post.CommonPostService;
+import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.complain.Complain;
@@ -67,7 +67,7 @@ class CommonPostControllerTest {
     WebApplicationContext webApplicationContext;
 
     @Autowired
-    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
+    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.CommonPostRequest, CommonPostDto.CommonPostResponse> commonPostService;
 
     @Autowired
     private CommonPostRepository<CommonPost> commonPostRepository;

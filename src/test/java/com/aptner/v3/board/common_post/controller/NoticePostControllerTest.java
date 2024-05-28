@@ -2,8 +2,8 @@ package com.aptner.v3.board.common_post.controller;
 
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
-import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -43,7 +44,7 @@ public class NoticePostControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
+    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.CommonPostRequest, CommonPostDto.CommonPostResponse> commonPostService;
 
     @Autowired
     private CommonPostRepository<CommonPost> commonPostRepository;
@@ -77,7 +78,7 @@ public class NoticePostControllerTest {
         MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/notices"))
                 .andDo(print())
                 .andReturn();
-        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data[*].dtype");
+        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].dtype");
         Assertions.assertThat(list).hasSize(10);
 
         for (String str : list) {
@@ -85,6 +86,7 @@ public class NoticePostControllerTest {
         }
     }
 
+    @WithMockUser(username = "user", password = "p@ssword", roles = "USER")
     @Test
     void 공지사항_게시글_생성() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -92,6 +94,12 @@ public class NoticePostControllerTest {
         jsonObject.put("content", "Spring Boot Test");
         jsonObject.put("category_id", 1);
         jsonObject.put("post_at", "2024-05-12T17:00:12");
+        CommonPostDto.CommonPostRequest request = postUtil.makeCommonPostRequest(NoticePost.class,
+                "Spring Boot Test",
+                "Content",
+                1L
+        );
+
 
         MvcResult mvcResult = mockMvc.perform(
                         post(prefix + "/boards/notices/")

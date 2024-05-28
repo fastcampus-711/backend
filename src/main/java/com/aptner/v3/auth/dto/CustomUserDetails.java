@@ -5,6 +5,7 @@ import com.aptner.v3.member.dto.MemberDto;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -14,19 +15,24 @@ import java.util.stream.Collectors;
  * The type Custom user details dto.
  */
 @ToString
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails extends User implements UserDetails {
 
     private Member member;
 
     public CustomUserDetails(Member member) {
+        super(member.getUsername(), member.getPassword(), member.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList()));
         this.member = member;
+    }
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
     }
 
     /**
      * Role 반환
      */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities(Member member) {
         return member.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
@@ -94,6 +100,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public MemberDto toDto() {
+
         return MemberDto.of(
                 member.getId(),
                 member.getUsername(),
