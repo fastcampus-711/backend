@@ -3,7 +3,9 @@ package com.aptner.v3.board.comment;
 import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.ModelMapperUtil;
+import com.aptner.v3.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +19,14 @@ import java.util.List;
 @Getter
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
 @NoArgsConstructor
-public class Comment implements ReactionAndCommentCalculator {
+public class Comment extends BaseTimeEntity implements ReactionAndCommentCalculator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String content;
 
@@ -44,14 +48,16 @@ public class Comment implements ReactionAndCommentCalculator {
     private boolean visible;
 
     @ColumnDefault(value = "false")
-    private boolean admin = false;
+    private boolean admin;
+
+    @ColumnDefault(value = "false")
+    private boolean writer;
 
     @ColumnDefault(value = "false")
     private Boolean deleted;
 
     public static Comment of(CommonPost commonPost, CommentDto.Request request) {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
 
         return modelMapper
                 .map(request, Comment.class).setCommonPost(commonPost);

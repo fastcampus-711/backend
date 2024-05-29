@@ -1,9 +1,10 @@
 package com.aptner.v3.global.util;
 
 import com.aptner.v3.board.category.CategoryCode;
+import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.domain.CommonPost;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
@@ -27,7 +28,7 @@ public class ModelMapperUtil {
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setSkipNullEnabled(true)
                 .setFieldMatchingEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
+                .setMatchingStrategy(MatchingStrategies.LOOSE);
 
         for (CategoryCode categoryCode: CategoryCode.values()) {
             Class<? extends CommonPost> commonPostDomain = categoryCode.getDomain();
@@ -36,5 +37,11 @@ public class ModelMapperUtil {
             modelMapper.createTypeMap(commonPostDomain, commonPostDtoResponse, "skipComments")
                     .addMappings(mapping -> mapping.skip((a, b) -> a.setComments((List<CommentDto.Response>) b)));
         }
+        modelMapper.createTypeMap(Comment.class, CommentDto.Response.class, "memberToCommentResponse")
+                .addMappings(mapping -> {
+                    mapping.map(a -> a.getMember().getImage(), CommentDto.Response::setProfileImageUuid);
+                    mapping.map(a -> a.getMember().getNickname(), CommentDto.Response::setNickname);
+                });
+
     }
 }

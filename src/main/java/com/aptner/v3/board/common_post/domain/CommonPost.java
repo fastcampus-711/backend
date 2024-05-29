@@ -10,6 +10,7 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
@@ -51,7 +52,8 @@ implements ReactionAndCommentCalculator {
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    private boolean visible = true;
+    @ColumnDefault(value = "true")
+    private boolean visible;
 
     private boolean deleted;
 
@@ -86,7 +88,7 @@ implements ReactionAndCommentCalculator {
 
         Class<? extends CommonPostDto.Response> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.Response responseDto =  modelMapper.map(this, responseDtoClass);
+        CommonPostDto.Response responseDto =  modelMapper.map(this, responseDtoClass, "memberToCommentResponse");
 
         return responseDto.blindPostAlgorithm();
     }

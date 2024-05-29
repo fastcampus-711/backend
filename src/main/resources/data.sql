@@ -141,13 +141,18 @@ insert into notice_post (id, post_at) values (38, '2023-12-22');
 insert into notice_post (id, post_at) values (39, '2024-03-17');
 insert into notice_post (id, post_at) values (40, '2024-01-18');
 
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (1, 1, 'parent comment1', 32, null, false, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (2, 2, 'parent comment2', 1, null, true, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (3, 3, 'parent comment3', 1, null, true, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (4, 4, 'parent comment4', 1, null, true, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (5, 3, 'child comment1', null, 1, false, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (6, 1, 'child comment2', null, 1, true, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (7, 3, 'child comment1', null, 3, false, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad) values (8, 4, 'admin comment', 1, null, true, true, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (9, 3, 'child comment1', null, 8, false, 1, 1);
-insert into comment(id, user_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad) values (10, 3, 'child comment1', null, 8, false, 1, 1);
+insert into Users(id, username, password, nickname, image) values (1, 'username1', 'pwd1', 'nickname1', 'image1');
+insert into Users(id, username, password, nickname, image) values (2, 'username2', 'pwd2', 'nickname2', 'image2');
+insert into Users(id, username, password, nickname, image) values (3, 'username3', 'pwd3', 'nickname3', 'image3');
+insert into Users(id, username, password, nickname, image) values (4, 'username4', 'pwd4', 'nickname4', 'image4');
+
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 32, null, false, 1, 1, now(), true);
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 1, null, true, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 1, null, true, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 1, null, true, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (5, 3, 'child comment1', null, 1, false, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (6, 1, 'child comment2', null, 1, true, 1, 1, now(), true);
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (7, 3, 'child comment1', null, 3, false, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 1, null, true, true, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', null, 8, false, 1, 1, now());
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', null, 8, false, 1, 1, now());
