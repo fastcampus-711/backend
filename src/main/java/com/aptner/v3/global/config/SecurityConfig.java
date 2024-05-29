@@ -6,7 +6,8 @@ import com.aptner.v3.global.exception.security.JwtAccessDeniedHandler;
 import com.aptner.v3.global.exception.security.JwtAuthenticationEntryPoint;
 import com.aptner.v3.global.jwt.JwtFilter;
 import com.aptner.v3.global.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,23 +22,31 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.aptner.v3.global.config.CorsConfig.corsFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // jwt 방식으로 session을 STATELESS 상태로 관리하기 때문에 disable 처리
                 .csrf(AbstractHttpConfigurer::disable)
-
+                .cors(corsFilter(frontendUrl))
                 // formLogin, httpBasic은 사용하지 않기 때문에 disable 처리
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);

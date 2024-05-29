@@ -13,7 +13,6 @@ import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.aptner.v3.board.qna.Qna;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.hibernate.validator.internal.constraintvalidators.bv.size.SizeValidatorForArray;
@@ -31,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -52,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
 class CommonPostControllerTest {
@@ -102,6 +101,7 @@ class CommonPostControllerTest {
     void setUp() throws Exception {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))  // 한글 깨짐 필터 추가
                 .alwaysDo(print())
                 .build();
@@ -217,7 +217,7 @@ class CommonPostControllerTest {
         T commonPost = postUtil.makeCommonPost(targetClass,
                 targetClass.getSimpleName() + " Title",
                 targetClass.getSimpleName() + " Content",
-                1);
+                1L);
         commonPostRepository.save(commonPost);
 
         Optional<? extends CommonPost> foundedPost = commonPostRepository.findById(commonPost.getId());
