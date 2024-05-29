@@ -1,8 +1,8 @@
 package com.aptner.v3.board.common_post.service;
 
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
+import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,6 +47,8 @@ class CommonPostServiceCountOfCommentsApplyTest {
     void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))  // 필터 추가
+                .alwaysDo(print())
                 .build();
 
         prefix = "http://localhost:" + port;

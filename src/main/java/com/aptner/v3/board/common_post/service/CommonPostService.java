@@ -98,7 +98,6 @@ public class CommonPostService<E extends CommonPost,
         return (S) commonPost.toResponseDtoWithComments();
     }
 
-    @Transactional
     public T createPost(T dto) {
 
         Member member = verifyMember(dto);
@@ -114,9 +113,15 @@ public class CommonPostService<E extends CommonPost,
         Category category = verifyCategory(dto);
         E post = verifyPost(dto);
 
-        if(dto.getTitle() != null) {post.setTitle(dto.getTitle());}
-        if(dto.getContent() != null) {post.setContent(dto.getContent());}
-        if(dto.getImageUrls() != null) {post.setImageUrls(dto.getImageUrls());}
+        if (dto.getTitle() != null) {
+            post.setTitle(dto.getTitle());
+        }
+        if (dto.getContent() != null) {
+            post.setContent(dto.getContent());
+        }
+        if (dto.getImageUrls() != null) {
+            post.setImageUrls(dto.getImageUrls());
+        }
 
         commonPostRepository.flush();
         log.debug("updatePost : {}", post);
@@ -131,11 +136,11 @@ public class CommonPostService<E extends CommonPost,
     }
 
     private E verifyPost(T dto) {
-
+        // id check
         if (dto.getId() == null) {
             throw new PostException(INVALID_REQUEST);
         }
-
+        // exists
         E post;
         try {
             post = commonPostRepository.getReferenceById(dto.getId());
@@ -143,17 +148,24 @@ public class CommonPostService<E extends CommonPost,
             throw new PostException(_NOT_FOUND);
         }
 
+        // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {
             throw new PostException(ErrorCode.INSUFFICIENT_AUTHORITY);
         }
 
+        // 수정 요청 사항에 categoryId가 다른 경우.
+        if (!post.getCategory().getId().equals(dto.getCategoryDto().getId())) {
+            throw new PostException(INVALID_REQUEST);
+        }
         return post;
     }
 
     private Category verifyCategory(T dto) {
+        // id check
         if (dto.getCategoryDto().getId() == null) {
             throw new CategoryException(INVALID_REQUEST);
         }
+        // exists
         try {
             return categoryRepository.getReferenceById(dto.getCategoryDto().getId());
         } catch (EntityNotFoundException e1) {

@@ -22,7 +22,7 @@ public class QnaDto extends CommonPostDto {
         private String type;
         private String status;
 
-        public QnaRequest(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls, String type, String status) {
+        public QnaRequest(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls, String type, String status) {
             super(id, categoryId, title, content, visible, imageUrls);
             this.type = type;
             this.status = status;

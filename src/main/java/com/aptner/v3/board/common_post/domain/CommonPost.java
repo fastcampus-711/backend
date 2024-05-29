@@ -13,6 +13,7 @@ import com.aptner.v3.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@ToString(callSuper = true)
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")

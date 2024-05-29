@@ -23,10 +23,10 @@ import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 public class FreePostController extends CommonPostController<
         FreePost,
         FreePostDto,
-        FreePostDto.CommonPostRequest,
-        FreePostDto.CommonPostResponse> {
+        FreePostDto.FreePostRequest,
+        FreePostDto.FreePostResponse> {
 
-    public FreePostController(CategoryRepository categoryRepository, CommonPostService<FreePost, FreePostDto, FreePostDto.CommonPostRequest, FreePostDto.CommonPostResponse> commonPostService, PaginationService paginationService) {
+    public FreePostController(CategoryRepository categoryRepository, CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> commonPostService, PaginationService paginationService) {
         super(categoryRepository, commonPostService, paginationService);
     }
 

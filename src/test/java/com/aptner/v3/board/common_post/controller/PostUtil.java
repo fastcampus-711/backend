@@ -7,6 +7,7 @@ import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.complain.Complain;
+import com.aptner.v3.board.complain.dto.ComplainDto;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.market.Market;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
@@ -48,6 +49,7 @@ public class PostUtil {
         jsonObject.put("title", title);
         jsonObject.put("content", content);
         jsonObject.put("category_id", categoryId);
+        jsonObject.put("visible", true);
 
         return objectMapper.readValue(jsonObject.toJSONString(), targetClass);
     }
@@ -57,6 +59,7 @@ public class PostUtil {
         jsonObject.put("title", title);
         jsonObject.put("content", content);
         jsonObject.put("category_id", categoryId);
+        jsonObject.put("visible", true);
 
         Class<?> requestDtoClass = Arrays.stream(CategoryCode.values())
                 .filter(s -> s.getDomain().getSimpleName().equals(targetClass.getSimpleName()))
@@ -122,19 +125,19 @@ public class PostUtil {
     }
 
     long makeComplainPostAndReturnId() throws Exception {
-        CommonPostDto.CommonPostRequest commonPostRequestDto = makeCommonPostRequest(Complain.class,
+        ComplainDto.ComplainRequest request = makeCommonPostRequest(Complain.class,
                 "Spring Boot Test",
                 "Content",
                 1);
         CommonPostDto dto = CommonPostDto.of(
                 BoardGroup.COMPLAINT,
                 createMember(),
-                commonPostRequestDto
+                request
         );
         return commonPostService.createPost(dto).getId();
     }
 
     MemberDto createMember() {
-        return MemberDto.of(null, "user", "p@ssword", "nickname", null, null, List.of(MemberRole.ROLE_USER));
+        return MemberDto.of(1L, "user1", "p@ssword", "nickname1", null, null, List.of(MemberRole.ROLE_USER));
     }
 }

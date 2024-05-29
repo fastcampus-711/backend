@@ -19,7 +19,7 @@ public class ComplainDto extends CommonPostDto {
     @NoArgsConstructor
     public static class ComplainRequest extends CommonPostDto.CommonPostRequest {
 
-        public ComplainRequest(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls) {
+        public ComplainRequest(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls) {
             super(id, categoryId, title, content, visible, imageUrls);
         }
     }

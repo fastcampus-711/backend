@@ -7,10 +7,12 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
+import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -18,17 +20,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Getter
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class CommonPostDto {
+public class CommonPostDto extends BaseTimeDto {
     Long id;
     MemberDto memberDto;
     String title;
@@ -36,13 +41,27 @@ public class CommonPostDto {
     List<String> imageUrls;
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
-    Long countReactionTypeBad;
     Long countOfComments;
-    Boolean visible;
+    boolean visible;
     BoardGroup boardGroup;
     CategoryDto categoryDto;
 
-    public CommonPostDto(Long id, MemberDto memberDto, String title, String content, List<String> imageUrls, Long hits, ReactionColumnsDto reactionColumnsDto, Long countOfComments, Boolean visible, BoardGroup boardGroup, CategoryDto categoryDto) {
+    public CommonPostDto(Long id
+            , MemberDto memberDto
+            , String title
+            , String content
+            , List<String> imageUrls
+            , Long hits
+            , ReactionColumnsDto reactionColumnsDto
+            , Long countOfComments
+            , boolean visible
+            , BoardGroup boardGroup
+            , CategoryDto categoryDto
+            , String createdBy
+            , LocalDateTime createdAt
+            , String modifiedBy
+            , LocalDateTime modifiedAt) {
+        super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
         this.memberDto = memberDto;
         this.title = title;
@@ -57,6 +76,7 @@ public class CommonPostDto {
     }
 
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest commonPostRequestDto) {
+
         return new CommonPostDto(
                 commonPostRequestDto.getId(),
                 memberDto,
@@ -66,14 +86,19 @@ public class CommonPostDto {
                 null,
                 null,
                 null,
-                commonPostRequestDto.getVisible(),
+                commonPostRequestDto.isVisible(),
                 boardGroup,
-                CategoryDto.of(commonPostRequestDto.getCategoryId())
+                CategoryDto.of(commonPostRequestDto.getCategoryId()),
+                null,
+                null,
+                null,
+                null
         );
     }
 
     public static CommonPostDto from(CommonPost entity) {
-        return CommonPostDto.builder()
+
+        CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
                 .title(entity.getTitle())
@@ -84,11 +109,17 @@ public class CommonPostDto {
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                .createdAt(entity.getCreatedAt())
+                .createdBy(entity.getCreatedBy())
+                .modifiedAt(entity.getModifiedAt())
+                .modifiedBy(entity.getModifiedBy())
                 .build();
+        log.debug("commonPostDto.from : {}", build);
+        return build;
     }
 
     public CommonPost toEntity(Member member, Category category) {
-        return CommonPost.of(
+        CommonPost commonPost = CommonPost.of(
                 member,
                 category,
                 title,
@@ -96,6 +127,8 @@ public class CommonPostDto {
                 boardGroup.getTable(),
                 visible
         );
+        log.debug("toEntity: {}", commonPost);
+        return commonPost;
     }
 
 
@@ -105,20 +138,20 @@ public class CommonPostDto {
     @SuperBuilder
     @NoArgsConstructor
     public static class CommonPostRequest {
-        private Long id;
+        protected Long id;
         @NotBlank
         @Min(1L)
-        private Long categoryId;
+        protected Long categoryId;
         @NotBlank
-        private String title;
+        protected String title;
         @NotBlank
-        private String content;
+        protected String content;
 
-        private Boolean visible;
+        protected boolean visible;
 
-        private List<String> imageUrls;
+        protected List<String> imageUrls;
 
-        public CommonPostRequest(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls) {
+        public CommonPostRequest(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls) {
             this.id = id;
             this.categoryId = categoryId;
             this.title = title;
@@ -128,10 +161,10 @@ public class CommonPostDto {
         }
 
         public static CommonPostRequest of(Long id, Long categoryId) {
-            return new CommonPostRequest(id, categoryId, null, null, null, null);
+            return new CommonPostRequest(id, categoryId, null, null, true, null);
         }
 
-        private Class<? extends CommonPost> getEntityClassType() {
+        protected Class<? extends CommonPost> getEntityClassType() {
             return Arrays.stream(CategoryCode.values())
                     .filter(s -> s.getDtoForRequest().equals(this.getClass()))
                     .findFirst()
@@ -142,22 +175,25 @@ public class CommonPostDto {
 
     @Getter
     @Setter
+    @ToString(callSuper = true)
     @NoArgsConstructor
     @SuperBuilder
-    public static class CommonPostResponse {
-        private long id;
-        private long userId;
-        private String userNickname;
-        private long postUserId;
-        private String categoryName;
-        private String title;
-        private String content;
-        private boolean visible;
-        private Long hits;
-        private ReactionColumnsDto reactionColumns;
-        private long countOfComments;
-        private BoardGroup boardGroup;
-        private List<CommentDto.Response> comments;
+    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
+    public static class CommonPostResponse extends BaseTimeDto.BaseResponse {
+        protected long id;
+        protected long userId;
+        protected String userNickname;
+        protected String userImage;
+        protected long postUserId;
+        protected String categoryName;
+        protected String title;
+        protected String content;
+        protected boolean visible;
+        protected Long hits;
+        protected ReactionColumnsDto reactionColumns;
+        protected long countOfComments;
+        protected BoardGroup boardGroup;
+        protected List<CommentDto.Response> comments;
 
         public <E extends CommonPost> CommonPostResponse(E entity) {
             ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
@@ -177,7 +213,7 @@ public class CommonPostDto {
             return this;
         }
 
-        private void blindCommentAlgorithm(List<CommentDto.Response> comments) {
+        protected void blindCommentAlgorithm(List<CommentDto.Response> comments) {
             if (comments == null)
                 return;
 
@@ -203,11 +239,12 @@ public class CommonPostDto {
             String blindContent = "비밀 게시글입니다.";
             boolean isSecret = hasSecret(dto);
 
-            return CommonPostResponse.builder()
+            CommonPostResponse build = CommonPostResponse.builder()
                     .id(dto.getId())
                     .userId(dto.getMemberDto().getId())
                     .userNickname(dto.getMemberDto().getNickname())
-                    .visible(dto.getVisible())
+                    .userImage(dto.getMemberDto().getImage())
+                    .visible(dto.isVisible())
                     .title(isSecret ? blindTitle : dto.getTitle())
                     .content(isSecret ? blindContent : dto.getContent())
                     .hits(dto.getHits())
@@ -215,11 +252,20 @@ public class CommonPostDto {
                     .countOfComments(dto.getCountOfComments())
                     .boardGroup(dto.getBoardGroup())
                     .categoryName(dto.getCategoryDto().getName())
+                    .createdAt(dto.getCreatedAt())
+                    .createdBy(dto.getCreatedBy())
+                    .modifiedAt(dto.getModifiedAt())
+                    .modifiedBy(dto.getModifiedBy())
                     .build();
+
+            log.debug("CommonPostResponse:from : {}", build);
+            return build;
+
         }
 
-        private static boolean hasSecret(CommonPostDto dto) {
-            return !dto.getVisible();
+        protected static boolean hasSecret(CommonPostDto dto) {
+            return (!dto.isVisible()
+                    && MemberUtil.getMemberId() != dto.getMemberDto().getId());
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.aptner.v3.board.common_post;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
@@ -8,11 +9,7 @@ import com.aptner.v3.board.common_post.dto.SearchDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.global.error.response.ApiResponse;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ResponseUtil;
-import com.aptner.v3.member.Member;
-import com.aptner.v3.member.MemberRole;
-import com.aptner.v3.member.dto.MemberDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -80,27 +72,14 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(
             @RequestBody Q request,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-        log.debug("user : {} ", user);
-
-//        Member member = Optional.ofNullable(customUserDetails)
-//                .map(CustomUserDetails::getMember)
-//                .orElseGet(MemberUtil::getMember);
-
-        User authenticated = Optional.ofNullable(user)
-                .orElseGet(MemberUtil::getMember1);
-
-
-        List<MemberRole> collect = authenticated.getAuthorities().stream().map(e -> MemberRole.valueOf(e.getAuthority())).collect(Collectors.toList());
-        Member member = Member.of(authenticated.getUsername(), authenticated.getPassword(), null, null, null, collect);
-
         T postDto = (T) T.of(
                 getBoardGroup(),
-                MemberDto.from(member),
+                user.toDto(),
                 request
         );
-        log.debug("createPost - member :{}", member);
+        log.debug("createPost - user :{}", user);
         log.debug("createPost - request :{}", request);
         log.debug("createPost - postDto :{}", postDto);
         return ResponseUtil.create(S.from(commonPostService.createPost(postDto)));
@@ -111,21 +90,15 @@ public class CommonPostController<E extends CommonPost,
     public ApiResponse<?> updatePost(
             @PathVariable(name = "post-id") Long postId,
             @RequestBody Q request,
-            @AuthenticationPrincipal User user) {
-
-        User authenticated = Optional.ofNullable(user)
-                .orElseGet(MemberUtil::getMember);
-
-        List<MemberRole> collect = authenticated.getAuthorities().stream().map(e -> MemberRole.valueOf(e.getAuthority())).collect(Collectors.toList());
-        Member member = Member.of(authenticated.getUsername(), authenticated.getPassword(), null, null, null, collect);
+            @AuthenticationPrincipal CustomUserDetails user) {
 
         request.setId(postId);
         T postDto = (T) T.of(
                 getBoardGroup(),
-                MemberDto.from(member),
+                user.toDto(),
                 request
         );
-        log.debug("updatePost - member :{}", member);
+        log.debug("updatePost - member :{}", user);
         log.debug("updatePost - request :{}", request);
         log.debug("updatePost - postDto :{}", postDto);
         return ResponseUtil.update(S.from(commonPostService.updatePost(postDto)));
@@ -135,23 +108,14 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시글 삭제")
     public ApiResponse<?> deletePost(
             @PathVariable(name = "post-id") long postId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal CustomUserDetails user) {
 
-        User authenticated = Optional.ofNullable(user)
-                .orElseGet(MemberUtil::getMember);
-
-        List<MemberRole> collect = authenticated.getAuthorities().stream().map(e -> MemberRole.valueOf(e.getAuthority())).collect(Collectors.toList());
-        Member member = Member.of(authenticated.getUsername(), authenticated.getPassword(), null, null, null, collect);
-
-
-        CommonPostDto.CommonPostRequest request = CommonPostDto.CommonPostRequest.of(postId, null);
         T postDto = (T) T.of(
                 getBoardGroup(),
-                MemberDto.from(member),
-                request
+                user.toDto(),
+                CommonPostDto.CommonPostRequest.of(postId, null)
         );
-        log.debug("deletePost - member :{}", member);
-        log.debug("deletePost - request :{}", request);
+        log.debug("deletePost - user :{}", user);
         log.debug("deletePost - postDto :{}", postDto);
         long deleted = commonPostService.deletePost(postId, postDto);
         return ResponseUtil.delete(deleted);

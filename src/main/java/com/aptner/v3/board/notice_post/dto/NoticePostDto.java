@@ -23,7 +23,7 @@ public class NoticePostDto extends CommonPostDto {
 
         private LocalDateTime postAt;
 
-        public NoticeRequest(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls, LocalDateTime postAt) {
+        public NoticeRequest(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls, LocalDateTime postAt) {
             super(id, categoryId, title, content, visible, imageUrls);
             this.postAt = postAt;
         }

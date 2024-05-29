@@ -24,7 +24,7 @@ public class MarketDto extends CommonPostDto {
         private String type;
         private String status;
 
-        public MarketReqeust(Long id, Long categoryId, String title, String content, Boolean visible, List<String> imageUrls, String type, String status) {
+        public MarketReqeust(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls, String type, String status) {
             super(id, categoryId, title, content, visible, imageUrls);
             this.type = type;
             this.status = status;
@@ -42,7 +42,7 @@ public class MarketDto extends CommonPostDto {
     @Getter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    public static class MarketResponse extends CommonPostDto.CommonPostResponse {
+    public static class MarketResponse extends CommonPostResponse {
         private long id;
         private String type;
         private String status;
