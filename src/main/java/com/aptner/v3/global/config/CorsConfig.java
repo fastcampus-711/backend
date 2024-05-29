@@ -16,8 +16,8 @@ public class CorsConfig {
     private static CorsConfigurationSource corsConfigurationSource(String frontEndUrl) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin(frontEndUrl);
-        configuration.addAllowedOrigin("localhost:3000");
-        configuration.addAllowedOrigin("localhost");
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
