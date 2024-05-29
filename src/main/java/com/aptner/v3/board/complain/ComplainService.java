@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplainService extends CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> {
 
+    private final CommonPostRepository<Complain> commonPostRepository;
 
     public ComplainService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<Complain> commonPostRepository) {
         super(memberRepository, categoryRepository, commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
     }
 }

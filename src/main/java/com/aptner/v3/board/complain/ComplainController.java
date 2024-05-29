@@ -1,7 +1,6 @@
 package com.aptner.v3.board.complain;
 
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
@@ -18,8 +17,8 @@ public class ComplainController extends CommonPostController<
         ComplainDto,
         ComplainDto.ComplainRequest,
         ComplainDto.ComplainResponse> {
-    public ComplainController(CategoryRepository categoryRepository, CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> commonPostService, PaginationService paginationService) {
-        super(categoryRepository, commonPostService, paginationService);
+    public ComplainController(CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> commonPostService, PaginationService paginationService) {
+        super(commonPostService, paginationService);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.SearchDto;
@@ -28,8 +27,6 @@ public class CommonPostController<E extends CommonPost,
         T extends CommonPostDto,
         Q extends CommonPostDto.CommonPostRequest,
         S extends CommonPostDto.CommonPostResponse> {
-
-    private final CategoryRepository categoryRepository;
 
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
@@ -115,8 +112,7 @@ public class CommonPostController<E extends CommonPost,
                 user.toDto(),
                 CommonPostDto.CommonPostRequest.of(postId, null)
         );
-        log.debug("deletePost - user :{}", user);
-        log.debug("deletePost - postDto :{}", postDto);
+        log.debug("deletePost - postDto.getId :{}", postDto.getId());
         long deleted = commonPostService.deletePost(postId, postDto);
         return ResponseUtil.delete(deleted);
     }

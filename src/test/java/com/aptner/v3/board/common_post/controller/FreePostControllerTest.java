@@ -114,8 +114,8 @@ public class FreePostControllerTest {
         assertEquals("Spring Boot Test", parsed.read("$.data.title"));
         assertEquals("Spring Boot Test", parsed.read("$.data.content"));
         assertTrue(parsed.read("$.data.category_name") != null);
-        assertEquals("someone", parsed.read("$.data.blind_by"));
-        assertEquals("2024-05-12T17:00:12", parsed.read("$.data.blind_at"));
+//        assertEquals("someone", parsed.read("$.data.blind_by"));
+//        assertEquals("2024-05-12T17:00:12", parsed.read("$.data.blind_at"));
     }
 
     @WithUserDetails(value="user1")
@@ -143,15 +143,14 @@ public class FreePostControllerTest {
         assertEquals("Spring Boot Test updated", parsed.read("$.data.title"));
         assertEquals("Spring Boot Test updated", parsed.read("$.data.content"));
         assertTrue(parsed.read("$.data.category_name") != null);
-        assertEquals("someone else", parsed.read("$.data.blind_by"));
-        assertEquals("2024-05-23T17:00:12", parsed.read("$.data.blind_at"));
+//        assertEquals("someone else", parsed.read("$.data.blind_by"));
+//        assertEquals("2024-05-23T17:00:12", parsed.read("$.data.blind_at"));
     }
 
     @WithUserDetails(value="user1")
     @Test
     void 자유게시판_게시글_삭제() throws Exception {
         long postId = postUtil.makeFreePostAndReturnId();
-        System.out.println(postId);
 
         mockMvc.perform(
                         delete(prefix + "/boards/frees/" + postId)

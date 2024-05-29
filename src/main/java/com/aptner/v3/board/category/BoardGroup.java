@@ -19,21 +19,23 @@ public enum BoardGroup {
     private final String table;
 
     public static BoardGroup getById(Long id) {
+        if (id == null) return null;
         for (BoardGroup group : values()) {
             if (group.id.equals(id)) {
                 return group;
             }
         }
-        throw new IllegalArgumentException("No BoardGroup found with id: " + id);
+        return null;
     }
 
     public static BoardGroup getByTable(String table) {
+        if (table == null) return null;
         for (BoardGroup group : values()) {
             if (group.table.equals(table)) {
                 return group;
             }
         }
-        throw new IllegalArgumentException("No BoardGroup found with id: " + table);
+        return null;
     }
 
 }

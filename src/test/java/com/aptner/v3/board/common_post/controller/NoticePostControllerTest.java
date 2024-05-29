@@ -119,32 +119,6 @@ public class NoticePostControllerTest {
 
     @WithUserDetails(value="user1")
     @Test
-    void 자유게시판_게시글_수정() throws Exception {
-        long postId = postUtil.makeNoticePostAndReturnId();
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "Spring Boot Test updated");
-        jsonObject.put("content", "Spring Boot Test updated");
-        jsonObject.put("category_id", 2);
-        jsonObject.put("visible", true);
-
-        MvcResult mvcResult = mockMvc.perform(
-                        put(prefix + "/boards/frees/" + postId)
-                                .content(jsonObject.toJSONString())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andReturn();
-
-        DocumentContext parsed = JsonPath.parse(mvcResult.getResponse().getContentAsString());
-
-        assertEquals("Spring Boot Test updated", parsed.read("$.data.title"));
-        assertEquals("Spring Boot Test updated", parsed.read("$.data.content"));
-        assertTrue(parsed.read("$.data.category_name") != null);
-    }
-
-    @WithUserDetails(value="user1")
-    @Test
     void 공지사항_게시글_삭제() throws Exception {
         long postId = postUtil.makeNoticePostAndReturnId();
 

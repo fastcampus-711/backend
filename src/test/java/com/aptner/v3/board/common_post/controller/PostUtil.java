@@ -1,6 +1,7 @@
 package com.aptner.v3.board.common_post.controller;
 
 import com.aptner.v3.board.category.BoardGroup;
+import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
@@ -9,12 +10,17 @@ import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.complain.Complain;
 import com.aptner.v3.board.complain.dto.ComplainDto;
 import com.aptner.v3.board.free_post.domain.FreePost;
+import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.board.market.Market;
+import com.aptner.v3.board.market.dto.MarketDto;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
+import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import com.aptner.v3.board.qna.Qna;
+import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.member.dto.MemberDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 public class PostUtil {
 
@@ -45,10 +52,19 @@ public class PostUtil {
     private CommonPostRepository<Qna> qnaPostRepository;
 
     <E extends CommonPost> E makeCommonPost(Class<E> targetClass, String title, String content, long categoryId) throws Exception {
+        JSONObject memberObject = new JSONObject();
+        memberObject.put("id", 1L);
+        Member member = objectMapper.readValue(memberObject.toJSONString(), Member.class);
+
+        JSONObject categoryObject = new JSONObject();
+        categoryObject.put("id", categoryId);
+        Category category = objectMapper.readValue(categoryObject.toJSONString(), Category.class);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", title);
         jsonObject.put("content", content);
-        jsonObject.put("category_id", categoryId);
+        jsonObject.put("category", category);
+        jsonObject.put("member", member);
         jsonObject.put("visible", true);
 
         return objectMapper.readValue(jsonObject.toJSONString(), targetClass);
@@ -84,11 +100,11 @@ public class PostUtil {
     }
 
     long makeNoticePostAndReturnId() throws Exception {
-        CommonPostDto.CommonPostRequest commonPostRequestDto = makeCommonPostRequest(NoticePost.class,
+        NoticePostDto.NoticeRequest commonPostRequestDto = makeCommonPostRequest(NoticePost.class,
                 "Spring Boot Test",
                 "Content",
                 1);
-        CommonPostDto dto = CommonPostDto.of(
+        NoticePostDto dto = NoticePostDto.of(
                 BoardGroup.NOTICES,
                 createMember(),
                 commonPostRequestDto
@@ -97,29 +113,29 @@ public class PostUtil {
     }
 
     long makeFreePostAndReturnId() throws Exception {
-        CommonPostDto.CommonPostRequest commonPostRequestDto = makeCommonPostRequest(FreePost.class,
+        FreePostDto.FreePostRequest request = makeCommonPostRequest(FreePost.class,
                 "Spring Boot Test",
                 "Content",
                 1);
-        CommonPostDto dto = CommonPostDto.of(
+        FreePostDto dto = FreePostDto.of(
                 BoardGroup.FREES,
                 createMember(),
-                commonPostRequestDto
+                request
         );
         return commonPostService.createPost(dto).getId();
     }
 
     long makeMarketPostAndReturnId() throws Exception {
 
-        CommonPostDto.CommonPostRequest commonPostRequestDto = makeCommonPostRequest(Market.class,
+        MarketDto.MarketRequest requst = makeCommonPostRequest(Market.class,
                 "Spring Boot Test",
                 "Content",
                 1);
 
-        CommonPostDto dto = CommonPostDto.of(
+        MarketDto dto = MarketDto.of(
                 BoardGroup.MARKETS,
                 createMember(),
-                commonPostRequestDto
+                requst
         );
         return commonPostService.createPost(dto).getId();
     }
@@ -129,11 +145,13 @@ public class PostUtil {
                 "Spring Boot Test",
                 "Content",
                 1);
-        CommonPostDto dto = CommonPostDto.of(
+        log.debug("makeComplainPost.request : {}", request);
+        ComplainDto dto = ComplainDto.of(
                 BoardGroup.COMPLAINT,
                 createMember(),
                 request
         );
+        log.debug("makeComplainPost.dto : {}", dto);
         return commonPostService.createPost(dto).getId();
     }
 

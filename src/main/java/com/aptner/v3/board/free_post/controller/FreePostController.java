@@ -1,7 +1,6 @@
 package com.aptner.v3.board.free_post.controller;
 
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
@@ -26,8 +25,8 @@ public class FreePostController extends CommonPostController<
         FreePostDto.FreePostRequest,
         FreePostDto.FreePostResponse> {
 
-    public FreePostController(CategoryRepository categoryRepository, CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> commonPostService, PaginationService paginationService) {
-        super(categoryRepository, commonPostService, paginationService);
+    public FreePostController(CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> commonPostService, PaginationService paginationService) {
+        super(commonPostService, paginationService);
     }
 
     @Override

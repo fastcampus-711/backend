@@ -1,11 +1,9 @@
 package com.aptner.v3.board.comment;
 
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
-import com.aptner.v3.board.common_post.domain.CommonPost;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
