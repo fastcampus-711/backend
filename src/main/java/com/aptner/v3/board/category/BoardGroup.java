@@ -26,4 +26,14 @@ public enum BoardGroup {
         }
         throw new IllegalArgumentException("No BoardGroup found with id: " + id);
     }
+
+    public static BoardGroup getByTable(String table) {
+        for (BoardGroup group : values()) {
+            if (group.table.equals(table)) {
+                return group;
+            }
+        }
+        throw new IllegalArgumentException("No BoardGroup found with id: " + table);
+    }
+
 }

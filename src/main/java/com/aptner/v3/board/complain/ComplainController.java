@@ -1,8 +1,10 @@
 package com.aptner.v3.board.complain;
 
 import com.aptner.v3.board.category.BoardGroup;
+import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.CommonPostController;
-import com.aptner.v3.board.common_post.CommonPostService;
+import com.aptner.v3.board.common_post.service.CommonPostService;
+import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ComplainController extends CommonPostController<
         Complain,
         ComplainDto,
-        ComplainDto.Request,
-        ComplainDto.Response> {
+        ComplainDto.ComplainRequest,
+        ComplainDto.ComplainResponse> {
+    public ComplainController(CategoryRepository categoryRepository, CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> commonPostService, PaginationService paginationService) {
+        super(categoryRepository, commonPostService, paginationService);
+    }
 
-    protected BoardGroup boardGroup = BoardGroup.COMPLAINT;
-    public ComplainController(CommonPostService<Complain, ComplainDto, ComplainDto.Request, ComplainDto.Response> commonPostService) {
-        super(commonPostService);
+    @Override
+    public BoardGroup getBoardGroup() {
+        return  BoardGroup.COMPLAINT;
     }
 }

@@ -2,9 +2,7 @@ package com.aptner.v3.global.jwt;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.auth.repository.RefreshTokenRepository;
-import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.error.response.ApiResponse;
-import com.aptner.v3.global.exception.AuthException;
 import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.global.util.ResponseUtil;
 import com.aptner.v3.member.Member;
@@ -21,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.StringUtils;
@@ -53,11 +50,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 Claims claims = jwtUtil.parseClaims(token);
                 Member member = jwtUtil.claimsToMember(claims);
-                if (!isLogout(member.getUsername())) {
+                log.debug("토큰으로 부터 가져온 정보 : {}", member);
+                if (isRefreshTokenExists(member.getUsername())) {
 
                     // 2. security Context 저장
-                    CustomUserDetails userDetails = new CustomUserDetails(member);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    log.debug("유요한 토큰, 정상 접근 {}", token);
+                    CustomUserDetails principal = new CustomUserDetails(member);
+                    UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(principal, principal.getPassword(), principal.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
@@ -69,12 +68,8 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isLogout(String username) {
-        boolean exists = refreshTokenRepository.existsByKey(username);
-        if (!exists) {
-            throw new AuthException(ErrorCode.NOT_AVAILABLE_TOKEN);
-        }
-        return exists;
+    private boolean isRefreshTokenExists(String username) {
+        return refreshTokenRepository.existsByKey(username);
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -106,6 +101,7 @@ public class JwtFilter extends OncePerRequestFilter {
             errorMessage = "Authentication failed: Username or Password not valid.";
         } else {
             log.debug("Unknown authentication error.");
+            log.debug(e.getMessage());
             errorMessage = "Authentication error: Unable to process your request.";
         }
 

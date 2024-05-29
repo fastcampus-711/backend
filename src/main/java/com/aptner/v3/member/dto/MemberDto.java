@@ -18,7 +18,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class MemberDto {
-    private long memberId;
+    private Long id;
     private String username;
     private String password;
     private String nickname;
@@ -26,8 +26,8 @@ public class MemberDto {
     private String image;
     private List<MemberRole> roles;
 
-    public MemberDto(Long memberId, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
-        this.memberId = memberId;
+    public MemberDto(Long id, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -37,7 +37,7 @@ public class MemberDto {
     }
 
     public static MemberDto of(Long id, String username, String password, String nickname, String phone, String image, List<MemberRole> roles) {
-        return new MemberDto(null, username, password, nickname, phone, image, roles);
+        return new MemberDto(id, username, password, nickname, phone, image, roles);
     }
 
     public static MemberDto from(Member entity) {

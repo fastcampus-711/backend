@@ -16,24 +16,24 @@ import lombok.Getter;
 
 @Getter
 public enum CategoryCode {
-    공통("", CommonPost.class, CommonPostDto.Request.class, CommonPostDto.Response.class),
-    공지사항("notices", NoticePost.class, NoticePostDto.Request.class, NoticePostDto.Response.class),
-    자유게시판("frees", FreePost.class, FreePostDto.Request.class, FreePostDto.Response.class),
-    QNA("qnas", Qna.class, QnaDto.Request.class, QnaDto.Response.class),
-    나눔장터("markets", Market.class, MarketDto.Request.class, MarketDto.Response.class),
-    민원게시판("complains", Complain.class, ComplainDto.Request.class, ComplainDto.Response.class);
+    공통("", CommonPost.class, CommonPostDto.CommonPostRequest.class, CommonPostDto.CommonPostResponse.class),
+    공지사항("notices", NoticePost.class, NoticePostDto.NoticeRequest.class, NoticePostDto.NoticeResponse.class),
+    자유게시판("frees", FreePost.class, FreePostDto.FreePostRequest.class, FreePostDto.FreePostResponse.class),
+    QNA("qnas", Qna.class, QnaDto.QnaRequest.class, QnaDto.QnaResponse.class),
+    나눔장터("markets", Market.class, MarketDto.MarketReqeust.class, MarketDto.MarketResponse.class),
+    민원게시판("complains", Complain.class, ComplainDto.ComplainRequest.class, ComplainDto.ComplainResponse.class);
 
     private final String URI;
     private final Class<? extends CommonPost> domain;
     private final String dtype;
-    private final Class<? extends CommonPostDto.Request> dtoForRequest;
+    private final Class<? extends CommonPostDto.CommonPostRequest> dtoForRequest;
 
-    private final Class<? extends CommonPostDto.Response> dtoForResponse;
+    private final Class<? extends CommonPostDto.CommonPostResponse> dtoForResponse;
 
     CategoryCode(String uri,
                  Class<? extends CommonPost> domain,
-                 Class<? extends CommonPostDto.Request> dtoForRequest,
-                 Class<? extends CommonPostDto.Response> dtoForResponse) {
+                 Class<? extends CommonPostDto.CommonPostRequest> dtoForRequest,
+                 Class<? extends CommonPostDto.CommonPostResponse> dtoForResponse) {
         this.URI = uri;
         this.domain = domain;
         this.dtoForRequest = dtoForRequest;

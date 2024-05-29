@@ -5,13 +5,44 @@ import com.aptner.v3.board.category.Category;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Getter
+@ToString(callSuper = true)
+@NoArgsConstructor
+@SuperBuilder
 public class CategoryDto {
+    Long id;
+    String code;
+    String name;
+    BoardGroup boardGroup;
+
+    public CategoryDto(Long id, String code, String name, BoardGroup boardGroup) {
+        this.id = id;
+        this.boardGroup = boardGroup;
+        this.code = code;
+        this.name = name;
+    }
+
+    public static CategoryDto of(Long id) {
+        return new CategoryDto(id, null, null, null);
+    }
+
+    public static CategoryDto from(Category entity) {
+        return new CategoryDto(
+                entity.getId(),
+                entity.getCode(),
+                entity.getName(),
+                BoardGroup.getById(entity.getBoardGroup())
+        );
+    }
 
     @Getter
     @AllArgsConstructor

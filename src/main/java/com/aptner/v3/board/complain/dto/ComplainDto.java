@@ -3,16 +3,31 @@ package com.aptner.v3.board.complain.dto;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
+@Getter
+@ToString(callSuper = true)
+@SuperBuilder
+@NoArgsConstructor
 public class ComplainDto extends CommonPostDto {
     @Getter
-    public static class Request extends CommonPostDto.Request {
+    @ToString(callSuper = true)
+    @SuperBuilder
+    @NoArgsConstructor
+    public static class ComplainRequest extends CommonPostDto.CommonPostRequest {
 
+        public ComplainRequest(Long id, Long categoryId, String title, String content, boolean visible, List<String> imageUrls) {
+            super(id, categoryId, title, content, visible, imageUrls);
+        }
     }
 
     @Getter
+    @ToString(callSuper = true)
     @NoArgsConstructor
-    public static class Response extends CommonPostDto.Response {
+    public static class ComplainResponse extends CommonPostDto.CommonPostResponse {
 
     }
 }
