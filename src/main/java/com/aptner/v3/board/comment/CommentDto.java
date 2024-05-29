@@ -15,6 +15,7 @@ public class CommentDto {
     @Setter
     public static class Request {
         private Member member;
+        private boolean writer;
         private long postUserId;
         @NotBlank
         private String content;

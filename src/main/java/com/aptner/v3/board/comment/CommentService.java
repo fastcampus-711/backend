@@ -35,6 +35,9 @@ public class CommentService {
                 .orElseThrow(InvalidTableIdException::new);
         requestDto.setMember(member);
 
+        if (commonPost.getUserId() == MemberUtil.getMemberId())
+            requestDto.setWriter(true);
+
         Comment comment;
         if (commentId == null) {
             comment = Comment.of(commonPost, requestDto);
