@@ -1,10 +1,8 @@
 package com.aptner.v3.member;
 
-import com.aptner.v3.global.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +11,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity(name = "users")
 public class Member {
 
@@ -30,6 +29,7 @@ public class Member {
     @Column(length = 50)
     private String nickname;
 
+    @Setter
     @NotNull(message = "필수 입력값입니다.")
     @Column(nullable = false)
     private String password;
@@ -48,14 +48,17 @@ public class Member {
     @Column(name = "user_role")
     private List<MemberRole> roles;
 
-    public Member(String username, String password, List<MemberRole> roles) {
+    public Member(String username, String password, String nickname, String image, String phone, List<MemberRole> roles) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname;
+        this.image = image;
+        this.phone = phone;
         this.roles = roles;
     }
 
-    public static Member of(String username, String password, List<MemberRole> roles) {
-        return new Member(username, password, roles);
+    public static Member of(String username, String password, String nickname, String image, String phone, List<MemberRole> roles) {
+        return new Member(username, password, nickname, image, phone, roles);
     }
 
     @Override

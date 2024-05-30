@@ -1,11 +1,11 @@
 package com.aptner.v3.board.market;
 
+import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.member.Member;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -14,22 +14,15 @@ public class Market extends CommonPost {
     private String type;
     private String status;
 
-    private List<String> imageUrls;
+    public Market() {}
 
-    public Market(String title, String content, String type, String status) {
-        super(title, content);
+    public Market(Member member, Category category, String title, String content, boolean visible, String type, String status) {
+        super(member, category, title, content, visible);
         this.type = type;
         this.status = status;
     }
 
-    public Market(String title, String content, String type, String status, List<String> imageUrls) {
-        super(title, content);
-        this.type = type;
-        this.status = status;
-        this.imageUrls = imageUrls;
-    }
-
-    public Market() {
-
+    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, String status) {
+        return new Market(member, category, title, content, visible, type, status);
     }
 }
