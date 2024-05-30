@@ -94,6 +94,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public MemberDto toDto() {
+
         return MemberDto.of(
                 member.getId(),
                 member.getUsername(),
