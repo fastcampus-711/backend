@@ -7,7 +7,7 @@ server:
 
 spring:
     profiles:
-        include: hidden hidden-dev
+        include: hidden, hidden-dev
 
     http:
         encoding:
