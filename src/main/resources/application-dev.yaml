@@ -2,7 +2,7 @@ frontend:
   url: localhost
 
 server:
-  port: 8989
+  port: 8181
 
 spring:
 
