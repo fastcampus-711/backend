@@ -2,8 +2,8 @@ package com.aptner.v3.board.free_post.controller;
 
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostController;
-import com.aptner.v3.board.common_post.CommonPostService;
-import com.aptner.v3.board.free_post.FreePostService;
+import com.aptner.v3.board.common_post.service.CommonPostService;
+import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,15 +21,12 @@ import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 @Slf4j
 public class FreePostController extends CommonPostController<
         FreePost,
-        FreePostDto.Request,
-        FreePostDto.Response> {
-    private final FreePostService freePostService;
+        FreePostDto,
+        FreePostDto.FreePostRequest,
+        FreePostDto.FreePostResponse> {
 
-    public FreePostController(
-            CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,
-            FreePostService freePostService) {
-        super(commonPostService);
-        this.freePostService = freePostService;
+    public FreePostController(CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> commonPostService, PaginationService paginationService) {
+        super(commonPostService, paginationService);
     }
 
     @Override

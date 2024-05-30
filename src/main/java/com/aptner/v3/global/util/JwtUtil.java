@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -223,15 +222,21 @@ public class JwtUtil {
      */
     public Map<String, Object> memberToClaims(Member member) {
 
-        List<SimpleGrantedAuthority> authority = member.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
+        List<String> authority = member.getRoles().stream()
+                .map(MemberRole::name)
                 .collect(Collectors.toList());
+        log.debug("authority {}", authority);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", member.getId());
         claims.put("username", member.getUsername());
+        claims.put("password", member.getPassword());
+        claims.put("nickname", member.getNickname());
+        claims.put("image", member.getImage());
+        claims.put("phone", member.getPhone());
         claims.put("roles", authority);
 
+        log.debug("claim to member: {}", claims);
         return claims;
     }
 
@@ -242,15 +247,23 @@ public class JwtUtil {
      * @return the member
      */
     public Member claimsToMember(Map<String, Object> claims) {
-        // @todo DTO로 전환?
+
+        log.debug("{}", claims);
         Member member = new Member();
         member.setId(((Number) claims.get("id")).longValue());
         member.setUsername((String) claims.get("username"));
-        // Add other member fields as needed
-        List<MemberRole> roles = Arrays.stream((String[]) claims.get("roles"))
+        member.setPassword((String) claims.get("password"));
+        member.setNickname((String) claims.get("nickname"));
+        member.setImage((String) claims.get("image"));
+        member.setPhone((String) claims.get("phone"));
+
+        List<String> rolesList = (List<String>) claims.get("roles");
+        List<MemberRole> roles = rolesList.stream()
                 .map(MemberRole::valueOf)
                 .collect(Collectors.toList());
         member.setRoles(roles);
+
+        log.debug("claim to member: {}", member);
         return member;
     }
 

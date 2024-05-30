@@ -32,7 +32,7 @@ public class ModelMapperUtil {
 
         for (CategoryCode categoryCode: CategoryCode.values()) {
             Class<? extends CommonPost> commonPostDomain = categoryCode.getDomain();
-            Class<? extends CommonPostDto.Response> commonPostDtoResponse = categoryCode.getDtoForResponse();
+            Class<? extends CommonPostDto.CommonPostResponse> commonPostDtoResponse = categoryCode.getDtoForResponse();
 
             modelMapper.createTypeMap(commonPostDomain, commonPostDtoResponse, "skipComments")
                     .addMappings(mapping -> mapping.skip((a, b) -> a.setComments((List<CommentDto.Response>) b)));

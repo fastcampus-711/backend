@@ -1,15 +1,12 @@
 package com.aptner.v3.global.util;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
-import com.aptner.v3.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 public class MemberUtil {
     private static Authentication authentication;
-    @Autowired
-    private static MemberService memberService;
 
     public static String getUsername() {
         authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -20,5 +17,21 @@ public class MemberUtil {
         authentication = SecurityContextHolder.getContext().getAuthentication();
 //        return ((CustomUserDetails)(authentication.getPrincipal())).getId();
         return 1;
+    }
+
+    public static User getMember() {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal();
+        }
+        return null;
+    }
+
+    public static CustomUserDetails getMember1() {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            return (CustomUserDetails) authentication.getPrincipal();
+        }
+        return null;
     }
 }

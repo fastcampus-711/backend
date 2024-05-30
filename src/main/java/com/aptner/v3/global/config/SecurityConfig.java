@@ -74,11 +74,11 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
 
-//        http.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-//    @Bean
+    @Bean
     public JwtFilter AuthenticationFilter() {
         return new JwtFilter(jwtUtil, refreshTokenRepository);
     }

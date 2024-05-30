@@ -35,7 +35,7 @@ public class CommentService {
                 .orElseThrow(InvalidTableIdException::new);
         requestDto.setMember(member);
 
-        if (commonPost.getUserId() == MemberUtil.getMemberId())
+        if (commonPost.getMember().getId() == MemberUtil.getMemberId())
             requestDto.setWriter(true);
 
         Comment comment;
@@ -44,7 +44,7 @@ public class CommentService {
         } else {
             Comment parentComment = commentRepository.findById(commentId)
                     .orElseThrow(InvalidTableIdException::new);
-            requestDto.setPostUserId(commonPost.getUserId());
+            requestDto.setPostUserId(commonPost.getMemberId());
             comment = Comment.of(parentComment, requestDto);
         }
         comment = commentRepository.save(comment);

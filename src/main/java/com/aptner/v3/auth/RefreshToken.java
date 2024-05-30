@@ -18,7 +18,7 @@ public class RefreshToken {
     private String key;
 
     @Setter
-    @Column(name = "token_value")
+    @Column(name = "token_value", unique = true, length = 512)
     private String value;
 
     @Column(name = "expire_at")

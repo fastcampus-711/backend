@@ -1,6 +1,8 @@
 package com.aptner.v3;
 
-import com.aptner.v3.auth.dto.CustomUserDetails;
+import com.aptner.v3.auth.dto.LoginDto;
+import com.aptner.v3.auth.dto.TokenDto;
+import com.aptner.v3.auth.service.AuthService;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryService;
 import com.aptner.v3.board.category.dto.CategoryDto;
@@ -13,8 +15,6 @@ import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,11 +29,13 @@ public class MenuInitializer implements CommandLineRunner {
     private final CategoryService categoryService;
     private final MemberRepository memberRepository;
 
+    private final AuthService authService;
+
     @Override
     public void run(String... args) {
 
-        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
+        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER)));
+        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
 
         // intro
         Menu intro = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));
@@ -93,8 +95,14 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "23", BoardGroup.FREES));
 
         // 가짜 로그인 사용자 지정
-        CustomUserDetails userDetails = new CustomUserDetails(user);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        CustomUserDetails userDetails = new CustomUserDetails(user);
+//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        TokenDto login = authService.login(LoginDto.builder()
+                .password("p@ssword")
+                .username("user")
+                .build());
+        System.out.println(login.accessToken());
     }
 }
