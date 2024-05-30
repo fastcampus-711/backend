@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/boards/markets")
 public class MarketController extends CommonPostController<
         Market,
-        MarketDto,
         MarketDto.Request,
         MarketDto.Response> {
     private final MarketService marketService;
 
     protected BoardGroup boardGroup = BoardGroup.MARKETS;
 
-    public MarketController(CommonPostService<Market, MarketDto, MarketDto.Request, MarketDto.Response> commonPostService,
+    public MarketController(CommonPostService<Market, MarketDto.Request, MarketDto.Response> commonPostService,
                             MarketService marketService) {
         super(commonPostService);
         this.marketService = marketService;

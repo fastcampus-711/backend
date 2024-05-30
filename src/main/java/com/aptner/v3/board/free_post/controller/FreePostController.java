@@ -21,13 +21,12 @@ import static com.aptner.v3.global.config.SwaggerConfig.Accesskey;
 @Slf4j
 public class FreePostController extends CommonPostController<
         FreePost,
-        FreePostDto,
         FreePostDto.Request,
         FreePostDto.Response> {
     private final FreePostService freePostService;
 
     public FreePostController(
-            CommonPostService<FreePost, FreePostDto, FreePostDto.Request, FreePostDto.Response> commonPostService,
+            CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> commonPostService,
             FreePostService freePostService) {
         super(commonPostService);
         this.freePostService = freePostService;

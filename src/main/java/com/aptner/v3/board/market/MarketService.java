@@ -1,15 +1,20 @@
 package com.aptner.v3.board.market;
 
+import com.aptner.v3.board.common.reaction.ReactionRepository;
+import com.aptner.v3.board.common.reaction.domain.CommentReaction;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarketService extends CommonPostService<Market, MarketDto, MarketDto.Request, MarketDto.Response> {
+public class MarketService extends CommonPostService<Market, MarketDto.Request, MarketDto.Response> {
     private final CommonPostRepository<Market> commonPostRepository;
-    public MarketService(CommonPostRepository<Market> commonPostRepository) {
-        super(commonPostRepository);
+    public MarketService(CommonPostRepository<Market> commonPostRepository,
+                         ReactionRepository<PostReaction> postReactionRepository,
+                         ReactionRepository<CommentReaction> commentReactionRepository) {
+        super(commonPostRepository, postReactionRepository, commentReactionRepository);
         this.commonPostRepository = commonPostRepository;
     }
 

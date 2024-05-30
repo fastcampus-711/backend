@@ -21,9 +21,9 @@ import java.util.List;
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
+@DiscriminatorColumn(name = "dtype")
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
-@SQLRestriction("deleted is false")
+@SQLRestriction("deleted is FALSE")
 public class CommonPost extends BaseTimeEntity
 implements ReactionAndCommentCalculator {
     @Id

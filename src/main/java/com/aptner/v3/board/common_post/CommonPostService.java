@@ -1,11 +1,16 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.category.BoardGroup;
+import com.aptner.v3.board.common.reaction.ReactionRepository;
+import com.aptner.v3.board.common.reaction.domain.CommentReaction;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
+import com.aptner.v3.global.util.MemberUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -14,20 +19,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Primary
 @Service
 @Transactional
 public class CommonPostService<E extends CommonPost,
-        K extends CommonPostDto,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
     private final CommonPostRepository<E> commonPostRepository;
     private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
-
-    public CommonPostService(CommonPostRepository<E> commonPostRepository) {
+    private final ReactionRepository<PostReaction> postReactionRepository;
+    private final ReactionRepository<CommentReaction> commentReactionRepository;
+    public CommonPostService(CommonPostRepository<E> commonPostRepository,
+                             ReactionRepository<PostReaction> postReactionRepository,
+                             ReactionRepository<CommentReaction> commentReactionRepository) {
         this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
+        this.postReactionRepository = postReactionRepository;
+        this.commentReactionRepository = commentReactionRepository;
     }
 
 //    public Page<S> searchPost(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
@@ -87,8 +98,18 @@ public class CommonPostService<E extends CommonPost,
         commonPost.updateCountOfComments(
                 countOfReactionAndCommentApplyService.countComments(commonPost.getComments())
         );
+        S commonPostDtoResponse = (S) commonPost.toResponseDtoWithComments();
+        postReactionRepository.findByUserIdAndTargetIdAndDtype(MemberUtil.getMemberId(), postId, "PostReaction")
+                .ifPresent(rst -> commonPostDtoResponse.setReactionType(rst.getReactionType()));
 
-        return (S) commonPost.toResponseDtoWithComments();
+        Map<Long, ReactionType> mapCommentIdAndReactionType =commentReactionRepository.findByUserIdAndDtype(MemberUtil.getMemberId(), "CommentReaction")
+                .stream()
+                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        commonPostDtoResponse.applyReactionTypeToComments(mapCommentIdAndReactionType);
+
+        return commonPostDtoResponse;
     }
 
     public S createPost(Q requestDto) {

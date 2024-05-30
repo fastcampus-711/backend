@@ -3,6 +3,7 @@ package com.aptner.v3.board.common_post;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.global.util.ModelMapperUtil;
@@ -13,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class CommonPostDto {
     @Getter
@@ -57,6 +59,7 @@ public class CommonPostDto {
         private boolean visible;
         private int hits;
         private ReactionColumns reactionColumns;
+        private ReactionType reactionType = ReactionType.DEFAULT;
         private long countOfComments;
         private String dtype;
         private List<CommentDto.Response> comments;
@@ -97,6 +100,18 @@ public class CommonPostDto {
                 }
                 blindCommentAlgorithm(comment.getChildComments());
             }
+        }
+
+        public CommonPostDto.Response applyReactionTypeToComments(Map<Long, ReactionType> mapCommentIdAndReactionType) {
+            for (CommentDto.Response comment : comments) {
+                if (mapCommentIdAndReactionType.containsKey(comment.getId()))
+                    comment.setReactionType(mapCommentIdAndReactionType.get(comment.getId()));
+                for (CommentDto.Response childComment : comment.getChildComments())
+                    if (mapCommentIdAndReactionType.containsKey(childComment.getId()))
+                        childComment.setReactionType(mapCommentIdAndReactionType.get(childComment.getId()));
+            }
+
+            return this;
         }
     }
 }

@@ -7,13 +7,12 @@ import com.aptner.v3.board.qna.dto.QnaDto;
 
 public class QnaController extends CommonPostController<
         Qna,
-        QnaDto,
         QnaDto.Request,
         QnaDto.Response> {
 
     protected BoardGroup boardGroup = BoardGroup.QNAS;
 
-    public QnaController(CommonPostService<Qna, QnaDto, QnaDto.Request, QnaDto.Response> commonPostService) {
+    public QnaController(CommonPostService<Qna, QnaDto.Request, QnaDto.Response> commonPostService) {
         super(commonPostService);
     }
 }

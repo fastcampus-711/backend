@@ -19,11 +19,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
-        T extends CommonPostDto,
         Q extends CommonPostDto.Request,
         S extends CommonPostDto.Response> {
 
-    protected final CommonPostService<E, T, Q, S> commonPostService;
+    protected final CommonPostService<E, Q, S> commonPostService;
 
     @GetMapping("")
     @Operation(summary = "게시글 검색")

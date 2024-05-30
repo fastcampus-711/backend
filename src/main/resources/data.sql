@@ -1,4 +1,4 @@
-insert into common_post (id, user_id, title, content, created_by, created_at, hits, visible, deleted, dtype, category_id, count_of_comments, count_reaction_type_good, count_reaction_type_bad) values (1, 66, '13 Fighting Men', 'Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.', 'Herminia Janovsky', '2024-03-26', 86, true, false, 'FreePost', 6, 4, 20, 7);
+insert into common_post (id, user_id, title, content, created_by, created_at, hits, visible, deleted, dtype, category_id, count_of_comments, count_reaction_type_good, count_reaction_type_bad) values (1, 1, '13 Fighting Men', 'Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.', 'Herminia Janovsky', '2024-03-26', 86, true, false, 'FreePost', 6, 4, 20, 7);
 insert into common_post (id, user_id, title, content, created_by, created_at, hits, visible, deleted, dtype, category_id, count_of_comments, count_reaction_type_good, count_reaction_type_bad) values (2, 14, 'Wild Beasts (Wild beasts - Belve feroci)', 'Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.', 'Pinchas Fiveash', '2023-07-25', 40, true, false, 'FreePost', 1, 43, 79, 54);
 insert into common_post (id, user_id, title, content, created_by, created_at, hits, visible, deleted, dtype, category_id, count_of_comments, count_reaction_type_good, count_reaction_type_bad) values (3, 78, 'The Woodcarver', 'Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.', 'Waverly Braunlein', '2024-04-26', 41, true, false, 'FreePost', 3, 11, 57, 57);
 insert into common_post (id, user_id, title, content, created_by, created_at, hits, visible, deleted, dtype, category_id, count_of_comments, count_reaction_type_good, count_reaction_type_bad) values (4, 77, 'Everybody''s Fine (Stanno tutti bene)', 'Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.', 'Raimondo Popov', '2024-05-12', 93, false, false, 'FreePost', 3, 29, 12, 64);
@@ -146,7 +146,7 @@ insert into Users(id, username, password, nickname, image) values (2, 'username2
 insert into Users(id, username, password, nickname, image) values (3, 'username3', 'pwd3', 'nickname3', 'image3');
 insert into Users(id, username, password, nickname, image) values (4, 'username4', 'pwd4', 'nickname4', 'image4');
 
-insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 32, null, false, 1, 1, now(), true);
+insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 32, null, true, 1, 1, now(), true);
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 1, null, true, 1, 1, now());
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 1, null, true, 1, 1, now());
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 1, null, true, 1, 1, now());
@@ -156,3 +156,8 @@ insert into comment(id, member_id, content, common_post_id, comment_id, visible,
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 1, null, true, true, 1, 1, now());
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', null, 8, false, 1, 1, now());
 insert into comment(id, member_id, content, common_post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', null, 8, false, 1, 1, now());
+
+
+insert into reaction(id, user_id, target_id, reaction_type, dtype) values (1, 1, 1, 0, 'PostReaction');
+insert into reaction(id, user_id, target_id, reaction_type, dtype) values (2, 1, 2, 1, 'CommentReaction');
+insert into reaction(id, user_id, target_id, reaction_type, dtype) values (3, 1, 7, 0, 'CommentReaction');

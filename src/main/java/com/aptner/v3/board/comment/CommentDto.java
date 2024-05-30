@@ -1,6 +1,7 @@
 package com.aptner.v3.board.comment;
 
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.member.Member;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class CommentDto {
         private LocalDateTime createdAt;
         private String content;
         private ReactionColumns reactionColumns;
+        private ReactionType reactionType = ReactionType.DEFAULT;
         private boolean visible;
         private boolean writer;
         private boolean admin;

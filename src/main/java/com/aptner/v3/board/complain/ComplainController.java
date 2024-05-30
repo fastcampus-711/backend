@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/boards/qnas")
 public class ComplainController extends CommonPostController<
         Complain,
-        ComplainDto,
         ComplainDto.Request,
         ComplainDto.Response> {
 
     protected BoardGroup boardGroup = BoardGroup.COMPLAINT;
-    public ComplainController(CommonPostService<Complain, ComplainDto, ComplainDto.Request, ComplainDto.Response> commonPostService) {
+    public ComplainController(CommonPostService<Complain, ComplainDto.Request, ComplainDto.Response> commonPostService) {
         super(commonPostService);
     }
 }

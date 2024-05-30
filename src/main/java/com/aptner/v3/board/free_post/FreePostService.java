@@ -1,5 +1,8 @@
 package com.aptner.v3.board.free_post;
 
+import com.aptner.v3.board.common.reaction.ReactionRepository;
+import com.aptner.v3.board.common.reaction.domain.CommentReaction;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.free_post.domain.FreePost;
@@ -7,10 +10,12 @@ import com.aptner.v3.board.free_post.dto.FreePostDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FreePostService extends CommonPostService<FreePost, FreePostDto, FreePostDto.Request, FreePostDto.Response> {
+public class FreePostService extends CommonPostService<FreePost, FreePostDto.Request, FreePostDto.Response> {
     private final CommonPostRepository<FreePost> commonPostRepository;
-    public FreePostService(CommonPostRepository<FreePost> commonPostRepository) {
-        super(commonPostRepository);
+    public FreePostService(CommonPostRepository<FreePost> commonPostRepository,
+                           ReactionRepository<PostReaction> postReactionRepository,
+                           ReactionRepository<CommentReaction> commentReactionRepository) {
+        super(commonPostRepository, postReactionRepository, commentReactionRepository);
         this.commonPostRepository = commonPostRepository;
     }
 

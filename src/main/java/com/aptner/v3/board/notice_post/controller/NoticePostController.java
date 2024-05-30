@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/boards/notices")
 public class NoticePostController extends CommonPostController<
         NoticePost,
-        NoticePostDto,
         NoticePostDto.Request,
         NoticePostDto.Response> {
     private final NoticePostService noticePostService;
