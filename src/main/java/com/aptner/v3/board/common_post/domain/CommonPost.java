@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
@@ -73,7 +74,8 @@ public class CommonPost extends BaseTimeEntity
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    private boolean visible = true;
+    @ColumnDefault(value = "true")
+    private boolean visible;
 
     private boolean deleted;
 
@@ -108,7 +110,7 @@ public class CommonPost extends BaseTimeEntity
 
         Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
 
-        CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass);
+        CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass, "memberToCommentResponse");
 
         return commonPostResponseDto.blindPostAlgorithm();
     }
