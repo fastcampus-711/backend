@@ -34,8 +34,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "profile.png", "01011112222", List.of(MemberRole.ROLE_USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "profile.png", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
+        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER)));
+        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
 
         // intro
         Menu intro = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));
