@@ -7,7 +7,6 @@ import com.aptner.v3.auth.dto.TokenDto;
 import com.aptner.v3.auth.repository.RefreshTokenRepository;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.AuthException;
-import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.member.Member;
 import io.jsonwebtoken.Claims;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.aptner.v3.global.error.ErrorCode.NOT_AVAILABLE_TOKEN;
-import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 @Slf4j
 @Service
@@ -114,24 +112,26 @@ public class AuthService {
     private String getOrCreateRefreshToken(Authentication authentication) {
 
         RefreshToken refreshToken = getRefreshToken(authentication.getName());
-        String refreshTokenValue = refreshToken.getValue();
-        if (refreshTokenValue != null && jwtUtil.is3DaysLeftFromExpire(refreshTokenValue)) {
-            String newRefreshToken = jwtUtil.createRefreshToken(authentication);
-            refreshTokenRepository.save(new RefreshToken(
-                    authentication.getName(),
-                    newRefreshToken,
-                    jwtUtil.getRefreshTokenExpirationInSeconds()
-            ));
-            return newRefreshToken;
+        if (refreshToken == null || jwtUtil.is3DaysLeftFromExpire(refreshToken.getValue())) {
+            return reCreateAndSaveRefreshToken(authentication);
         } else {
             // Otherwise, use the existing refresh token
-            return refreshTokenValue;
+            return refreshToken.getValue();
         }
     }
 
+    private String reCreateAndSaveRefreshToken(Authentication authentication) {
+        String newRefreshToken = jwtUtil.createRefreshToken(authentication);
+        refreshTokenRepository.save(new RefreshToken(
+                authentication.getName(),
+                newRefreshToken,
+                jwtUtil.getRefreshTokenExpirationInSeconds()
+        ));
+        return newRefreshToken;
+    }
+
     private RefreshToken getRefreshToken(String username) {
-        return refreshTokenRepository.findByKey(username)
-                .orElseThrow(() -> new UserException(_NOT_FOUND));
+        return refreshTokenRepository.findByKey(username).orElse(null);
     }
 
 }

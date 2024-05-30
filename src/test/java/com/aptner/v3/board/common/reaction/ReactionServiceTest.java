@@ -2,7 +2,6 @@ package com.aptner.v3.board.common.reaction;
 
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentRepository;
-import com.aptner.v3.board.comment.CommentService;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionDto;
@@ -12,8 +11,6 @@ import com.aptner.v3.board.common.reaction.service.PostReactionService;
 import com.aptner.v3.board.common.reaction.service.ReactionService;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.common_post.CommonPostService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

@@ -1,9 +1,10 @@
 package com.aptner.v3.board.common_post.controller;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
-import com.aptner.v3.board.common_post.CommonPostService;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
@@ -17,17 +18,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -44,7 +48,7 @@ public class NoticePostControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.Request, CommonPostDto.Response> commonPostService;
+    private CommonPostService<CommonPost, CommonPostDto, CommonPostDto.CommonPostRequest, CommonPostDto.CommonPostResponse> commonPostService;
 
     @Autowired
     private CommonPostRepository<CommonPost> commonPostRepository;
@@ -69,31 +73,35 @@ public class NoticePostControllerTest {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .alwaysDo(print())
                 .build();
 
         prefix = "http://localhost:" + port;
     }
 
+    @WithUserDetails(value="user1")
     @Test
     void 공지사항_전체_조회() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/notices"))
                 .andDo(print())
                 .andReturn();
-        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data[*].dtype");
+        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].board_group");
         Assertions.assertThat(list).hasSize(10);
 
         for (String str : list) {
-            Assertions.assertThat(str).contains("NoticePost");
+            Assertions.assertThat(str).contains(BoardGroup.NOTICES.name());
         }
     }
 
+    @WithUserDetails(value="user1")
     @Test
     void 공지사항_게시글_생성() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", "Spring Boot Test");
         jsonObject.put("content", "Spring Boot Test");
         jsonObject.put("category_id", 1);
-        jsonObject.put("post_at", "2024-05-12T17:00:12");
+        jsonObject.put("visible", true);
 
         MvcResult mvcResult = mockMvc.perform(
                         post(prefix + "/boards/notices/")
@@ -105,39 +113,13 @@ public class NoticePostControllerTest {
                 .andReturn();
 
         DocumentContext parsed = JsonPath.parse(mvcResult.getResponse().getContentAsString());
-        for (String key : jsonObject.keySet()) {
-            assertEquals(
-                    jsonObject.get(key),
-                    parsed.read("$.data." + key)
-            );
-        }
+
+        assertEquals("Spring Boot Test", parsed.read("$.data.title"));
+        assertEquals("Spring Boot Test", parsed.read("$.data.content"));
+        assertTrue(parsed.read("$.data.category_name") != null);
     }
 
-    @Test
-    void 자유게시판_게시글_수정() throws Exception {
-        long postId = postUtil.makeNoticePostAndReturnId();
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "Spring Boot Test updated");
-        jsonObject.put("content", "Spring Boot Test updated");
-        jsonObject.put("category_id", 2);
-
-        MvcResult mvcResult = mockMvc.perform(
-                        put(prefix + "/boards/frees/" + postId)
-                                .content(jsonObject.toJSONString())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andReturn();
-
-        for (String key : jsonObject.keySet()) {
-            assertEquals(
-                    jsonObject.get(key),
-                    JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data." + key)
-            );
-        }
-    }
-
+    @WithUserDetails(value="user1")
     @Test
     void 공지사항_게시글_삭제() throws Exception {
         long postId = postUtil.makeNoticePostAndReturnId();

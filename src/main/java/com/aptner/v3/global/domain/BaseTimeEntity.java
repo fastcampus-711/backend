@@ -11,7 +11,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -20,13 +19,13 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseTimeEntity {
+
     @CreatedBy
+    @Column(updatable = false)
     @JsonIgnore
     private String createdBy;
 
     @CreatedDate
-    @DateTimeFormat(iso = DateTimeFormat. ISO.DATE_TIME)
-    @JsonIgnore
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -35,8 +34,6 @@ public abstract class BaseTimeEntity {
     private String modifiedBy;
 
     @LastModifiedDate
-    @DateTimeFormat(iso = DateTimeFormat. ISO.DATE_TIME)
-    @JsonIgnore
     @Column(updatable = false)
     private LocalDateTime modifiedAt;
 }
