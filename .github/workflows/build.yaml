@@ -44,6 +44,14 @@ jobs:
           echo "${{ secrets.hidden }}" >> ./application-hidden.yaml
         shell: bash
 
+      - name: make application-hidden-dev.yaml
+        run: |
+          cd ./src/main/resources
+          touch ./application-hidden-dev.yaml
+          
+          echo "${{ secrets.hidden_dev }}" >> ./application-hidden-dev.yaml
+        shell: bash
+
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:

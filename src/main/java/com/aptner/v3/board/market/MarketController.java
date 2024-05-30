@@ -1,7 +1,6 @@
 package com.aptner.v3.board.market;
 
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.CommonPostController;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
@@ -16,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MarketController extends CommonPostController<
         Market,
         MarketDto,
-        MarketDto.MarketReqeust,
+        MarketDto.MarketRequest,
         MarketDto.MarketResponse> {
-    public MarketController(CategoryRepository categoryRepository, CommonPostService<Market, MarketDto, MarketDto.MarketReqeust, MarketDto.MarketResponse> commonPostService, PaginationService paginationService) {
-        super(categoryRepository, commonPostService, paginationService);
+    public MarketController(CommonPostService<Market, MarketDto, MarketDto.MarketRequest, MarketDto.MarketResponse> commonPostService, PaginationService paginationService) {
+        super(commonPostService, paginationService);
     }
 
     @Override

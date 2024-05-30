@@ -14,6 +14,7 @@ import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -35,11 +36,10 @@ public class CommonPostService<E extends CommonPost,
         Q extends CommonPostDto.CommonPostRequest,
         S extends CommonPostDto.CommonPostResponse> {
 
-    protected final CommonPostRepository<E> commonPostRepository;
-
-    protected final MemberRepository memberRepository;
-    protected final CategoryRepository categoryRepository;
-    protected final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
+    private final CommonPostRepository<E> commonPostRepository;
+    private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
+    private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
 
     public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<E> commonPostRepository) {
         this.memberRepository = memberRepository;
@@ -153,8 +153,9 @@ public class CommonPostService<E extends CommonPost,
             throw new PostException(ErrorCode.INSUFFICIENT_AUTHORITY);
         }
 
-        // 수정 요청 사항에 categoryId가 다른 경우.
-        if (!post.getCategory().getId().equals(dto.getCategoryDto().getId())) {
+        // Board 속한 게시글 수정/삭제
+        if (StringUtils.isNotEmpty(post.getDtype())
+                && post.getDtype().equals(dto.getBoardGroup().getTable())) {
             throw new PostException(INVALID_REQUEST);
         }
         return post;

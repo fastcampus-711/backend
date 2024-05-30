@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class FreePostService extends CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> {
 
+    private final CommonPostRepository<FreePost> commonPostRepository;
+
     public FreePostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<FreePost> commonPostRepository) {
         super(memberRepository, categoryRepository, commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
     }
 }

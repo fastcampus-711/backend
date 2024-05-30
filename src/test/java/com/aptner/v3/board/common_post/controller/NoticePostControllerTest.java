@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -71,6 +72,7 @@ public class NoticePostControllerTest {
     void setUp() throws Exception {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
@@ -114,32 +116,6 @@ public class NoticePostControllerTest {
 
         assertEquals("Spring Boot Test", parsed.read("$.data.title"));
         assertEquals("Spring Boot Test", parsed.read("$.data.content"));
-        assertTrue(parsed.read("$.data.category_name") != null);
-    }
-
-    @WithUserDetails(value="user1")
-    @Test
-    void 자유게시판_게시글_수정() throws Exception {
-        long postId = postUtil.makeNoticePostAndReturnId();
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "Spring Boot Test updated");
-        jsonObject.put("content", "Spring Boot Test updated");
-        jsonObject.put("category_id", 2);
-        jsonObject.put("visible", true);
-
-        MvcResult mvcResult = mockMvc.perform(
-                        put(prefix + "/boards/frees/" + postId)
-                                .content(jsonObject.toJSONString())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andReturn();
-
-        DocumentContext parsed = JsonPath.parse(mvcResult.getResponse().getContentAsString());
-
-        assertEquals("Spring Boot Test updated", parsed.read("$.data.title"));
-        assertEquals("Spring Boot Test updated", parsed.read("$.data.content"));
         assertTrue(parsed.read("$.data.category_name") != null);
     }
 

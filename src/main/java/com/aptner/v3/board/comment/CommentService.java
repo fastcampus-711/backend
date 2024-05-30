@@ -5,6 +5,8 @@ import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.global.util.MemberUtil;
+import com.aptner.v3.member.Member;
+import com.aptner.v3.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +15,28 @@ import org.springframework.stereotype.Service;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommonPostRepository<CommonPost> commonPostRepository;
+    private final MemberRepository memberRepository;
     private final CountCommentsAndReactionApplyService<Comment> countOfReactionAndCommentApplyService;
-    public CommentService(CommentRepository commentRepository, CommonPostRepository<CommonPost> commonPostRepository) {
+
+    public CommentService(CommentRepository commentRepository,
+                          CommonPostRepository<CommonPost> commonPostRepository,
+                          MemberRepository memberRepository) {
         this.commentRepository = commentRepository;
         this.commonPostRepository = commonPostRepository;
         this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commentRepository);
+        this.memberRepository = memberRepository;
     }
 
     public CommentDto.Response addComment(long postId, Long commentId, CommentDto.Request requestDto) {
         CommonPost commonPost = commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new);
 
-        requestDto.setUserId(MemberUtil.getMemberId());
+        Member member = memberRepository.findById(MemberUtil.getMemberId())
+                .orElseThrow(InvalidTableIdException::new);
+        requestDto.setMember(member);
+
+        if (commonPost.getMember().getId() == MemberUtil.getMemberId())
+            requestDto.setWriter(true);
 
         Comment comment;
         if (commentId == null) {

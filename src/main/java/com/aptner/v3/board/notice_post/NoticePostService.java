@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class NoticePostService extends CommonPostService<NoticePost, NoticePostDto, NoticePostDto.NoticeRequest, NoticePostDto.NoticeResponse> {
 
+    protected final CommonPostRepository<NoticePost> commonPostRepository;
+
     public NoticePostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<NoticePost> commonPostRepository) {
         super(memberRepository, categoryRepository, commonPostRepository);
+        this.commonPostRepository = commonPostRepository;
     }
 }

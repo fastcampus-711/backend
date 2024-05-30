@@ -20,7 +20,7 @@ public enum CategoryCode {
     공지사항("notices", NoticePost.class, NoticePostDto.NoticeRequest.class, NoticePostDto.NoticeResponse.class),
     자유게시판("frees", FreePost.class, FreePostDto.FreePostRequest.class, FreePostDto.FreePostResponse.class),
     QNA("qnas", Qna.class, QnaDto.QnaRequest.class, QnaDto.QnaResponse.class),
-    나눔장터("markets", Market.class, MarketDto.MarketReqeust.class, MarketDto.MarketResponse.class),
+    나눔장터("markets", Market.class, MarketDto.MarketRequest.class, MarketDto.MarketResponse.class),
     민원게시판("complains", Complain.class, ComplainDto.ComplainRequest.class, ComplainDto.ComplainResponse.class);
 
     private final String URI;
