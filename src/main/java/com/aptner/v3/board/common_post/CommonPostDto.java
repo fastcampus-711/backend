@@ -79,7 +79,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()).getTable())
+//                .boardGroup(BoardGroup.getByTable(entity.getDtype()).getTable())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())

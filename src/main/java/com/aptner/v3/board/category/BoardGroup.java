@@ -2,7 +2,6 @@ package com.aptner.v3.board.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
