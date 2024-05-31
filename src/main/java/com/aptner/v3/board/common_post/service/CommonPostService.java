@@ -21,9 +21,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
@@ -57,20 +63,18 @@ public class CommonPostService<E extends CommonPost,
      */
     public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
 
-
         Page<E> list = null;
         if (categoryId == 0) {
             if (status != null) {
+                // 민원 게시판, 나눔 게시판, Qna 게시판
                 list = findByDtypeAndStatus(boardGroup, status, pageable);
             } else {
-                // 게시판 조회
+                // 자유 게시판 조회
                 if (BoardGroup.FREES.equals(boardGroup)) {
-                    if (pageable.getPageNumber() == 1) {
-                        // 인기 게시글
-                    }
+                    return Top3PostsWhenFirstPage(boardGroup, pageable);
+                } else {
+                    list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
                 }
-                // 게시판
-                list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
             }
         } else {
             if (status != null) {
@@ -82,6 +86,40 @@ public class CommonPostService<E extends CommonPost,
         }
 
         return list.map(e -> (T) e.toDto());
+    }
+
+    private Page<T> Top3PostsWhenFirstPage(BoardGroup boardGroup, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        // 7일간 인기 게시글
+        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(sevenDaysAgo, boardGroup.getTable(), pageable);
+        List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
+        if (pageable.getPageNumber() == 0) {
+
+            // 7일간 인기 게시글 중복 제거
+            Pageable adjustPageable = Pageable.ofSize(pageable.getPageSize() - topPosts.size()).withPage(pageable.getPageNumber());
+            Page<E> posts = commonPostRepository.findAllExcludingTopPostsAndDtype(topPostIds, boardGroup.getTable(), adjustPageable);
+
+            // 합치기
+            List<T> topPostsDto = topPosts.stream().map(e -> {
+                T dto = (T) e.toDto();
+                dto.setHot(true);
+                return dto;
+            }).toList();
+            List<T> postsDto = posts.map(e -> (T) e.toDto()).getContent();
+
+            List<T> combined = new ArrayList<>(topPostsDto);
+            combined.addAll(postsDto);
+            return new PageImpl<T>(combined, pageable, posts.getTotalElements() + topPosts.size());
+        } else {
+
+            // 7일간 인기 게시글 중복 제거
+            Page<E> list = commonPostRepository.findAllExcludingTopPostsAndDtype(topPostIds, boardGroup.getTable(), pageable);
+            return list.map(e -> (T) e.toDto());
+        }
     }
 
     public Page<E> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
@@ -102,6 +140,8 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public T getPost(long postId) {
+
+        // Dtype 넣어서 조회 하도록 수정
         //Logic: 조회수 +1
         E post = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(

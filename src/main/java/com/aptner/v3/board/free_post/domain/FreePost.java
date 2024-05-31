@@ -9,9 +9,9 @@ import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("FreePost")
 public class FreePost extends CommonPost {
     private String blindBy;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime blindAt;
 
     public FreePost() {}

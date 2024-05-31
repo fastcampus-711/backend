@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -96,7 +95,6 @@ public class FreePostDto extends CommonPostDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FreePostRequest extends CommonPostDto.CommonPostRequest {
-        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime blindAt;
         private String blindBy;
 

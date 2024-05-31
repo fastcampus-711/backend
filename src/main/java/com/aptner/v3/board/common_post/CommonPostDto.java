@@ -38,6 +38,8 @@ public class CommonPostDto extends BaseTimeDto {
     boolean visible;
 
     Long hits;
+    @Setter
+    private boolean isHot;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
     protected List<Comment> comments;
@@ -109,6 +111,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
                 .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
                 .build();
     }
 
@@ -172,6 +175,7 @@ public class CommonPostDto extends BaseTimeDto {
 
         protected boolean isOwner;
         protected boolean isNew;
+        protected boolean isHot;
 
         public static boolean hasSecret(CommonPostDto dto) {
             return (!dto.isVisible()
