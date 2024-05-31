@@ -27,8 +27,8 @@ public class CommentDto {
     @Setter
     public static class Response {
         private long id;
-        private String profileImageUuid;
-        private String nickname;
+        private String userImage;
+        private String userNickname;
         private LocalDateTime createdAt;
         private String content;
         private ReactionColumns reactionColumns;

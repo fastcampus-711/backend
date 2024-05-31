@@ -42,7 +42,7 @@ public class CommonPostDto extends BaseTimeDto {
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
     boolean visible;
-    BoardGroup boardGroup;
+    String boardGroup;
     CategoryDto categoryDto;
 
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest request) {
@@ -57,7 +57,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .reactionColumnsDto(null)
                 .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup)
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
                 .createdBy(null)
                 .createdAt(null)
@@ -79,7 +79,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
+                .boardGroup(BoardGroup.getByTable(entity.getDtype()).getTable())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
@@ -146,7 +146,7 @@ public class CommonPostDto extends BaseTimeDto {
         protected ReactionColumnsDto reactionColumns;
         private ReactionType reactionType = ReactionType.DEFAULT;
         protected long countOfComments;
-        protected BoardGroup boardGroup;
+        protected String boardGroup;
         protected List<CommentDto.Response> comments;
 
         public <E extends CommonPost> CommonPostResponse(E entity) {

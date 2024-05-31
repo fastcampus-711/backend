@@ -2,6 +2,7 @@ package com.aptner.v3.board.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public enum BoardGroup {
     private Long menuId;
     private String table;
 
+    BoardGroup(){}
 
     public static BoardGroup getById(Long id) {
         if (id == null) return null;

@@ -18,6 +18,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +27,9 @@ import java.util.List;
 @Getter
 @ToString(callSuper = true)
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "dtype")
+@DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
-@SQLRestriction("deleted is FALSE")
+@SQLRestriction("deleted is false")
 public class CommonPost extends BaseTimeEntity
         implements ReactionAndCommentCalculator {
     @Id
@@ -107,10 +108,13 @@ public class CommonPost extends BaseTimeEntity
 
     public CommonPostDto.CommonPostResponse toResponseDtoWithComments() {
         ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
 
         Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
 
         CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass, "memberToCommentResponse");
+
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
 
         return commonPostResponseDto.blindPostAlgorithm();
     }

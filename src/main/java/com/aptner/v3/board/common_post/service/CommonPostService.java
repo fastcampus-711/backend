@@ -182,7 +182,7 @@ public class CommonPostService<E extends CommonPost,
 
         // Board 속한 게시글 수정/삭제
         if (StringUtils.isNotEmpty(post.getDtype())
-                && post.getDtype().equals(dto.getBoardGroup().getTable())) {
+                && post.getDtype().equals(dto.getBoardGroup())) {
             throw new PostException(INVALID_REQUEST);
         }
         return post;

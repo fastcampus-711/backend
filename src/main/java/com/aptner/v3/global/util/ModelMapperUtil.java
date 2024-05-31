@@ -1,5 +1,6 @@
 package com.aptner.v3.global.util;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
@@ -14,7 +15,8 @@ import java.util.List;
 public class ModelMapperUtil {
     private static ModelMapper modelMapper;
 
-    private ModelMapperUtil() {}
+    private ModelMapperUtil() {
+    }
 
     public static ModelMapper getModelMapper() {
         if (modelMapper == null)
@@ -30,7 +32,7 @@ public class ModelMapperUtil {
                 .setFieldMatchingEnabled(true)
                 .setMatchingStrategy(MatchingStrategies.LOOSE);
 
-        for (CategoryCode categoryCode: CategoryCode.values()) {
+        for (CategoryCode categoryCode : CategoryCode.values()) {
             Class<? extends CommonPost> commonPostDomain = categoryCode.getDomain();
             Class<? extends CommonPostDto.CommonPostResponse> commonPostDtoResponse = categoryCode.getDtoForResponse();
 
@@ -39,9 +41,8 @@ public class ModelMapperUtil {
         }
         modelMapper.createTypeMap(Comment.class, CommentDto.Response.class, "memberToCommentResponse")
                 .addMappings(mapping -> {
-                    mapping.map(a -> a.getMember().getImage(), CommentDto.Response::setProfileImageUuid);
-                    mapping.map(a -> a.getMember().getNickname(), CommentDto.Response::setNickname);
+                    mapping.map(a -> a.getMember().getImage(), CommentDto.Response::setUserImage);
+                    mapping.map(a -> a.getMember().getNickname(), CommentDto.Response::setUserNickname);
                 });
-
     }
 }
