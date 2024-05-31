@@ -38,7 +38,7 @@ public class Qna extends CommonPost {
 
     @Override
     public QnaDto toDto() {
-        CommonPost entity = this;
+        Qna entity = this;
         return QnaDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

@@ -29,7 +29,6 @@ import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 
 @Slf4j
-@Primary
 @Service
 @Transactional
 @Qualifier("commonPostService")
@@ -43,7 +42,7 @@ public class CommonPostService<E extends CommonPost,
     private final CategoryRepository categoryRepository;
     private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
 
-    public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<E> commonPostRepository) {
+    public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, @Qualifier("commonPostRepository") CommonPostRepository<E> commonPostRepository) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
         this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
@@ -151,12 +150,8 @@ public class CommonPostService<E extends CommonPost,
         }
         // exists
         E post;
-        try {
-            post = commonPostRepository.findById(dto.getId()).get();
-        } catch (EntityNotFoundException e1) {
-            log.error("POST ID DB에 없음");
-            throw new PostException(_NOT_FOUND);
-        }
+
+        post = commonPostRepository.findById(dto.getId()).orElseThrow(EntityNotFoundException::new);
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {

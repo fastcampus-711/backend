@@ -11,16 +11,20 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
 @DiscriminatorValue("MarketPost")
 public class Market extends CommonPost {
     private String type;
+    @Setter
     @Enumerated(EnumType.STRING)
     private MarketStatus status;
-
+    @Setter
     private Integer price;
 
     public Market() {
@@ -36,10 +40,11 @@ public class Market extends CommonPost {
     public static Market of(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status, Integer price) {
         return new Market(member, category, title, content, visible, type, status, price);
     }
+
     @Override
     public MarketDto toDto() {
 
-        CommonPost entity = this;
+        Market entity = this;
         return MarketDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
@@ -50,6 +55,8 @@ public class Market extends CommonPost {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .status(entity.getStatus())
+                .price(entity.getPrice())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
