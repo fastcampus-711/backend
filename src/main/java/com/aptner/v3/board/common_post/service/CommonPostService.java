@@ -14,9 +14,9 @@ import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,7 +69,7 @@ public class CommonPostService<E extends CommonPost,
             list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
         }
 
-        return list.map(e -> (T) T.from(e));
+        return list.map(e -> (T) e.toDto());
     }
 
     /**
@@ -78,24 +78,24 @@ public class CommonPostService<E extends CommonPost,
      */
     public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
         Page<E> list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
-        return list.map(e -> (T) T.from(e));
+        return list.map(e -> (T) e.toDto());
     }
 
-    public S getPost(long postId) {
+    public T getPost(long postId) {
         //Logic: 조회수 +1
-        E commonPost = commonPostRepository.findByComments_CommonPostId(postId)
+        E post = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
                                 .orElseThrow(InvalidTableIdException::new)
                 );
-        commonPost.plusHits();
+        post.plusHits();
 
         //Logic: 댓글 수 갱신
-        commonPost.updateCountOfComments(
-                countOfReactionAndCommentApplyService.countComments(commonPost.getComments())
+        post.updateCountOfComments(
+                countOfReactionAndCommentApplyService.countComments(post.getComments())
         );
 
-        return (S) commonPost.toResponseDtoWithComments();
+        return (T) post.toDto();
     }
 
     public T createPost(T dto) {
@@ -104,11 +104,14 @@ public class CommonPostService<E extends CommonPost,
         Category category = verifyCategory(dto);
         E entity = (E) dto.toEntity(member, category);
         E saved = commonPostRepository.save(entity);
-        return (T) T.from(saved);
+        T postDto = (T) saved.toDto();
+        log.debug("createPost - postDto :{}", postDto);
+        return postDto;
     }
 
     public T updatePost(T dto) {
 
+        log.debug("updatePost : dto {}", dto);
         Member member = verifyMember(dto);
         Category category = verifyCategory(dto);
         E post = verifyPost(dto);
@@ -125,7 +128,10 @@ public class CommonPostService<E extends CommonPost,
 
         commonPostRepository.flush();
         log.debug("updatePost : {}", post);
-        return (T) T.from(post);
+
+        T postDto = (T) post.toDto();
+        log.debug("createPost - postDto :{}", postDto);
+        return postDto;
     }
 
     public long deletePost(long postId, T dto) {
@@ -138,24 +144,28 @@ public class CommonPostService<E extends CommonPost,
     private E verifyPost(T dto) {
         // id check
         if (dto.getId() == null) {
+            log.error("POST ID 없음");
             throw new PostException(INVALID_REQUEST);
         }
         // exists
         E post;
         try {
-            post = commonPostRepository.getReferenceById(dto.getId());
+            post = commonPostRepository.findById(dto.getId()).get();
         } catch (EntityNotFoundException e1) {
+            log.error("POST ID DB에 없음");
             throw new PostException(_NOT_FOUND);
         }
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {
+            log.error("POST 저장에 MEMBER ID 가 로그인 유저와 상이함");
             throw new PostException(ErrorCode.INSUFFICIENT_AUTHORITY);
         }
 
         // Board 속한 게시글 수정/삭제
         if (StringUtils.isNotEmpty(post.getDtype())
-                && post.getDtype().equals(dto.getBoardGroup().getTable())) {
+                && !post.getDtype().equals(dto.getBoardGroup().getTable())) {
+            log.error("속한 카테고리가 아님: {} | {}", post.getDtype(), dto.getBoardGroup().getTable());
             throw new PostException(INVALID_REQUEST);
         }
         return post;
@@ -164,24 +174,28 @@ public class CommonPostService<E extends CommonPost,
     private Category verifyCategory(T dto) {
         // id check
         if (dto.getCategoryDto().getId() == null) {
+            log.error("카테고리 ID 없음");
             throw new CategoryException(INVALID_REQUEST);
         }
         // exists
         try {
             return categoryRepository.getReferenceById(dto.getCategoryDto().getId());
         } catch (EntityNotFoundException e1) {
+            log.error("카테고리 ID DB에 없음");
             throw new CategoryException(_NOT_FOUND);
         }
     }
 
     private Member verifyMember(T dto) {
         if (dto.getMemberDto().getId() == null) {
+            log.error("MEMBER ID 없음");
             throw new UserException(INVALID_REQUEST);
         }
 
         try {
             return memberRepository.getReferenceById(dto.getMemberDto().getId());
         } catch (EntityNotFoundException e) {
+            log.error("MEMBER ID DBd에 없음");
             throw new UserException(_NOT_FOUND);
         }
     }
