@@ -122,7 +122,7 @@ public class CommonPostService<E extends CommonPost,
 
         commonPostDtoResponse.applyReactionTypeToComments(mapCommentIdAndReactionType);
 
-        return (S) commonPost.toResponseDtoWithComments();
+        return commonPostDtoResponse;
     }
 
     public T createPost(T dto) {

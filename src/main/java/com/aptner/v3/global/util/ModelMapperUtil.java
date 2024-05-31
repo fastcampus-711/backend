@@ -30,14 +30,16 @@ public class ModelMapperUtil {
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setSkipNullEnabled(true)
                 .setFieldMatchingEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
+                .setMatchingStrategy(MatchingStrategies.STRICT);
 
         for (CategoryCode categoryCode : CategoryCode.values()) {
             Class<? extends CommonPost> commonPostDomain = categoryCode.getDomain();
             Class<? extends CommonPostDto.CommonPostResponse> commonPostDtoResponse = categoryCode.getDtoForResponse();
 
             modelMapper.createTypeMap(commonPostDomain, commonPostDtoResponse, "skipComments")
-                    .addMappings(mapping -> mapping.skip((a, b) -> a.setComments((List<CommentDto.Response>) b)));
+                    .addMappings(mapping -> {
+                        mapping.skip((a, b) -> a.setComments((List<CommentDto.Response>) b));
+                    });
         }
         modelMapper.createTypeMap(Comment.class, CommentDto.Response.class, "memberToCommentResponse")
                 .addMappings(mapping -> {

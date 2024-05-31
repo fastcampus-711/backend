@@ -14,10 +14,6 @@ import java.util.List;
 
 public class CommonPostDto {
 
-    public static void test() {
-
-    }
-
     @Getter
     @ToString
     public static class Request {
