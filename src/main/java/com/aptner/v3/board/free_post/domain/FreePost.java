@@ -34,9 +34,10 @@ public class FreePost extends CommonPost {
     public static FreePost of(Member member, Category category, String title, String content, boolean visible, LocalDateTime blindAt, String blindBy) {
         return new FreePost(member, category, title, content, visible, blindAt, blindBy);
     }
+    @Override
+    public FreePostDto toDto() {
 
-    public FreePostDto toDto(FreePost entity) {
-
+        FreePost entity = this;
         return FreePostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

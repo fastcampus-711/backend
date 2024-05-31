@@ -31,7 +31,10 @@ public class Market extends CommonPost {
     public static Market of(Member member, Category category, String title, String content, boolean visible, String type, String status) {
         return new Market(member, category, title, content, visible, type, status);
     }
-    public MarketDto toDto(CommonPost entity) {
+    @Override
+    public MarketDto toDto() {
+
+        CommonPost entity = this;
         return MarketDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
