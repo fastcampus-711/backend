@@ -80,8 +80,8 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "9", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "10", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "11", BoardGroup.NOTICES));
-
         // 자유 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("취미/운동", "12", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("생활/편의", "13", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("음식/카페", "14", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("병원/약국", "15", BoardGroup.FREES));
@@ -93,12 +93,26 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("살림정보", "21", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("모임/동호회", "22", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "23", BoardGroup.FREES));
+        // QNA 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("QNA", "24", BoardGroup.QNAS));
+        // 나눔장터 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("무료나눔", "25", BoardGroup.MARKETS));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("중고거래", "26", BoardGroup.MARKETS));
+        // 민원 게시판 분류
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "24", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "25", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "26", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "27", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안경비", "28", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "29", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "30", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "31", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "32", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "33", BoardGroup.COMPLAINT));
+//        categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "34", BoardGroup.COMPLAINT));
+
 
         // 가짜 로그인 사용자 지정
-//        CustomUserDetails userDetails = new CustomUserDetails(user);
-//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         TokenDto login = authService.login(LoginDto.builder()
                 .password("p@ssword")
                 .username("user")

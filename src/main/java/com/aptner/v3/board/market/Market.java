@@ -18,23 +18,23 @@ import lombok.Getter;
 @DiscriminatorValue("MarketPost")
 public class Market extends CommonPost {
     private String type;
-    private String status;
+    private MarketStatus status;
 
     public Market() {}
 
-    public Market(Member member, Category category, String title, String content, boolean visible, String type, String status) {
+    public Market(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status) {
         super(member, category, title, content, visible);
         this.type = type;
         this.status = status;
     }
 
-    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, String status) {
+    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status) {
         return new Market(member, category, title, content, visible, type, status);
     }
     @Override
     public MarketDto toDto() {
 
-        CommonPost entity = this;
+        Market entity = this;
         return MarketDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

@@ -38,7 +38,7 @@ public class NoticePost extends CommonPost {
     @Override
     public NoticePostDto toDto() {
 
-        CommonPost entity = this;
+        NoticePost entity = this;
         return NoticePostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

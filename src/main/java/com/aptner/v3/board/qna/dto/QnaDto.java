@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class QnaDto extends CommonPostDto {
     private String type;
-    private QnaStatus status;
+    private QnaStatus status = QnaStatus.AWAITING_RESPONSE;
 
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
@@ -37,6 +37,8 @@ public class QnaDto extends CommonPostDto {
                 .reactionColumnsDto(null)
                 .countOfComments(null)
                 .visible(request.isVisible())
+                .type(request.getType())
+                .status(request.getStatus())
                 .boardGroup(boardGroup)
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
                 .createdBy(null)
@@ -74,6 +76,8 @@ public class QnaDto extends CommonPostDto {
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .hits(dto.getHits())
+                .status(dto.getStatus())
+                .type(dto.getType())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
                 .boardGroup(dto.getBoardGroup())

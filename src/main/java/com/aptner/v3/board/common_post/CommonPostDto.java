@@ -19,6 +19,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -34,11 +35,13 @@ public class CommonPostDto extends BaseTimeDto {
     String title;
     String content;
     List<String> imageUrls;
+    boolean visible;
+
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
     protected List<Comment> comments;
-    boolean visible;
+
     BoardGroup boardGroup;
     CategoryDto categoryDto;
 
@@ -82,21 +85,30 @@ public class CommonPostDto extends BaseTimeDto {
 
         return CommonPostResponse.builder()
                 .id(dto.getId())
+                // user
                 .userId(dto.getMemberDto().getId())
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
-                .visible(dto.isVisible())
+                // post
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .hits(dto.getHits())
-                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .countOfComments(dto.getCountOfComments())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // post
                 .boardGroup(dto.getBoardGroup())
                 .categoryName(dto.getCategoryDto().getName())
+                // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
                 .build();
     }
 
@@ -149,43 +161,30 @@ public class CommonPostDto extends BaseTimeDto {
         protected String categoryName;
         protected String title;
         protected String content;
+        protected List<String> imageUrls;
         protected boolean visible;
+
         protected Long hits;
         protected ReactionColumnsDto reactionColumns;
         protected long countOfComments;
         protected BoardGroup boardGroup;
         protected List<CommentDto.Response> comments;
 
-        public static CommonPostResponse from(CommonPostDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return CommonPostResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
+        protected boolean isOwner;
+        protected boolean isNew;
 
         public static boolean hasSecret(CommonPostDto dto) {
             return (!dto.isVisible()
                     && MemberUtil.getMemberId() != dto.getMemberDto().getId());
+        }
+
+        public static boolean isOwner(CommonPostDto dto) {
+            return (MemberUtil.getMemberId() == dto.getMemberDto().getId());
+        }
+
+        public static boolean isNew(CommonPostDto dto) {
+            LocalDateTime fourteenDaysAgo = LocalDateTime.now().minusDays(14);
+            return dto.getCreatedAt().isAfter(fourteenDaysAgo);
         }
     }
 }

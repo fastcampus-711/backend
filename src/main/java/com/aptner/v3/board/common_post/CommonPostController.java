@@ -7,6 +7,7 @@ import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.SearchDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
+import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,25 +42,27 @@ public class CommonPostController<E extends CommonPost,
     }
 
     @GetMapping("")
-    @Operation(summary = "게시글 검색")
+    @Operation(summary = "게시글 별 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
-                                                  @RequestParam(name = "withPopular", required = false) Boolean withPopular,
                                                   @RequestParam(name = "keyword", required = false) String keyword,
+                                                  @RequestParam(name = "status", required = false) Status status,
                                                   @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
                                                   @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                                                   @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
-
+        this.logGenericTypes();
         BoardGroup boardGroup = getBoardGroup();
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
 
         Page<T> posts = null;
         if (keyword != null) {
+            // 키워드 검색
             log.debug("keyword search : boardGroup: {}, categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, keyword, limit, page, sort);
             posts = commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable);
         } else {
+            // 카테고리 - 분류 검색
             log.debug("category search : boardGroup: {},  categoryId: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, limit, page, sort);
-            posts = commonPostService.getPostListByCategoryId(boardGroup, categoryId, pageable);
+            posts = commonPostService.getPostListByCategoryId(boardGroup, categoryId, status, pageable);
         }
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(

@@ -1,6 +1,7 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Qualifier("commonPostRepository")
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
 
     // 게시판 별 조회
@@ -22,10 +24,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     // 게시판 별 + 분류 별 + 검색어 조회
     Page<T> findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(String dtype, Long CategoryId, String title, Pageable pageable);
-
-    Page<T> findByTitleContainingIgnoreCaseAndVisible(String keyword, Pageable pageable, boolean visible);
-
-    Page<T> findByTitleContainingIgnoreCaseAndDtypeAndVisible(String keyword, String dtype, Pageable pageable, boolean visible);
 
     Optional<T> findByComments_CommonPostId(long postId);
 

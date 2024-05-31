@@ -6,6 +6,7 @@ import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.market.Market;
+import com.aptner.v3.board.market.MarketStatus;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class MarketDto extends CommonPostDto {
     private String type;
-    private String status;
+    private MarketStatus status;
 
     public static MarketDto of(BoardGroup boardGroup, MemberDto memberDto, MarketDto.MarketRequest request) {
 

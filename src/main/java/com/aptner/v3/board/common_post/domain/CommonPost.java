@@ -47,6 +47,7 @@ public class CommonPost extends BaseTimeEntity
     private Category category;
 
     @Setter
+    @Column(length = 200)
     private String title;
 
     @Setter

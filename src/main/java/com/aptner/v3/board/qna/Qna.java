@@ -14,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -21,6 +22,7 @@ import lombok.Getter;
 public class Qna extends CommonPost {
     private String type;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private QnaStatus status;
 
@@ -38,7 +40,7 @@ public class Qna extends CommonPost {
 
     @Override
     public QnaDto toDto() {
-        CommonPost entity = this;
+        Qna entity = this;
         return QnaDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
@@ -49,6 +51,8 @@ public class Qna extends CommonPost {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .type(entity.getType())
+                .status(entity.getStatus())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())

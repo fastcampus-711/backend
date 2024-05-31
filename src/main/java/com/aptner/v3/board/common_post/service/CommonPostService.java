@@ -7,6 +7,7 @@ import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApply
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.CategoryException;
 import com.aptner.v3.global.exception.PostException;
@@ -43,7 +44,7 @@ public class CommonPostService<E extends CommonPost,
     private final CategoryRepository categoryRepository;
     private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
 
-    public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<E> commonPostRepository) {
+    public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, @Qualifier("commonPostRepository") CommonPostRepository<E> commonPostRepository) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
         this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
@@ -54,24 +55,41 @@ public class CommonPostService<E extends CommonPost,
      * 게시판 + 분류 검색
      * 자유게시판 : 인기게시글
      */
-    public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Pageable pageable) {
+    public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
 
-        Page<E> list;
+
+        Page<E> list = null;
         if (categoryId == 0) {
-            // 게시판 조회
-            if (BoardGroup.FREES.equals(boardGroup)) {
-                if (pageable.getPageNumber() == 1) {
-                    // 인기 게시글
+            if (status != null) {
+                list = findByDtypeAndStatus(boardGroup, status, pageable);
+            } else {
+                // 게시판 조회
+                if (BoardGroup.FREES.equals(boardGroup)) {
+                    if (pageable.getPageNumber() == 1) {
+                        // 인기 게시글
+                    }
                 }
+                // 게시판
+                list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
             }
-
-            list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
         } else {
-            // 게시판 + 카테고리 조회
-            list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
+            if (status != null) {
+                list = findByDtypeAndCategoryIdAndStatus(boardGroup, categoryId, status, pageable);
+            } else {
+                // 게시판 + 카테고리 조회 ( 자유게시판 )
+                list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
+            }
         }
 
         return list.map(e -> (T) e.toDto());
+    }
+
+    public Page<E> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
+        return commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
+    }
+
+    public Page<E> findByDtypeAndCategoryIdAndStatus(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+        return commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
     }
 
     /**
