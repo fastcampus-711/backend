@@ -17,6 +17,7 @@ import com.aptner.v3.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 @Primary
 @Service
 @Transactional
+@Qualifier("commonPostService")
 public class CommonPostService<E extends CommonPost,
         T extends CommonPostDto,
         Q extends CommonPostDto.CommonPostRequest,
@@ -141,7 +143,7 @@ public class CommonPostService<E extends CommonPost,
         return postId;
     }
 
-    private E verifyPost(T dto) {
+    protected E verifyPost(T dto) {
         // id check
         if (dto.getId() == null) {
             log.error("POST ID 없음");
@@ -171,7 +173,7 @@ public class CommonPostService<E extends CommonPost,
         return post;
     }
 
-    private Category verifyCategory(T dto) {
+    protected Category verifyCategory(T dto) {
         // id check
         if (dto.getCategoryDto().getId() == null) {
             log.error("카테고리 ID 없음");
@@ -186,7 +188,7 @@ public class CommonPostService<E extends CommonPost,
         }
     }
 
-    private Member verifyMember(T dto) {
+    protected Member verifyMember(T dto) {
         if (dto.getMemberDto().getId() == null) {
             log.error("MEMBER ID 없음");
             throw new UserException(INVALID_REQUEST);

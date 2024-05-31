@@ -11,8 +11,6 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 
 @Entity
@@ -38,10 +36,10 @@ public class Market extends CommonPost {
     public static Market of(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status, Integer price) {
         return new Market(member, category, title, content, visible, type, status, price);
     }
-
     @Override
     public MarketDto toDto() {
-        Market entity = this;
+
+        CommonPost entity = this;
         return MarketDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

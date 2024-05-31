@@ -36,7 +36,9 @@ public class Qna extends CommonPost {
         return new Qna(member, category, title, content, visible, type, status);
     }
 
-    public QnaDto toDto(CommonPost entity) {
+    @Override
+    public QnaDto toDto() {
+        CommonPost entity = this;
         return QnaDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

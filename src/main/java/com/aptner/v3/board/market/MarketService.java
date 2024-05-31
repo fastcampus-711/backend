@@ -5,9 +5,11 @@ import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
 import com.aptner.v3.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@Qualifier("marketService")
 public class MarketService extends CommonPostService<Market, MarketDto, MarketDto.MarketRequest, MarketDto.MarketResponse> {
 
     private final MarketRepository marketRepository;
