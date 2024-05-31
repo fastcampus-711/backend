@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
-public abstract class CommonPostController<E extends CommonPost,
+public class CommonPostController<E extends CommonPost,
         T extends CommonPostDto,
         Q extends CommonPostDto.CommonPostRequest,
         S extends CommonPostDto.CommonPostResponse> {
@@ -34,7 +34,7 @@ public abstract class CommonPostController<E extends CommonPost,
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
 
-    @GetMapping()
+    @GetMapping("")
     @Operation(summary = "게시글 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "withPopular", required = false) Boolean withPopular,
@@ -57,7 +57,7 @@ public abstract class CommonPostController<E extends CommonPost,
         }
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
-                posts.map(p -> (S) S.from(p)),
+                posts.map(p -> (S) p.toResponse()),
                 paginationService.getPaginationBarNumbers(pageable.getPageNumber(), posts.getTotalPages())
         )));
     }
@@ -65,10 +65,10 @@ public abstract class CommonPostController<E extends CommonPost,
     @GetMapping("/{post-id}")
     @Operation(summary = "게시글 상세")
     public ApiResponse<?> getPost(@PathVariable(name = "post-id") Long postId) {
-        return ResponseUtil.ok(commonPostService.getPost(postId));
+        return ResponseUtil.ok(commonPostService.getPost(postId).toResponse());
     }
 
-    @PostMapping()
+    @PostMapping("/")
     @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(
             @RequestBody Q request,
@@ -80,15 +80,15 @@ public abstract class CommonPostController<E extends CommonPost,
                 user,
                 request
         );
+
         log.debug("createPost - user :{}", user);
         log.debug("createPost - request :{}", request);
-        log.debug("createPost - postDto :{}", request.toDto(
-                getBoardGroup(),
-                user,
-                request
-        ));
         log.debug("createPost - postDto :{}", postDto);
-        return ResponseUtil.create(S.from(commonPostService.createPost(postDto)));
+        T savedDto = commonPostService.createPost(postDto);
+        log.debug("createPost - savedDto :{}", savedDto);
+        S response = (S) savedDto.toResponse();
+        log.debug("createPost - response :{}", response);
+        return ResponseUtil.create(response);
     }
 
     @PutMapping("/{post-id}")
@@ -108,7 +108,11 @@ public abstract class CommonPostController<E extends CommonPost,
         log.debug("updatePost - member :{}", user);
         log.debug("updatePost - request :{}", request);
         log.debug("updatePost - postDto :{}", postDto);
-        return ResponseUtil.update(S.from(commonPostService.updatePost(postDto)));
+        T savedDto = commonPostService.updatePost(postDto);
+        log.debug("updatePost - savedDto :{}", savedDto);
+        S response = (S) savedDto.toResponse();
+        log.debug("updatePost - response :{}", response);
+        return ResponseUtil.update(response);
     }
 
     @DeleteMapping("/{post-id}")

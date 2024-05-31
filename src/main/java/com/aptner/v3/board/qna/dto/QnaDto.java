@@ -5,10 +5,8 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.qna.Qna;
 import com.aptner.v3.board.qna.QnaStatus;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.Getter;
@@ -48,28 +46,6 @@ public class QnaDto extends CommonPostDto {
                 .build();
     }
 
-    public static QnaDto from(Qna entity) {
-
-        return QnaDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .status(entity.getStatus())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
-                .build();
-    }
-
     public Qna toEntity(Member member, Category category) {
         return Qna.of(
                 member,
@@ -81,6 +57,34 @@ public class QnaDto extends CommonPostDto {
                 status
         );
     }
+
+    public QnaDto.QnaResponse toResponse() {
+
+        QnaDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = QnaResponse.hasSecret(dto);
+
+        return QnaResponse.builder()
+                .id(dto.getId())
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                .visible(dto.isVisible())
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .countOfComments(dto.getCountOfComments())
+                .boardGroup(dto.getBoardGroup())
+                .categoryName(dto.getCategoryDto().getName())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                .build();
+    }
+
     @Getter
     @ToString(callSuper = true)
     @SuperBuilder
@@ -115,32 +119,5 @@ public class QnaDto extends CommonPostDto {
         private String type;
         private QnaStatus status;
 
-        public static QnaResponse from(QnaDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return QnaResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .status(dto.getStatus())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
     }
 }

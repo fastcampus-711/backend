@@ -5,9 +5,7 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.Market;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.Getter;
@@ -44,27 +42,6 @@ public class MarketDto extends CommonPostDto {
                 .build();
     }
 
-    public static MarketDto from(Market entity) {
-
-        return MarketDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
-                .build();
-    }
-
     public Market toEntity(Member member, Category category) {
         return Market.of(
                 member,
@@ -77,6 +54,34 @@ public class MarketDto extends CommonPostDto {
         );
     }
 
+    @Override
+    public MarketResponse toResponse() {
+
+        MarketDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return MarketDto.MarketResponse.builder()
+                .id(dto.getId())
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                .visible(dto.isVisible())
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .countOfComments(dto.getCountOfComments())
+                .boardGroup(dto.getBoardGroup())
+                .categoryName(dto.getCategoryDto().getName())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                .build();
+
+    }
 
     @Getter
     @ToString(callSuper = true)
@@ -93,11 +98,12 @@ public class MarketDto extends CommonPostDto {
                     .build();
         }
 
-        public MarketDto createDto(BoardGroup boardGroup, CustomUserDetails user, MarketDto.MarketRequest request) {
+        @Override
+        public MarketDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
             return MarketDto.of(
                     boardGroup,
                     user.toDto(),
-                    request
+                    (MarketRequest) request
             );
         }
     }
@@ -110,31 +116,5 @@ public class MarketDto extends CommonPostDto {
         private String type;
         private String status;
 
-        public static MarketDto.MarketResponse from(MarketDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return MarketDto.MarketResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
     }
 }

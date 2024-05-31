@@ -5,11 +5,8 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
-import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.Getter;
@@ -46,27 +43,6 @@ public class NoticePostDto extends CommonPostDto {
                 .build();
     }
 
-    public static NoticePostDto from(FreePost entity) {
-
-        return NoticePostDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
-                .build();
-    }
-
     public NoticePost toEntity(Member member, Category category) {
         return NoticePost.of(
                 member,
@@ -76,6 +52,34 @@ public class NoticePostDto extends CommonPostDto {
                 this.isVisible(),
                 postAt
         );
+    }
+
+    @Override
+    public NoticePostDto.NoticeResponse toResponse() {
+
+        NoticePostDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return NoticePostDto.NoticeResponse.builder()
+                .id(dto.getId())
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                .visible(dto.isVisible())
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .countOfComments(dto.getCountOfComments())
+                .boardGroup(dto.getBoardGroup())
+                .categoryName(dto.getCategoryDto().getName())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                .build();
     }
 
     @Getter
@@ -92,11 +96,11 @@ public class NoticePostDto extends CommonPostDto {
                     .build();
         }
 
-        public NoticePostDto createDto(BoardGroup boardGroup, CustomUserDetails user, NoticePostDto.NoticeRequest request) {
+        public NoticePostDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
             return NoticePostDto.of(
                     boardGroup,
                     user.toDto(),
-                    request
+                    (NoticePostDto.NoticeRequest) request
             );
         }
     }

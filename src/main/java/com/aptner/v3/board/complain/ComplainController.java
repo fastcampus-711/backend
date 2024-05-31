@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name="민원 게시판")
-@RequestMapping("/boards/qnas")
+@RequestMapping("/boards/complains")
 public class ComplainController extends CommonPostController<
         Complain,
         ComplainDto,
