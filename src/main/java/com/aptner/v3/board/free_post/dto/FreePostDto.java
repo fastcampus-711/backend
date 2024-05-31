@@ -1,5 +1,6 @@
 package com.aptner.v3.board.free_post.dto;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
@@ -86,6 +87,10 @@ public class FreePostDto extends CommonPostDto {
         );
     }
 
+    public FreePostDto createDto(BoardGroup boardGroup, MemberDto memberDto, FreePostRequest request) {
+        return FreePostDto.of(boardGroup, memberDto, request);
+    }
+
     @Getter
     @ToString(callSuper = true)
     @SuperBuilder
@@ -101,6 +106,15 @@ public class FreePostDto extends CommonPostDto {
                     .id(id)
                     .categoryId(categoryId)
                     .build();
+        }
+
+        @Override
+        public FreePostDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
+            return FreePostDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    (FreePostRequest) request
+            );
         }
     }
 

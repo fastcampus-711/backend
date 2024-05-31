@@ -1,5 +1,6 @@
 package com.aptner.v3.board.market.dto;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
@@ -90,6 +91,14 @@ public class MarketDto extends CommonPostDto {
                     .id(id)
                     .categoryId(categoryId)
                     .build();
+        }
+
+        public MarketDto createDto(BoardGroup boardGroup, CustomUserDetails user, MarketDto.MarketRequest request) {
+            return MarketDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    request
+            );
         }
     }
 

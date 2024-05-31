@@ -19,11 +19,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
-public class CommonPostController<E extends CommonPost,
+public abstract class CommonPostController<E extends CommonPost,
         T extends CommonPostDto,
         Q extends CommonPostDto.CommonPostRequest,
         S extends CommonPostDto.CommonPostResponse> {
@@ -31,7 +34,7 @@ public class CommonPostController<E extends CommonPost,
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
 
-    @GetMapping(value = {"/",""})
+    @GetMapping()
     @Operation(summary = "게시글 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "withPopular", required = false) Boolean withPopular,
@@ -65,19 +68,25 @@ public class CommonPostController<E extends CommonPost,
         return ResponseUtil.ok(commonPostService.getPost(postId));
     }
 
-    @PostMapping(value = {"/",""})
+    @PostMapping()
     @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(
             @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        T postDto = (T) T.of(
+        this.logGenericTypes();
+        T postDto = (T) request.toDto(
                 getBoardGroup(),
-                user.toDto(),
+                user,
                 request
         );
         log.debug("createPost - user :{}", user);
         log.debug("createPost - request :{}", request);
+        log.debug("createPost - postDto :{}", request.toDto(
+                getBoardGroup(),
+                user,
+                request
+        ));
         log.debug("createPost - postDto :{}", postDto);
         return ResponseUtil.create(S.from(commonPostService.createPost(postDto)));
     }
@@ -88,13 +97,14 @@ public class CommonPostController<E extends CommonPost,
             @PathVariable(name = "post-id") Long postId,
             @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user) {
-
+        this.logGenericTypes();
         request.setId(postId);
-        T postDto = (T) T.of(
+        T postDto = (T) request.toDto(
                 getBoardGroup(),
-                user.toDto(),
+                user,
                 request
         );
+
         log.debug("updatePost - member :{}", user);
         log.debug("updatePost - request :{}", request);
         log.debug("updatePost - postDto :{}", postDto);
@@ -117,7 +127,29 @@ public class CommonPostController<E extends CommonPost,
         return ResponseUtil.delete(deleted);
     }
 
+    public CommonPostDto createDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostDto.CommonPostRequest request) {
+        return CommonPostDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                request
+        );
+    }
+
     public BoardGroup getBoardGroup() {
         return BoardGroup.ALL;
+    }
+
+    private void logGenericTypes() {
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) superclass).getActualTypeArguments();
+            log.debug("Generic types: (E)Entity = {}, (T)DTO = {}, (Q)Request = {}, (S)Response = {}",
+                    typeArguments[0].getTypeName(),
+                    typeArguments[1].getTypeName(),
+                    typeArguments[2].getTypeName(),
+                    typeArguments[3].getTypeName());
+        } else {
+            log.debug("No generic type information available.");
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.aptner.v3.board.free_post.controller;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.CommonPostController;
+import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.board.free_post.domain.FreePost;

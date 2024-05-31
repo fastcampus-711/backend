@@ -1,12 +1,11 @@
 package com.aptner.v3.board.qna.dto;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
-import com.aptner.v3.board.free_post.domain.FreePost;
-import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.board.qna.Qna;
 import com.aptner.v3.board.qna.QnaStatus;
 import com.aptner.v3.global.util.MemberUtil;
@@ -16,7 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @ToString(callSuper = true)
 @SuperBuilder
@@ -27,6 +28,7 @@ public class QnaDto extends CommonPostDto {
 
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
+        log.debug("qna of");
         return QnaDto.builder()
                 .id(request.getId())
                 .memberDto(memberDto)
@@ -46,7 +48,7 @@ public class QnaDto extends CommonPostDto {
                 .build();
     }
 
-    public static QnaDto from(FreePost entity) {
+    public static QnaDto from(Qna entity) {
 
         return QnaDto.builder()
                 .id(entity.getId())
@@ -58,6 +60,7 @@ public class QnaDto extends CommonPostDto {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .status(entity.getStatus())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
@@ -86,11 +89,20 @@ public class QnaDto extends CommonPostDto {
         private String type;
         private QnaStatus status;
 
-        public static FreePostDto.FreePostRequest of(Long id, Long categoryId) {
-            return FreePostDto.FreePostRequest.builder()
+        public static QnaDto.QnaRequest of(Long id, Long categoryId) {
+            return QnaDto.QnaRequest.builder()
                     .id(id)
                     .categoryId(categoryId)
                     .build();
+        }
+
+        @Override
+        public QnaDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
+            return QnaDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    (QnaDto.QnaRequest) request
+            );
         }
     }
 
@@ -103,7 +115,7 @@ public class QnaDto extends CommonPostDto {
         private String type;
         private QnaStatus status;
 
-        public static QnaResponse from(FreePostDto dto) {
+        public static QnaResponse from(QnaDto dto) {
 
             String blindTitle = "비밀 게시글입니다.";
             String blindContent = "비밀 게시글입니다.";
@@ -120,6 +132,7 @@ public class QnaDto extends CommonPostDto {
                     .hits(dto.getHits())
                     .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                     .countOfComments(dto.getCountOfComments())
+                    .status(dto.getStatus())
                     .boardGroup(dto.getBoardGroup())
                     .categoryName(dto.getCategoryDto().getName())
                     .createdAt(dto.getCreatedAt())

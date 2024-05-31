@@ -1,5 +1,6 @@
 package com.aptner.v3.board.notice_post.dto;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
@@ -89,6 +90,14 @@ public class NoticePostDto extends CommonPostDto {
                     .id(id)
                     .categoryId(categoryId)
                     .build();
+        }
+
+        public NoticePostDto createDto(BoardGroup boardGroup, CustomUserDetails user, NoticePostDto.NoticeRequest request) {
+            return NoticePostDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    request
+            );
         }
     }
 
