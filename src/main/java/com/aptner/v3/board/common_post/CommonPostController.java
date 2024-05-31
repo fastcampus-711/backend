@@ -10,8 +10,9 @@ import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,6 @@ import java.lang.reflect.Type;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
         T extends CommonPostDto,
@@ -33,6 +33,12 @@ public class CommonPostController<E extends CommonPost,
 
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
+
+    @Autowired
+    public CommonPostController(@Qualifier("commonPostService") CommonPostService<E, T, Q, S> commonPostService, PaginationService paginationService) {
+        this.commonPostService = commonPostService;
+        this.paginationService = paginationService;
+    }
 
     @GetMapping("")
     @Operation(summary = "게시글 검색")

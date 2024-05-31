@@ -28,6 +28,7 @@ public class Complain extends CommonPost {
     public static Complain of(Member member, Category category, String title, String content, boolean visible) {
         return new Complain(member, category, title, content, visible);
     }
+    @Override
     public ComplainDto toDto() {
         Complain entity = this;
 
