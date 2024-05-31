@@ -1,12 +1,11 @@
 package com.aptner.v3.board.complain.dto;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.complain.Complain;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.AllArgsConstructor;
@@ -42,27 +41,6 @@ public class ComplainDto extends CommonPostDto {
                 .build();
     }
 
-    public static ComplainDto from(Complain entity) {
-
-        return ComplainDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
-                .build();
-    }
-
     public Complain toEntity(Member member, Category category) {
         return Complain.of(
                 member,
@@ -71,6 +49,34 @@ public class ComplainDto extends CommonPostDto {
                 this.getContent(),
                 this.isVisible()
         );
+    }
+
+    public ComplainDto.ComplainResponse toResponse() {
+
+        ComplainDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return ComplainDto.ComplainResponse.builder()
+                .id(dto.getId())
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                .visible(dto.isVisible())
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .countOfComments(dto.getCountOfComments())
+                .boardGroup(dto.getBoardGroup())
+                .categoryName(dto.getCategoryDto().getName())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                .build();
+
     }
 
     @Getter
@@ -84,6 +90,15 @@ public class ComplainDto extends CommonPostDto {
                     .categoryId(categoryId)
                     .build();
         }
+
+        @Override
+        public ComplainDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
+            return ComplainDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    (ComplainDto.ComplainRequest) request
+            );
+        }
     }
 
     @Getter
@@ -92,31 +107,5 @@ public class ComplainDto extends CommonPostDto {
     @SuperBuilder
     public static class ComplainResponse extends CommonPostDto.CommonPostResponse {
 
-        public static ComplainDto.ComplainResponse from(ComplainDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return ComplainDto.ComplainResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
     }
 }
