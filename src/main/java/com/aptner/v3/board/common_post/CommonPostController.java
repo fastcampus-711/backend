@@ -31,7 +31,7 @@ public class CommonPostController<E extends CommonPost,
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
 
-    @GetMapping("")
+    @GetMapping(value = {"/",""})
     @Operation(summary = "게시글 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "withPopular", required = false) Boolean withPopular,
@@ -65,7 +65,7 @@ public class CommonPostController<E extends CommonPost,
         return ResponseUtil.ok(commonPostService.getPost(postId));
     }
 
-    @PostMapping("/")
+    @PostMapping(value = {"/",""})
     @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(
             @RequestBody Q request,

@@ -8,6 +8,7 @@ import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.board.qna.Qna;
+import com.aptner.v3.board.qna.QnaStatus;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
@@ -22,7 +23,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class QnaDto extends CommonPostDto {
     private String type;
-    private String status;
+    private QnaStatus status;
+
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
         return QnaDto.builder()
@@ -82,7 +84,7 @@ public class QnaDto extends CommonPostDto {
     @NoArgsConstructor
     public static class QnaRequest extends CommonPostDto.CommonPostRequest {
         private String type;
-        private String status;
+        private QnaStatus status;
 
         public static FreePostDto.FreePostRequest of(Long id, Long categoryId) {
             return FreePostDto.FreePostRequest.builder()
@@ -99,7 +101,7 @@ public class QnaDto extends CommonPostDto {
     public static class QnaResponse extends CommonPostDto.CommonPostResponse {
 
         private String type;
-        private String status;
+        private QnaStatus status;
 
         public static QnaResponse from(FreePostDto dto) {
 
