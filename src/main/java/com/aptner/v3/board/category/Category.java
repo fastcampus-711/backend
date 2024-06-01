@@ -15,7 +15,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted is false")
+@SQLRestriction("deleted = false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,6 @@ import com.aptner.v3.board.common_post.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.Market;
 import com.aptner.v3.board.market.MarketStatus;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import lombok.Getter;
@@ -59,7 +58,7 @@ public class MarketDto extends CommonPostDto {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .visible(entity.isVisible())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
@@ -99,7 +98,7 @@ public class MarketDto extends CommonPostDto {
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(dto.getImageUrls())
-                .visible(dto.isVisible())
+                .visible(dto.isVisible() == false)
                 .price(dto.getPrice())
                 .hits(dto.getHits())
                 .status(dto.getStatus())

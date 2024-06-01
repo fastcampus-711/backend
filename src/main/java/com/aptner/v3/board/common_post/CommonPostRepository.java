@@ -1,6 +1,8 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.global.converter.LocalDateTimeAttributeConverter;
+import jakarta.persistence.Convert;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,10 +36,11 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
     List<T> findByCategoryId(Long categoryId);
 
     // Fetch posts excluding the top ones by hits
-    @Query("SELECT p FROM CommonPost p WHERE p.dtype = :dtype And p.id NOT IN :topPostIds")
+    @Query("SELECT p FROM CommonPost p WHERE p.dtype = :dtype And p.id NOT IN :topPostIds And deleted = false")
     Page<T> findAllExcludingTopPostsAndDtype(@Param("topPostIds") List<Long> topPostIds, @Param("dtype") String dtype, Pageable pageable);
 
-    // 7일 이내의 조회수 + 공감수 가장 높은 3개의 글을 조회
-    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :date And p.dtype = :dtype ORDER BY (p.hits + p.reactionColumns.countReactionTypeGood) DESC")
+    // 7일 이내의 조회수(hits) + 공감수(reactionColumns.countReactionTypeGood) 가장 높은 3개의 글을 조회
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :date And p.dtype = :dtype And deleted = false ORDER BY (p.hits + p.reactionColumns.countReactionTypeGood) DESC")
     List<T> findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(@Param("date") LocalDateTime date, @Param("dtype") String dtype, Pageable pageable);
 }

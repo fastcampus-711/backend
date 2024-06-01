@@ -31,11 +31,11 @@ public class CommentService {
         CommonPost commonPost = commonPostRepository.findById(postId)
                 .orElseThrow(InvalidTableIdException::new);
 
-        Member member = memberRepository.findById(MemberUtil.getMemberId())
+        Member member = memberRepository.findById(MemberUtil.getMember().getId())
                 .orElseThrow(InvalidTableIdException::new);
         requestDto.setMember(member);
 
-        if (commonPost.getMember().getId() == MemberUtil.getMemberId())
+        if (commonPost.getMember().getId().equals(MemberUtil.getMember().getId()))
             requestDto.setWriter(true);
 
         Comment comment;
@@ -44,7 +44,7 @@ public class CommentService {
         } else {
             Comment parentComment = commentRepository.findById(commentId)
                     .orElseThrow(InvalidTableIdException::new);
-            requestDto.setPostUserId(commonPost.getMemberId());
+            requestDto.setPostUserId(commonPost.getMember().getId());
             comment = Comment.of(parentComment, requestDto);
         }
         comment = commentRepository.save(comment);

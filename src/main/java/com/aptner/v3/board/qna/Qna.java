@@ -6,7 +6,6 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.qna.dto.QnaDto;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -53,7 +52,7 @@ public class Qna extends CommonPost {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .visible(entity.isVisible())
                 .type(entity.getType())
                 .status(entity.getStatus())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))

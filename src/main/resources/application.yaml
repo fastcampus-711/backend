@@ -7,7 +7,7 @@ server:
 
 spring:
     profiles:
-        include: hidden, hidden-dev
+        include: hidden, hidden-dev, hidden-local
 
     http:
         encoding:
@@ -20,7 +20,7 @@ spring:
         init:
             mode: always
             platform: mysql
-            data-locations: classpath:data.sql
+            data-locations: classpath:data-mysql.sql
 
     jpa:
         defer-datasource-initialization: true

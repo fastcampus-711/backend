@@ -28,7 +28,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
-@SQLRestriction("deleted is false")
+@SQLRestriction("deleted = false")
 public class CommonPost extends BaseTimeEntity
         implements ReactionAndCommentCalculator {
     @Id
@@ -38,9 +38,6 @@ public class CommonPost extends BaseTimeEntity
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @ManyToOne(optional = false)
     private Member member;
-
-    @Column(nullable = true)
-    private Long memberId;
 
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @ManyToOne(optional = false)
@@ -112,7 +109,7 @@ public class CommonPost extends BaseTimeEntity
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .visible(!MemberUtil.getMember().getId().equals(entity.getMember().getId()))
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())

@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,17 +66,19 @@ public class CommonPostService<E extends CommonPost,
         if (categoryId == 0) {
             if (status != null) {
                 // 민원 게시판, 나눔 게시판, Qna 게시판
+                // 게시판 + 상태값 조회
                 list = findByDtypeAndStatus(boardGroup, status, pageable);
             } else {
                 // 자유 게시판 조회
                 if (BoardGroup.FREES.equals(boardGroup)) {
                     return Top3PostsWhenFirstPage(boardGroup, pageable);
-                } else {
-                    list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
                 }
+                // 게시판 조회
+                list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
             }
         } else {
             if (status != null) {
+                // 게시판 + 카테고리 + 상태값 조회
                 list = findByDtypeAndCategoryIdAndStatus(boardGroup, categoryId, status, pageable);
             } else {
                 // 게시판 + 카테고리 조회 ( 자유게시판 )
@@ -87,37 +90,46 @@ public class CommonPostService<E extends CommonPost,
     }
 
     private Page<T> Top3PostsWhenFirstPage(BoardGroup boardGroup, Pageable pageable) {
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
 
+        // 7일간 인기 게시글 목록
         LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-
-        // 7일간 인기 게시글
         List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(sevenDaysAgo, boardGroup.getTable(), pageable);
-        List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
-        if (pageable.getPageNumber() == 0) {
+        log.debug("topPost : {}", topPosts);
+        if (!topPosts.isEmpty() && pageable.getPageNumber() == 0) {
+            List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
 
-            // 7일간 인기 게시글 중복 제거
-            Pageable adjustPageable = Pageable.ofSize(pageable.getPageSize() - topPosts.size()).withPage(pageable.getPageNumber());
-            Page<E> posts = commonPostRepository.findAllExcludingTopPostsAndDtype(topPostIds, boardGroup.getTable(), adjustPageable);
+            // 자유 게시판 ( 7일간 인기 게시글 중복 제거 리스트 )
+            Page<E> posts = commonPostRepository
+                    .findAllExcludingTopPostsAndDtype(
+                            topPostIds, boardGroup.getTable(),
+                            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() - topPosts.size(), pageable.getSort())
+                    );
+            log.debug("page 0 : {}", posts.getContent());
 
-            // 합치기
-            List<T> topPostsDto = topPosts.stream().map(e -> {
-                T dto = (T) e.toDto();
-                dto.setHot(true);
-                return dto;
-            }).toList();
-            List<T> postsDto = posts.map(e -> (T) e.toDto()).getContent();
-
-            List<T> combined = new ArrayList<>(topPostsDto);
-            combined.addAll(postsDto);
+            List<T> combined = getCombinedPosts(topPosts, posts);
             return new PageImpl<T>(combined, pageable, posts.getTotalElements() + topPosts.size());
         } else {
-
-            // 7일간 인기 게시글 중복 제거
-            Page<E> list = commonPostRepository.findAllExcludingTopPostsAndDtype(topPostIds, boardGroup.getTable(), pageable);
+            // 게시판 조회
+            Page<E> list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
             return list.map(e -> (T) e.toDto());
         }
+    }
+
+    private List<T> getCombinedPosts(List<E> topPosts, Page<E> posts) {
+
+        List<T> topPostsDto = topPosts.stream().map(e -> {
+            // 인기글 ICON 설정  //@todo
+            T dto = (T) e.toDto();
+            dto.setHot(true);
+            return dto;
+        }).toList();
+        List<T> postsDto = posts.map(e -> (T) e.toDto()).getContent();
+
+        List<T> combined = new ArrayList<>(topPostsDto);
+        combined.addAll(postsDto);
+        log.debug("page 0 : dto {} + {} ", topPostsDto, postsDto);
+        log.debug("page 0 : {} ", combined);
+        return combined;
     }
 
     public Page<E> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {

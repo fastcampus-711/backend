@@ -6,7 +6,6 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.dto.MarketDto;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -15,8 +14,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 import java.util.List;
 
@@ -57,7 +54,7 @@ public class Market extends CommonPost {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .visible(entity.isVisible())
                 .status(entity.getStatus())
                 .price(entity.getPrice())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))

@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -137,7 +139,7 @@ public class CommonPostController<E extends CommonPost,
         );
         log.debug("deletePost - postDto.getId :{}", postDto.getId());
         long deleted = commonPostService.deletePost(postId, postDto);
-        return ResponseUtil.delete(deleted);
+        return ResponseUtil.delete(Collections.singletonMap("id", String.valueOf(deleted)));
     }
 
     public CommonPostDto createDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostDto.CommonPostRequest request) {

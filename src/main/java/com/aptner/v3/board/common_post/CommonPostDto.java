@@ -4,7 +4,6 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
@@ -184,12 +183,13 @@ public class CommonPostDto extends BaseTimeDto {
         protected boolean isHot;
 
         public static boolean hasSecret(CommonPostDto dto) {
+            // isVisible: false && (user != writer)
             return (!dto.isVisible()
-                    && MemberUtil.getMemberId() != dto.getMemberDto().getId());
+                    && !MemberUtil.getMember().getId().equals(dto.getMemberDto().getId()));
         }
 
         public static boolean isOwner(CommonPostDto dto) {
-            return (MemberUtil.getMemberId() == dto.getMemberDto().getId());
+            return MemberUtil.getMember().getId().equals(dto.getMemberDto().getId());
         }
 
         public static boolean isNew(CommonPostDto dto) {
