@@ -19,6 +19,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -69,7 +70,8 @@ public class CommonPostDto extends BaseTimeDto {
                 category,
                 title,
                 content,
-                visible
+                visible,
+                imageUrls
         );
     }
 
@@ -88,6 +90,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
@@ -139,7 +142,7 @@ public class CommonPostDto extends BaseTimeDto {
     @ToString(callSuper = true)
     @NoArgsConstructor
     @SuperBuilder
-    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
+    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "imageUrls", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
     public static class CommonPostResponse extends BaseTimeDto.BaseResponse {
         protected long id;
         protected long userId;
@@ -149,6 +152,7 @@ public class CommonPostDto extends BaseTimeDto {
         protected String categoryName;
         protected String title;
         protected String content;
+        protected List<String> imageUrls;
         protected boolean visible;
         protected Long hits;
         protected ReactionColumnsDto reactionColumns;

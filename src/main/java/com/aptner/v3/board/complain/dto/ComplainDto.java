@@ -47,7 +47,8 @@ public class ComplainDto extends CommonPostDto {
                 category,
                 this.getTitle(),
                 this.getContent(),
-                this.isVisible()
+                this.isVisible(),
+                this.getImageUrls()
         );
     }
 
@@ -66,6 +67,7 @@ public class ComplainDto extends CommonPostDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())

@@ -57,6 +57,7 @@ public class FreePostDto extends CommonPostDto {
                 this.getTitle(),
                 this.getContent(),
                 this.isVisible(),
+                this.getImageUrls(),
                 blindAt,
                 blindBy
         );

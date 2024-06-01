@@ -53,6 +53,7 @@ public class QnaDto extends CommonPostDto {
                 this.getTitle(),
                 this.getContent(),
                 this.isVisible(),
+                this.getImageUrls(),
                 type,
                 status
         );

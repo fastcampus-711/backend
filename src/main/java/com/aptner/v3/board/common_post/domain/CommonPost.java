@@ -87,16 +87,17 @@ public class CommonPost extends BaseTimeEntity
         this.content = content;
     }
 
-    public CommonPost(Member member, Category category, String title, String content, boolean visible) {
+    public CommonPost(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls) {
         this.member = member;
         this.category = category;
         this.title = title;
         this.content = content;
         this.visible = visible;
+        this.imageUrls = imageUrls;
     }
 
-    public static CommonPost of(Member member, Category category, String title, String content, boolean visible) {
-        return new CommonPost(member, category, title, content, visible);
+    public static CommonPost of(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls) {
+        return new CommonPost(member, category, title, content, visible, imageUrls);
     }
 
     public CommonPostDto toDto() {

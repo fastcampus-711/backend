@@ -14,6 +14,7 @@ import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,14 +26,14 @@ public class FreePost extends CommonPost {
 
     public FreePost() {}
 
-    public FreePost(Member member, Category category, String title, String content, boolean visible, LocalDateTime blindAt, String blindBy) {
-        super(member, category, title, content, visible);
+    public FreePost(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, LocalDateTime blindAt, String blindBy) {
+        super(member, category, title, content, visible, imageUrls);
         this.blindBy = blindBy;
         this.blindAt = blindAt;
     }
 
-    public static FreePost of(Member member, Category category, String title, String content, boolean visible, LocalDateTime blindAt, String blindBy) {
-        return new FreePost(member, category, title, content, visible, blindAt, blindBy);
+    public static FreePost of(Member member, Category category, String title, String content, boolean visible,List<String> imageUrls, LocalDateTime blindAt, String blindBy) {
+        return new FreePost(member, category, title, content, visible,imageUrls, blindAt, blindBy);
     }
     @Override
     public FreePostDto toDto() {

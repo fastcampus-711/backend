@@ -16,6 +16,8 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @DiscriminatorValue("MarketPost")
@@ -30,15 +32,15 @@ public class Market extends CommonPost {
     public Market() {
     }
 
-    public Market(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status, Integer price) {
-        super(member, category, title, content, visible);
+    public Market(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, MarketStatus status, Integer price) {
+        super(member, category, title, content, visible, imageUrls);
         this.type = type;
         this.status = status;
         this.price = price;
     }
 
-    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status, Integer price) {
-        return new Market(member, category, title, content, visible, type, status, price);
+    public static Market of(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, MarketStatus status, Integer price) {
+        return new Market(member, category, title, content, visible, imageUrls, type, status, price);
     }
 
     @Override

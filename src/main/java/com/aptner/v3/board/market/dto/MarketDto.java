@@ -77,6 +77,7 @@ public class MarketDto extends CommonPostDto {
                 this.getTitle(),
                 this.getContent(),
                 this.isVisible(),
+                this.getImageUrls(),
                 type,
                 status,
                 price
@@ -101,6 +102,7 @@ public class MarketDto extends CommonPostDto {
                 .status(dto.getStatus())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
