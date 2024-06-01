@@ -59,6 +59,9 @@ public class CommonPost extends BaseTimeEntity
     @Column(name = "post_images")
     List<String> imageUrls;
 
+    @ColumnDefault(value = "true")
+    private boolean visible;
+
     @Setter
     private long hits;
 
@@ -75,9 +78,6 @@ public class CommonPost extends BaseTimeEntity
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @ColumnDefault(value = "true")
-    private boolean visible;
-
     private boolean deleted;
 
     public CommonPost() {
@@ -88,16 +88,17 @@ public class CommonPost extends BaseTimeEntity
         this.content = content;
     }
 
-    public CommonPost(Member member, Category category, String title, String content, boolean visible) {
+    public CommonPost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
         this.member = member;
         this.category = category;
         this.title = title;
         this.content = content;
+        this.imageUrls = imageUrls;
         this.visible = visible;
     }
 
-    public static CommonPost of(Member member, Category category, String title, String content, boolean visible) {
-        return new CommonPost(member, category, title, content, visible);
+    public static CommonPost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
+        return new CommonPost(member, category, title, content, imageUrls, visible);
     }
 
     public CommonPostDto toDto() {

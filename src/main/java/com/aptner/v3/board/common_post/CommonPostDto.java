@@ -29,23 +29,24 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonPostDto extends BaseTimeDto {
-
     Long id;
+    // user
     MemberDto memberDto;
+    // post
     String title;
     String content;
     List<String> imageUrls;
     boolean visible;
-
+    // post info
     Long hits;
-    @Setter
-    private boolean isHot;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
-    protected List<Comment> comments;
-
+    // category
     BoardGroup boardGroup;
     CategoryDto categoryDto;
+    // icon
+    @Setter
+    private boolean isHot;
 
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest request) {
 
@@ -74,6 +75,7 @@ public class CommonPostDto extends BaseTimeDto {
                 category,
                 title,
                 content,
+                imageUrls,
                 visible
         );
     }
@@ -100,8 +102,9 @@ public class CommonPostDto extends BaseTimeDto {
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
-                // post
+                // category
                 .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // base
                 .createdAt(dto.getCreatedAt())
@@ -154,25 +157,28 @@ public class CommonPostDto extends BaseTimeDto {
     @ToString(callSuper = true)
     @NoArgsConstructor
     @SuperBuilder
-    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
+    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "imageUrls", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
     public static class CommonPostResponse extends BaseTimeDto.BaseResponse {
         protected long id;
+        // user
         protected long userId;
         protected String userNickname;
         protected String userImage;
-        protected long postUserId;
-        protected String categoryName;
+        // post
         protected String title;
         protected String content;
         protected List<String> imageUrls;
+        protected List<CommentDto.Response> comments;
         protected boolean visible;
-
+        // post info
         protected Long hits;
         protected ReactionColumnsDto reactionColumns;
         protected long countOfComments;
+        // category
         protected BoardGroup boardGroup;
-        protected List<CommentDto.Response> comments;
-
+        protected long categoryId;
+        protected String categoryName;
+        // icon
         protected boolean isOwner;
         protected boolean isNew;
         protected boolean isHot;

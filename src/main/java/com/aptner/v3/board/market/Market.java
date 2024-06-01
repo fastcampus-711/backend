@@ -11,26 +11,39 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+import java.util.List;
 
 @Entity
 @Getter
 @DiscriminatorValue("MarketPost")
 public class Market extends CommonPost {
     private String type;
+    @Setter
+    @Enumerated(EnumType.STRING)
     private MarketStatus status;
+    @Setter
+    private Integer price;
 
     public Market() {}
 
-    public Market(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status) {
-        super(member, category, title, content, visible);
+    public Market(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, MarketStatus status, Integer price) {
+        super(member, category, title, content, imageUrls, visible);
         this.type = type;
         this.status = status;
+        this.price = price;
     }
 
-    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, MarketStatus status) {
-        return new Market(member, category, title, content, visible, type, status);
+    public static Market of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, MarketStatus status, Integer price) {
+        return new Market(member, category, title, content, imageUrls, visible, type, status, price);
     }
+
     @Override
     public MarketDto toDto() {
 
@@ -45,6 +58,8 @@ public class Market extends CommonPost {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .status(entity.getStatus())
+                .price(entity.getPrice())
                 .boardGroup(BoardGroup.getByTable(entity.getDtype()))
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())

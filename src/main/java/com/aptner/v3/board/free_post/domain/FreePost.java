@@ -14,6 +14,7 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,14 +25,14 @@ public class FreePost extends CommonPost {
 
     public FreePost() {}
 
-    public FreePost(Member member, Category category, String title, String content, boolean visible, LocalDateTime blindAt, String blindBy) {
-        super(member, category, title, content, visible);
+    public FreePost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String blindBy, LocalDateTime blindAt) {
+        super(member, category, title, content, imageUrls, visible);
         this.blindBy = blindBy;
         this.blindAt = blindAt;
     }
 
-    public static FreePost of(Member member, Category category, String title, String content, boolean visible, LocalDateTime blindAt, String blindBy) {
-        return new FreePost(member, category, title, content, visible, blindAt, blindBy);
+    public static FreePost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime blindAt, String blindBy) {
+        return new FreePost(member, category, title, content, imageUrls, visible, blindBy, blindAt);
     }
     @Override
     public FreePostDto toDto() {

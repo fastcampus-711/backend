@@ -82,7 +82,7 @@ public class FreePostControllerTest {
     @WithUserDetails(value="user1")
     @Test
     void 자유_게시판_전체_조회() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/frees"))
+        MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/frees/"))
                 .andDo(print())
                 .andReturn();
         List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].board_group");

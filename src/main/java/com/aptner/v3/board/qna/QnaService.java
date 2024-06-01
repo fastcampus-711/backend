@@ -28,6 +28,16 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
         this.qnaRepository = qnaRepository;
     }
 
+    public QnaDto setStatus(CustomUserDetails user, QnaStatusDto.QnaStatusRequest request) {
+        // check
+        Qna qna = qnaRepository.findById(request.getPostId())
+                .orElseThrow(() -> new PostException(ErrorCode._NOT_FOUND));
+        // update
+        qna.setStatus(request.getStatus());
+        qnaRepository.flush();
+        return qna.toDto();
+    }
+
     @Override
     public Page<Qna> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
         return qnaRepository.findByDtypeAndStatus(boardGroup.getTable(), (QnaStatus) status, pageable);
@@ -64,13 +74,4 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
         return postDto;
     }
 
-    public QnaDto setStatus(CustomUserDetails user, QnaStatusDto.QnaStatusRequest request) {
-        // check
-        Qna qna = qnaRepository.findById(request.getPostId())
-                .orElseThrow(() -> new PostException(ErrorCode._NOT_FOUND));
-        // update
-        qna.setStatus(request.getStatus());
-        qnaRepository.flush();
-        return qna.toDto();
-    }
 }

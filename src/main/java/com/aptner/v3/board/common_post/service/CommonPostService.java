@@ -19,7 +19,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +35,6 @@ import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 
 @Slf4j
-@Primary
 @Service
 @Transactional
 @Qualifier("commonPostService")
@@ -204,7 +202,8 @@ public class CommonPostService<E extends CommonPost,
 
     private void verifyCreatePost(T dto) {
         int imageUploadCount = 5;
-        if (dto.getImageUrls().size() > imageUploadCount) {
+        if (dto.getImageUrls() != null &&
+                dto.getImageUrls().size() > imageUploadCount) {
             log.error("createPost - image count exceed : {}", dto.getImageUrls().size());
             throw new PostException(INVALID_REQUEST);
         }
@@ -218,12 +217,8 @@ public class CommonPostService<E extends CommonPost,
         }
         // exists
         E post;
-        try {
-            post = commonPostRepository.findById(dto.getId()).get();
-        } catch (EntityNotFoundException e1) {
-            log.error("POST ID DB에 없음");
-            throw new PostException(_NOT_FOUND);
-        }
+
+        post = commonPostRepository.findById(dto.getId()).orElseThrow(EntityNotFoundException::new);
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {

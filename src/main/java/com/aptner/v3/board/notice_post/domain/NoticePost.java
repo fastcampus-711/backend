@@ -15,6 +15,7 @@ import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,13 +27,13 @@ public class NoticePost extends CommonPost {
     public NoticePost() {
     }
 
-    public NoticePost(Member member, Category category, String title, String content, boolean visible, LocalDateTime postAt) {
-        super(member, category, title, content, visible);
+    public NoticePost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime postAt) {
+        super(member, category, title, content, imageUrls, visible);
         this.postAt = postAt;
     }
 
-    public static NoticePost of(Member member, Category category, String title, String content, boolean visible, LocalDateTime postAt) {
-        return new NoticePost(member, category, title, content, visible, postAt);
+    public static NoticePost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime postAt) {
+        return new NoticePost(member, category, title, content, imageUrls, visible, postAt);
     }
 
     @Override
