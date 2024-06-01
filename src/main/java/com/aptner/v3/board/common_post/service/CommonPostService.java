@@ -162,6 +162,7 @@ public class CommonPostService<E extends CommonPost,
 
         Member member = verifyMember(dto);
         Category category = verifyCategory(dto);
+        verifyCreatePost(dto);
         E entity = (E) dto.toEntity(member, category);
         E saved = commonPostRepository.save(entity);
         T postDto = (T) saved.toDto();
@@ -199,6 +200,14 @@ public class CommonPostService<E extends CommonPost,
 
         commonPostRepository.deleteById(postId);
         return postId;
+    }
+
+    private void verifyCreatePost(T dto) {
+        int imageUploadCount = 5;
+        if (dto.getImageUrls().size() > imageUploadCount) {
+            log.error("createPost - image count exceed : {}", dto.getImageUrls().size());
+            throw new PostException(INVALID_REQUEST);
+        }
     }
 
     protected E verifyPost(T dto) {
