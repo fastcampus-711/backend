@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class MarketDto extends CommonPostDto {
-    private String type;
+    private String type;  // @todo check type이 뭐징?
     private MarketStatus status;
     private Integer price;
 
@@ -90,28 +90,38 @@ public class MarketDto extends CommonPostDto {
         String blindContent = "비밀 게시글입니다.";
         boolean isSecret = CommonPostResponse.hasSecret(dto);
 
-        return MarketDto.MarketResponse.builder()
+        return MarketResponse.builder()
                 .id(dto.getId())
+                // user
                 .userId(dto.getMemberDto().getId())
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
+                // post
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(dto.getImageUrls())
-                .visible(dto.isVisible() == false)
-                .price(dto.getPrice())
-                .hits(dto.getHits())
-                .status(dto.getStatus())
-                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .countOfComments(dto.getCountOfComments())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
                 .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
+                // market
+                .price(dto.getPrice())
+                .status(dto.getStatus())
+                // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
                 .build();
-
     }
 
     @Getter

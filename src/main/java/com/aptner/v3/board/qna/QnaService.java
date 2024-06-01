@@ -1,14 +1,10 @@
 package com.aptner.v3.board.qna;
 
-import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.qna.dto.QnaDto;
-import com.aptner.v3.board.qna.dto.QnaStatusDto;
-import com.aptner.v3.global.error.ErrorCode;
-import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +24,12 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
         this.qnaRepository = qnaRepository;
     }
 
-    public QnaDto setStatus(CustomUserDetails user, QnaStatusDto.QnaStatusRequest request) {
+    public QnaDto setStatus(QnaDto dto) {
         // check
-        Qna qna = qnaRepository.findById(request.getPostId())
-                .orElseThrow(() -> new PostException(ErrorCode._NOT_FOUND));
+        Qna qna = verifyPost(dto);
         // update
-        qna.setStatus(request.getStatus());
+        qna.setStatus(dto.getStatus());
+        // @todo test!!!! verify -> commonPost...
         qnaRepository.flush();
         return qna.toDto();
     }

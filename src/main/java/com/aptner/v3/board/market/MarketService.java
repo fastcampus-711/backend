@@ -1,13 +1,11 @@
 package com.aptner.v3.board.market;
 
-import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
-import com.aptner.v3.board.market.dto.MarketStatusDto;
 import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.PostException;
@@ -36,14 +34,12 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
 
     }
 
-    public MarketDto setStatus(CustomUserDetails user, MarketStatusDto.MarketStatusRequest request) {
-        // check
-        Market marekt = marketRepository.findById(request.getPostId())
-                .orElseThrow(() -> new PostException(ErrorCode._NOT_FOUND));
+    public MarketDto setStatus(MarketDto dto) {
+        Market market = verifyPost(dto);
         // update
-        marekt.setStatus(request.getStatus());
+        market.setStatus(dto.getStatus());
         marketRepository.flush();
-        return marekt.toDto();
+        return market.toDto();
     }
 
     @Override
@@ -101,31 +97,6 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
         }
         return post;
     }
-
-
-
-
-    /*public List<MarketDto.MarketResponse> getMarketListByStatus(Long categoryId, MarketStatus status, Integer limit, Integer page, SortType sort) {
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<Market> list = marketRepository.findAllByCategoryIdAndStatus(categoryId, status, pageable);
-
-        return list.getContent()
-                .stream()
-                .map(market -> MarketDto.MarketResponse.from(MarketDto.fromMarketEntity(market)))
-                .toList();
-    }
-
-    public List<MarketDto.MarketResponse> getMarketListByStatusAndKeyword(Long categoryId, MarketStatus status, String keyword, Integer limit, Integer page, SortType sort) {
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<Market> list = marketRepository.findByCategoryIdAndStatusAndTitleContainingIgnoreCase(categoryId, status,keyword,  pageable);
-
-        return list.getContent()
-                .stream()
-                .map(market -> MarketDto.MarketResponse.from(MarketDto.fromMarketEntity(market)))
-                .toList();
-    }*/
 
     @Override
     public Page<Market> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {

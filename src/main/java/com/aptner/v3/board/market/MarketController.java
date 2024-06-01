@@ -36,11 +36,18 @@ public class MarketController extends CommonPostController<
     }
 
     @PostMapping("/status")
+    @Operation(summary = "상태 등록")
     public ApiResponse<?> setStatus(
             @RequestBody MarketStatusDto.MarketStatusRequest request
             , @AuthenticationPrincipal CustomUserDetails user) {
 
-        return ResponseUtil.ok(marketService.setStatus(user, request).toResponse());
+        MarketDto dto = MarketDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                MarketDto.MarketRequest.of(request.getPostId(), null)
+        );
+
+        return ResponseUtil.ok(marketService.setStatus(dto).toResponse());
     }
 
     @Override

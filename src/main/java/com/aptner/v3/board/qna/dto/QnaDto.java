@@ -70,23 +70,35 @@ public class QnaDto extends CommonPostDto {
 
         return QnaResponse.builder()
                 .id(dto.getId())
+                // user
                 .userId(dto.getMemberDto().getId())
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
-                .visible(dto.isVisible())
+                // post
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .hits(dto.getHits())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
+                .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
+                .categoryName(dto.getCategoryDto().getName())
+                // qna
                 .status(dto.getStatus())
                 .type(dto.getType())
-                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .countOfComments(dto.getCountOfComments())
-                .boardGroup(dto.getBoardGroup())
-                .categoryName(dto.getCategoryDto().getName())
+                // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
                 .build();
     }
 

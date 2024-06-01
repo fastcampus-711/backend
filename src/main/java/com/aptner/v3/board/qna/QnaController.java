@@ -38,11 +38,17 @@ public class QnaController extends CommonPostController<
     }
 
     @PostMapping("/status")
+    @Operation(summary = "상태 등록")
     public ApiResponse<?> setStatus(
             @RequestBody QnaStatusDto.QnaStatusRequest request
             , @AuthenticationPrincipal CustomUserDetails user) {
 
-        return ResponseUtil.ok(qnaService.setStatus(user, request).toResponse());
+        QnaDto dto = QnaDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                QnaDto.QnaRequest.of(request.getPostId(), null)
+        );
+        return ResponseUtil.ok(qnaService.setStatus(dto).toResponse());
     }
 
     @Override
