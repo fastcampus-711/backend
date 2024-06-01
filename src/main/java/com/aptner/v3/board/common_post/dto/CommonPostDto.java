@@ -1,4 +1,4 @@
-package com.aptner.v3.board.common_post;
+package com.aptner.v3.board.common_post.dto;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
@@ -7,7 +7,6 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;

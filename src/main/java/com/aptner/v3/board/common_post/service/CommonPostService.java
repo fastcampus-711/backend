@@ -7,7 +7,7 @@ import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.qna.Status;

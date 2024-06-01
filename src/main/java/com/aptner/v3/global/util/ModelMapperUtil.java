@@ -3,13 +3,11 @@ package com.aptner.v3.global.util;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
-
-import java.util.List;
 
 public class ModelMapperUtil {
     private static ModelMapper modelMapper;

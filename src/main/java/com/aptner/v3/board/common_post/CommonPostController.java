@@ -4,6 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.domain.SortType;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.SearchDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.common_post.service.PaginationService;

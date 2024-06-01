@@ -5,7 +5,7 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.MemberUtil;

@@ -5,6 +5,7 @@ import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.validation.constraints.NotBlank;
@@ -54,6 +55,8 @@ public class CommentDto extends BaseTimeDto {
 
     public CommentDto.CommentResponse toResponseDto() {
         CommentDto dto = this;
+        String blindTitle = "비밀 댓글입니다.";
+        boolean isSecret = CommentResponse.hasSecret(dto);
 
         return CommentResponse.builder()
                 .postId(dto.getPostId())
@@ -62,10 +65,10 @@ public class CommentDto extends BaseTimeDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 // comment
                 .commentId(dto.getCommentId())
-                .content(dto.getContent())
+                .content(isSecret? blindTitle : dto.getContent())
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
-                .reactionColumns(dto.getReactionColumnsDto())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .visible(dto.isVisible())
                 // base
                 .createdAt(dto.getCreatedAt())
@@ -133,5 +136,11 @@ public class CommentDto extends BaseTimeDto {
         private boolean visible;
         // icon
         private boolean isOwner;
+
+        public static boolean hasSecret(CommentDto dto) {
+            // isVisible: false && (user != writer)
+            return (!dto.isVisible()
+                    && !MemberUtil.getMember().getId().equals(dto.getMemberDto().getId()));
+        }
     }
 }
