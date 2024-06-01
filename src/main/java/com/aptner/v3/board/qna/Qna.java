@@ -29,14 +29,14 @@ public class Qna extends CommonPost {
     public Qna() {
     }
 
-    public Qna(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, QnaStatus status) {
-        super(member, category, title, content, visible, imageUrls);
+    public Qna(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, QnaStatus status) {
+        super(member, category, title, content, imageUrls, visible);
         this.type = type;
         this.status = status;
     }
 
-    public static Qna of(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, QnaStatus status) {
-        return new Qna(member, category, title, content, visible, imageUrls, type, status);
+    public static Qna of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, QnaStatus status) {
+        return new Qna(member, category, title, content, imageUrls, visible, type, status);
     }
 
     @Override

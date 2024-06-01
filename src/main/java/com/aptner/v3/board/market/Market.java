@@ -18,6 +18,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import java.util.List;
+
 @Entity
 @Getter
 @DiscriminatorValue("MarketPost")
@@ -32,15 +34,15 @@ public class Market extends CommonPost {
     public Market() {
     }
 
-    public Market(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, MarketStatus status, Integer price) {
-        super(member, category, title, content, visible, imageUrls);
+    public Market(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, MarketStatus status, Integer price) {
+        super(member, category, title, content, imageUrls, visible);
         this.type = type;
         this.status = status;
         this.price = price;
     }
 
-    public static Market of(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls, String type, MarketStatus status, Integer price) {
-        return new Market(member, category, title, content, visible, imageUrls, type, status, price);
+    public static Market of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, MarketStatus status, Integer price) {
+        return new Market(member, category, title, content, imageUrls, visible, type, status, price);
     }
 
     @Override

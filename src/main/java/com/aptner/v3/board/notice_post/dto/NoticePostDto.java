@@ -49,8 +49,8 @@ public class NoticePostDto extends CommonPostDto {
                 category,
                 this.getTitle(),
                 this.getContent(),
-                this.isVisible(),
                 this.getImageUrls(),
+                this.isVisible(),
                 postAt
         );
     }

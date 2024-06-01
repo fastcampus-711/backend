@@ -23,12 +23,12 @@ public class Complain extends CommonPost {
     public Complain() {
     }
 
-    public Complain(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls) {
-        super(member, category, title, content, visible, imageUrls);
+    public Complain(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
+        super(member, category, title, content, imageUrls, visible);
     }
 
-    public static Complain of(Member member, Category category, String title, String content, boolean visible, List<String> imageUrls) {
-        return new Complain(member, category, title, content, visible,imageUrls);
+    public static Complain of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
+        return new Complain(member, category, title, content, imageUrls, visible);
     }
     @Override
     public ComplainDto toDto() {
