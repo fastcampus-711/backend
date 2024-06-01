@@ -15,6 +15,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @DiscriminatorValue("QnaPost")
@@ -26,14 +28,14 @@ public class Qna extends CommonPost {
 
     public Qna() {}
 
-    public Qna(Member member, Category category, String title, String content, boolean visible, String type, QnaStatus status) {
-        super(member, category, title, content, visible);
+    public Qna(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, QnaStatus status) {
+        super(member, category, title, content, imageUrls, visible);
         this.type = type;
         this.status = status;
     }
 
-    public static Qna of(Member member, Category category, String title, String content, boolean visible, String type, QnaStatus status) {
-        return new Qna(member, category, title, content, visible, type, status);
+    public static Qna of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, QnaStatus status) {
+        return new Qna(member, category, title, content, imageUrls, visible, type, status);
     }
 
     @Override

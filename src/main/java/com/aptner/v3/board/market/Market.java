@@ -13,6 +13,8 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @DiscriminatorValue("MarketPost")
@@ -22,14 +24,14 @@ public class Market extends CommonPost {
 
     public Market() {}
 
-    public Market(Member member, Category category, String title, String content, boolean visible, String type, String status) {
-        super(member, category, title, content, visible);
+    public Market(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, String status) {
+        super(member, category, title, content, imageUrls, visible);
         this.type = type;
         this.status = status;
     }
 
-    public static Market of(Member member, Category category, String title, String content, boolean visible, String type, String status) {
-        return new Market(member, category, title, content, visible, type, status);
+    public static Market of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, String status) {
+        return new Market(member, category, title, content, imageUrls, visible, type, status);
     }
     @Override
     public MarketDto toDto() {
