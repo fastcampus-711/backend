@@ -1,17 +1,20 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
+@Qualifier("commonPostRepository")
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
 
     // 게시판 별 조회

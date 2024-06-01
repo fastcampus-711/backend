@@ -27,7 +27,7 @@ public class NoticePost extends CommonPost {
     public NoticePost() {
     }
 
-    public NoticePost(Member member, Category category, String title, String content,List<String> imageUrls, boolean visible, LocalDateTime postAt) {
+    public NoticePost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime postAt) {
         super(member, category, title, content, imageUrls, visible);
         this.postAt = postAt;
     }
@@ -39,7 +39,7 @@ public class NoticePost extends CommonPost {
     @Override
     public NoticePostDto toDto() {
 
-        CommonPost entity = this;
+        NoticePost entity = this;
         return NoticePostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

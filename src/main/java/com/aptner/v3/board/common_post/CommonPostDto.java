@@ -19,6 +19,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -142,7 +143,7 @@ public class CommonPostDto extends BaseTimeDto {
     @ToString(callSuper = true)
     @NoArgsConstructor
     @SuperBuilder
-    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
+    @JsonPropertyOrder({"id", "user_id", "userNickname", "userImage", "categoryName", "title", "content", "imageUrls", "visible", "reactionColumns", "countOfComments", "hits", "comments"})
     public static class CommonPostResponse extends BaseTimeDto.BaseResponse {
         protected long id;
         protected long userId;

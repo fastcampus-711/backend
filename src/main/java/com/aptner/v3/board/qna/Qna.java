@@ -26,7 +26,8 @@ public class Qna extends CommonPost {
     @Enumerated(EnumType.STRING)
     private QnaStatus status;
 
-    public Qna() {}
+    public Qna() {
+    }
 
     public Qna(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, QnaStatus status) {
         super(member, category, title, content, imageUrls, visible);
@@ -40,7 +41,7 @@ public class Qna extends CommonPost {
 
     @Override
     public QnaDto toDto() {
-        CommonPost entity = this;
+        Qna entity = this;
         return QnaDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))

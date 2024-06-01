@@ -71,6 +71,7 @@ public class NoticePostDto extends CommonPostDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())

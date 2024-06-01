@@ -67,6 +67,7 @@ public class ComplainDto extends CommonPostDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
