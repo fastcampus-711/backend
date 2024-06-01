@@ -7,6 +7,7 @@ import com.aptner.v3.board.notice_post.NoticePostService;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.aptner.v3.board.notice_post.dto.NoticePostDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,9 +19,8 @@ public class NoticePostController extends CommonPostController<
         NoticePostDto,
         NoticePostDto.NoticeRequest,
         NoticePostDto.NoticeResponse> {
-
-    private final NoticePostService noticePostService;
-    public NoticePostController(NoticePostService noticePostService, PaginationService paginationService) {
+    NoticePostService noticePostService;
+    public NoticePostController(@Qualifier("noticePostService") NoticePostService noticePostService, PaginationService paginationService) {
         super(noticePostService, paginationService);
         this.noticePostService = (NoticePostService) commonPostService;
     }

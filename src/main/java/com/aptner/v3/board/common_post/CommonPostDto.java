@@ -1,12 +1,13 @@
 package com.aptner.v3.board.common_post;
 
+import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
-import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
@@ -18,7 +19,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,13 +37,14 @@ public class CommonPostDto extends BaseTimeDto {
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
+    protected List<Comment> comments;
     boolean visible;
     BoardGroup boardGroup;
     CategoryDto categoryDto;
 
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest request) {
 
-        return FreePostDto.builder()
+        return CommonPostDto.builder()
                 .id(request.getId())
                 .memberDto(memberDto)
                 .title(request.getTitle())
@@ -62,30 +63,6 @@ public class CommonPostDto extends BaseTimeDto {
                 .build();
     }
 
-    public static CommonPostDto from(CommonPost entity) {
-
-        log.debug("dtype : {}", entity.getDtype());
-        CommonPostDto build = CommonPostDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
-                .build();
-
-        return build;
-    }
-
     public CommonPost toEntity(Member member, Category category) {
         return CommonPost.of(
                 member,
@@ -96,6 +73,32 @@ public class CommonPostDto extends BaseTimeDto {
         );
     }
 
+    public CommonPostResponse toResponse() {
+        CommonPostDto dto = this;
+
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return CommonPostResponse.builder()
+                .id(dto.getId())
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                .visible(dto.isVisible())
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .countOfComments(dto.getCountOfComments())
+                .boardGroup(dto.getBoardGroup())
+                .categoryName(dto.getCategoryDto().getName())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                .build();
+    }
 
     @Getter
     @Setter
@@ -120,6 +123,15 @@ public class CommonPostDto extends BaseTimeDto {
                     .categoryId(categoryId)
                     .build();
         }
+
+        public CommonPostDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
+            return CommonPostDto.of(
+                    boardGroup,
+                    user.toDto(),
+                    request
+            );
+        }
+
     }
 
     @Getter
@@ -143,38 +155,6 @@ public class CommonPostDto extends BaseTimeDto {
         protected long countOfComments;
         protected BoardGroup boardGroup;
         protected List<CommentDto.Response> comments;
-
-        public CommonPostResponse blindPostAlgorithm() {
-            if (!visible && MemberUtil.getMemberId() != userId) {
-                this.title = "비밀 게시글입니다.";
-                this.content = "비밀 게시글입니다.";
-//                this.reactionColumns.blindColumns();
-                this.comments = new ArrayList<>();
-            }
-            blindCommentAlgorithm(comments);
-
-            return this;
-        }
-
-        protected void blindCommentAlgorithm(List<CommentDto.Response> comments) {
-            if (comments == null)
-                return;
-
-            for (int i = 0; i < comments.size(); i++) {
-                CommentDto.Response comment = comments.get(i);
-                if (comment.isAdmin()) {
-                    comments.add(0, comments.remove(i));
-                }
-
-                if (!comment.isVisible() &&
-                        MemberUtil.getMemberId() != userId &&
-                        MemberUtil.getMemberId() != postUserId) {
-                    comment.setContent("비밀 댓글입니다.");
-//                    comment.getReactionColumns().blindColumns();
-                }
-                blindCommentAlgorithm(comment.getChildComments());
-            }
-        }
 
         public static CommonPostResponse from(CommonPostDto dto) {
 

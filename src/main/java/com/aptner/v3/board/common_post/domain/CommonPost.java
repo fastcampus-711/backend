@@ -1,24 +1,25 @@
 package com.aptner.v3.board.common_post.domain;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
-import com.aptner.v3.board.category.CategoryCode;
+import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
 import com.aptner.v3.global.util.MemberUtil;
-import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.modelmapper.ModelMapper;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -73,7 +74,8 @@ public class CommonPost extends BaseTimeEntity
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    private boolean visible = true;
+    @ColumnDefault(value = "true")
+    private boolean visible;
 
     private boolean deleted;
 
@@ -83,66 +85,6 @@ public class CommonPost extends BaseTimeEntity
     public CommonPost(String title, String content) {
         this.title = title;
         this.content = content;
-    }
-
-    public <Q extends CommonPostDto.CommonPostRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        modelMapper.map(updateRequest, this);
-        return this;
-    }
-
-    public CommonPostDto.CommonPostResponse toResponseDtoWithoutComments() {
-        ModelMapper modelMapper = (ModelMapperUtil.getModelMapper());
-
-        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
-
-        CommonPostDto.CommonPostResponse commonPostResponseDto =
-                modelMapper.map(this, responseDtoClass, "skipComments");
-
-        return commonPostResponseDto.blindPostAlgorithm();
-    }
-
-    public CommonPostDto.CommonPostResponse toResponseDtoWithComments() {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
-
-        CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass);
-
-        return commonPostResponseDto.blindPostAlgorithm();
-    }
-
-    private Class<? extends CommonPostDto.CommonPostResponse> getResponseDtoClassType() {
-        return Arrays.stream(CategoryCode.values())
-                .filter(s -> s.getDomain().equals(this.getClass()))
-                .findFirst()
-                .orElseThrow()
-                .getDtoForResponse();
-    }
-
-    public CommonPost updateCountOfComments(long countOfComments) {
-        this.countOfComments = countOfComments;
-        return this;
-    }
-
-    public CommonPost plusHits() {
-        this.hits++;
-
-        return this;
-    }
-
-    public boolean checkIsDtypeIsEquals(String dtype) {
-        return this.getClass().getSimpleName().equals(dtype);
-    }
-
-    public boolean validUpdateOrDeleteAuthority() {
-        return this.memberId == MemberUtil.getMemberId();
-    }
-
-    public CommonPost setMemberId() {
-        this.memberId = MemberUtil.getMemberId();
-        return this;
     }
 
     public CommonPost(Member member, Category category, String title, String content, boolean visible) {
@@ -155,5 +97,39 @@ public class CommonPost extends BaseTimeEntity
 
     public static CommonPost of(Member member, Category category, String title, String content, boolean visible) {
         return new CommonPost(member, category, title, content, visible);
+    }
+
+    public CommonPostDto toDto() {
+        CommonPost entity = this;
+        CommonPostDto build = CommonPostDto.builder()
+                .id(entity.getId())
+                .memberDto(MemberDto.from(entity.getMember()))
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .imageUrls(entity.getImageUrls())
+                .hits(entity.getHits())
+                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .countOfComments(entity.getCountOfComments())
+                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
+                .categoryDto(CategoryDto.from(entity.getCategory()))
+                .createdAt(entity.getCreatedAt())
+                .createdBy(entity.getCreatedBy())
+                .modifiedAt(entity.getModifiedAt())
+                .modifiedBy(entity.getModifiedBy())
+                .build();
+
+        return build;
+    }
+
+    public CommonPost updateCountOfComments(long countOfComments) {
+        this.countOfComments = countOfComments;
+        return this;
+    }
+
+    public CommonPost plusHits() {
+        this.hits++;
+
+        return this;
     }
 }

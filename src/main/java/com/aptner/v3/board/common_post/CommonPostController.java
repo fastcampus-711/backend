@@ -10,8 +10,9 @@ import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/boards")
 public class CommonPostController<E extends CommonPost,
         T extends CommonPostDto,
@@ -30,6 +33,12 @@ public class CommonPostController<E extends CommonPost,
 
     protected final CommonPostService<E, T, Q, S> commonPostService;
     protected final PaginationService paginationService;
+
+    @Autowired
+    public CommonPostController(@Qualifier("commonPostService") CommonPostService<E, T, Q, S> commonPostService, PaginationService paginationService) {
+        this.commonPostService = commonPostService;
+        this.paginationService = paginationService;
+    }
 
     @GetMapping("")
     @Operation(summary = "게시글 검색")
@@ -54,7 +63,7 @@ public class CommonPostController<E extends CommonPost,
         }
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
-                posts.map(p -> (S) S.from(p)),
+                posts.map(p -> (S) p.toResponse()),
                 paginationService.getPaginationBarNumbers(pageable.getPageNumber(), posts.getTotalPages())
         )));
     }
@@ -62,7 +71,7 @@ public class CommonPostController<E extends CommonPost,
     @GetMapping("/{post-id}")
     @Operation(summary = "게시글 상세")
     public ApiResponse<?> getPost(@PathVariable(name = "post-id") Long postId) {
-        return ResponseUtil.ok(commonPostService.getPost(postId));
+        return ResponseUtil.ok(commonPostService.getPost(postId).toResponse());
     }
 
     @PostMapping("/")
@@ -71,15 +80,21 @@ public class CommonPostController<E extends CommonPost,
             @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        T postDto = (T) T.of(
+        this.logGenericTypes();
+        T postDto = (T) request.toDto(
                 getBoardGroup(),
-                user.toDto(),
+                user,
                 request
         );
+
         log.debug("createPost - user :{}", user);
         log.debug("createPost - request :{}", request);
         log.debug("createPost - postDto :{}", postDto);
-        return ResponseUtil.create(S.from(commonPostService.createPost(postDto)));
+        T savedDto = commonPostService.createPost(postDto);
+        log.debug("createPost - savedDto :{}", savedDto);
+        S response = (S) savedDto.toResponse();
+        log.debug("createPost - response :{}", response);
+        return ResponseUtil.create(response);
     }
 
     @PutMapping("/{post-id}")
@@ -88,17 +103,22 @@ public class CommonPostController<E extends CommonPost,
             @PathVariable(name = "post-id") Long postId,
             @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user) {
-
+        this.logGenericTypes();
         request.setId(postId);
-        T postDto = (T) T.of(
+        T postDto = (T) request.toDto(
                 getBoardGroup(),
-                user.toDto(),
+                user,
                 request
         );
+
         log.debug("updatePost - member :{}", user);
         log.debug("updatePost - request :{}", request);
         log.debug("updatePost - postDto :{}", postDto);
-        return ResponseUtil.update(S.from(commonPostService.updatePost(postDto)));
+        T savedDto = commonPostService.updatePost(postDto);
+        log.debug("updatePost - savedDto :{}", savedDto);
+        S response = (S) savedDto.toResponse();
+        log.debug("updatePost - response :{}", response);
+        return ResponseUtil.update(response);
     }
 
     @DeleteMapping("/{post-id}")
@@ -117,7 +137,29 @@ public class CommonPostController<E extends CommonPost,
         return ResponseUtil.delete(deleted);
     }
 
+    public CommonPostDto createDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostDto.CommonPostRequest request) {
+        return CommonPostDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                request
+        );
+    }
+
     public BoardGroup getBoardGroup() {
         return BoardGroup.ALL;
+    }
+
+    private void logGenericTypes() {
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) superclass).getActualTypeArguments();
+            log.debug("Generic types: (E)Entity = {}, (T)DTO = {}, (Q)Request = {}, (S)Response = {}",
+                    typeArguments[0].getTypeName(),
+                    typeArguments[1].getTypeName(),
+                    typeArguments[2].getTypeName(),
+                    typeArguments[3].getTypeName());
+        } else {
+            log.debug("No generic type information available.");
+        }
     }
 }
