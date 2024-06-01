@@ -69,6 +69,7 @@ public class CommonPostDto extends BaseTimeDto {
                 category,
                 title,
                 content,
+                imageUrls,
                 visible
         );
     }
@@ -88,10 +89,12 @@ public class CommonPostDto extends BaseTimeDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
                 .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -145,7 +148,9 @@ public class CommonPostDto extends BaseTimeDto {
         protected long userId;
         protected String userNickname;
         protected String userImage;
+        protected List<String> imageUrls;
         protected long postUserId;
+        protected long categoryId;
         protected String categoryName;
         protected String title;
         protected String content;
@@ -155,33 +160,6 @@ public class CommonPostDto extends BaseTimeDto {
         protected long countOfComments;
         protected BoardGroup boardGroup;
         protected List<CommentDto.Response> comments;
-
-        public static CommonPostResponse from(CommonPostDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return CommonPostResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
 
         public static boolean hasSecret(CommonPostDto dto) {
             return (!dto.isVisible()

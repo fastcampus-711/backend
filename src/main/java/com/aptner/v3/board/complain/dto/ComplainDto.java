@@ -47,6 +47,7 @@ public class ComplainDto extends CommonPostDto {
                 category,
                 this.getTitle(),
                 this.getContent(),
+                this.getImageUrls(),
                 this.isVisible()
         );
     }
