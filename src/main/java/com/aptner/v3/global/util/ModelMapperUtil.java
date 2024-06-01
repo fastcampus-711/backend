@@ -1,6 +1,5 @@
 package com.aptner.v3.global.util;
 
-import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryCode;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.comment.CommentDto;
@@ -35,16 +34,11 @@ public class ModelMapperUtil {
         for (CategoryCode categoryCode : CategoryCode.values()) {
             Class<? extends CommonPost> commonPostDomain = categoryCode.getDomain();
             Class<? extends CommonPostDto.CommonPostResponse> commonPostDtoResponse = categoryCode.getDtoForResponse();
-
-            modelMapper.createTypeMap(commonPostDomain, commonPostDtoResponse, "skipComments")
-                    .addMappings(mapping -> {
-                        mapping.skip((a, b) -> a.setComments((List<CommentDto.Response>) b));
-                    });
         }
-        modelMapper.createTypeMap(Comment.class, CommentDto.Response.class, "memberToCommentResponse")
+        modelMapper.createTypeMap(Comment.class, CommentDto.CommentResponse.class, "memberToCommentResponse")
                 .addMappings(mapping -> {
-                    mapping.map(a -> a.getMember().getImage(), CommentDto.Response::setUserImage);
-                    mapping.map(a -> a.getMember().getNickname(), CommentDto.Response::setUserNickname);
+                    mapping.map(a -> a.getMember().getImage(), CommentDto.CommentResponse::setUserImage);
+                    mapping.map(a -> a.getMember().getNickname(), CommentDto.CommentResponse::setUserNickname);
                 });
     }
 }

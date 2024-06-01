@@ -93,7 +93,7 @@ public class NoticePostControllerTest {
 //        }
     }
 
-    @WithUserDetails(value="user1")
+    @WithUserDetails(value="user")
     @Test
     void 공지사항_게시글_생성() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -126,7 +126,7 @@ public class NoticePostControllerTest {
         mockMvc.perform(
                         delete(prefix + "/boards/notices/" + postId)
                 ).andDo(print())
-                .andExpect(jsonPath("$.data").value(postId));
+                .andExpect(jsonPath("$.data.id").value(postId));
     }
 
 }

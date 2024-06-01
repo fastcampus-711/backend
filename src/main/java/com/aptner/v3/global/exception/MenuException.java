@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MenuException extends GlobalException {
 
     public MenuException(ErrorCode responseCode) {
-        super("메뉴", responseCode);
+        super(responseCode, "메뉴");
     }
 
 }

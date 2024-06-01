@@ -8,9 +8,11 @@ import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
 import com.aptner.v3.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@Qualifier("complainService")
 public class ComplainService extends CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> {
 
     private final CommonPostRepository<Complain> commonPostRepository;

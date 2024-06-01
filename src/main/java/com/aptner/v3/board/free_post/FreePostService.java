@@ -9,9 +9,11 @@ import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@Qualifier("freePostService")
 public class FreePostService extends CommonPostService<FreePost, FreePostDto, FreePostDto.FreePostRequest, FreePostDto.FreePostResponse> {
 
     private final CommonPostRepository<FreePost> commonPostRepository;

@@ -84,7 +84,7 @@ public class FreePostControllerTest {
         MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards/frees"))
                 .andDo(print())
                 .andReturn();
-        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].board_group");
+        List<String> list = JsonPath.parse(mvcResult.getResponse().getContentAsString()).read("$.data.posts.content.[*].title");
         Assertions.assertThat(list).hasSize(10);
 
 //        for (String str : list) {
@@ -156,7 +156,7 @@ public class FreePostControllerTest {
         mockMvc.perform(
                         delete(prefix + "/boards/frees/" + postId)
                 ).andDo(print())
-                .andExpect(jsonPath("$.data").value(postId));
+                .andExpect(jsonPath("$.data.id").value(postId));
     }
 
 }

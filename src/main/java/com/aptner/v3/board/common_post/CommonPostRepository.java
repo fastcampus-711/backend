@@ -1,17 +1,21 @@
 package com.aptner.v3.board.common_post;
 
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.global.converter.LocalDateTimeAttributeConverter;
+import jakarta.persistence.Convert;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
+@Qualifier("commonPostRepository")
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
 
     // 게시판 별 조회
@@ -31,12 +35,12 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
 
     List<T> findByCategoryId(Long categoryId);
 
-    //7일 이내의 조회수+공감수가 가장 높은 3개의 글을 조회
-    /*@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= CURRENT_DATE - 7 ORDER BY (p.hits + p.countReactionTypeGood) DESC")
-    List<T> findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfter(Pageable pageable);*/
+    // Fetch posts excluding the top ones by hits
+    @Query("SELECT p FROM CommonPost p WHERE p.dtype = :dtype And p.id NOT IN :topPostIds And deleted = false")
+    Page<T> findAllExcludingTopPostsAndDtype(@Param("topPostIds") List<Long> topPostIds, @Param("dtype") String dtype, Pageable pageable);
 
-    //@Query("SELECT * FROM common_post WHERE created_at > NOW() - 7 ORDER BY hits DESC")
-    //@Query("SELECT p FROM CommonPost p WHERE p.createdAt >= local datetime - 7 ORDER BY p.hits DESC")
-    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :sevenDayAgo And p.dtype = :dtype ORDER BY p.hits DESC")
-    List<T> findTop3ByOrderByHitsDescAndCreatedAtAfterAndDtype(@Param("sevenDayAgo") LocalDateTime sevenDayAgo, @Param("dtype") String dtype, PageRequest of);
+    // 7일 이내의 조회수(hits) + 공감수(reactionColumns.countReactionTypeGood) 가장 높은 3개의 글을 조회
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    @Query("SELECT p FROM CommonPost p WHERE p.createdAt >= :date And p.dtype = :dtype And deleted = false ORDER BY (p.hits + p.reactionColumns.countReactionTypeGood) DESC")
+    List<T> findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(@Param("date") LocalDateTime date, @Param("dtype") String dtype, Pageable pageable);
 }
