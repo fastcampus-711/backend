@@ -12,6 +12,7 @@ import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,7 +83,7 @@ public class CommonPostController<E extends CommonPost,
     @PostMapping("/")
     @Operation(summary = "게시글 등록")
     public ApiResponse<?> createPost(
-            @RequestBody Q request,
+            @Valid @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         this.logGenericTypes();
@@ -106,7 +107,7 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시글 수정")
     public ApiResponse<?> updatePost(
             @PathVariable(name = "post-id") Long postId,
-            @RequestBody Q request,
+            @Valid @RequestBody Q request,
             @AuthenticationPrincipal CustomUserDetails user) {
         this.logGenericTypes();
         request.setId(postId);

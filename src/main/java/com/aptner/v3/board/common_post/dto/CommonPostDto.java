@@ -13,6 +13,7 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -167,8 +168,10 @@ public class CommonPostDto extends BaseTimeDto {
         @Min(1L)
         protected Long categoryId;
         @NotBlank
+        @Max(value = 200, message = "제목은 200자 이내로 작성해주세요.")
         protected String title;
         @NotBlank
+        @Max(value = 500, message = "제목은 500자 이내로 작성해주세요.")
         protected String content;
         protected boolean visible;
         protected List<String> imageUrls;

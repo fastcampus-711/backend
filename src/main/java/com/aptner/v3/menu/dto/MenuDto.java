@@ -3,6 +3,7 @@ package com.aptner.v3.menu.dto;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.menu.Menu;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +21,10 @@ public class MenuDto {
         Long parentId;
         @NotBlank
         String code;
+        @NotBlank
+        @Max(value = 50, message = "50자 이내로 입력해주세요.")
         String name;
+
         BoardGroup boardGroup;
 
 
