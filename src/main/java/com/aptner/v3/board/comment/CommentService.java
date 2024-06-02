@@ -11,9 +11,12 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
+import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 @Slf4j
 @Service
@@ -45,6 +48,11 @@ public class CommentService {
                     .orElseThrow(InvalidTableIdException::new);
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
             log.debug("dto.getParentCommentId()!=null comment : {}", comment);
+            // 2-depth 이상 제외
+            if (parentComment.getParentCommentId() != null) {
+                log.error("dto.getParentCommentId()!=null comment : {}", comment);
+                throw new PostException(ErrorCode.COMMENT_DEPTH_IS_OVER);
+            }
             parentComment.addChildComment(comment);
         }
 
@@ -80,6 +88,13 @@ public class CommentService {
         commonPost.setCountOfComments(commonPost.getCountOfComments() - 1);
         commentRepository.deleteById(comment.getId());
         return comment.getId();
+    }
+
+    public Page<CommentDto> getPostWithComment(long postId, Pageable pageable) {
+
+        CommonPost post = commonPostRepository.findById(postId).orElseThrow(() -> new PostException(_NOT_FOUND));
+        Page<Comment> list = commentRepository.findAllByPostId(post.getId(), pageable);
+        return list.map(e -> (CommentDto) e.toDto());
     }
 
     private Member verifyMember(CommentDto dto) {

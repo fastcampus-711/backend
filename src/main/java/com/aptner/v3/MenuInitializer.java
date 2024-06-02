@@ -13,7 +13,7 @@ import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuCode;
 import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,6 @@ import java.util.List;
 import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
 @Component
-@RequiredArgsConstructor
 public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
@@ -30,6 +29,17 @@ public class MenuInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
 
     private final AuthService authService;
+    private final Boolean isTest;
+
+    public MenuInitializer(MenuService menuService, CategoryService categoryService,
+                           MemberRepository memberRepository, AuthService authService,
+                           @Value("${server.auth}") Boolean isTest) {
+        this.menuService = menuService;
+        this.categoryService = categoryService;
+        this.memberRepository = memberRepository;
+        this.authService = authService;
+        this.isTest = isTest;
+    }
 
     @Override
     public void run(String... args) {
@@ -113,10 +123,12 @@ public class MenuInitializer implements CommandLineRunner {
 
 
         // 가짜 로그인 사용자 지정
-        TokenDto login = authService.login(LoginDto.builder()
-                .password("p@ssword")
-                .username("user")
-                .build());
-        System.out.println(login.accessToken());
+        if(!isTest) {
+            TokenDto login = authService.login(LoginDto.builder()
+                    .password("p@ssword")
+                    .username("user")
+                    .build());
+            System.out.println(login.accessToken());
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.global.util.ResponseUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.MemberRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,10 +18,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,14 +31,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static com.aptner.v3.CommunityApplication.passwordEncoder;
 import static com.aptner.v3.global.util.JwtUtil.BEARER_PREFIX;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${server.auth}")
+    private Boolean isAuth;
 
     @Override
     protected void doFilterInternal(
@@ -45,16 +53,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 1. Request Header 에서 토큰을 꺼냄
         String token = resolveToken(request);
+        log.debug("isAuth: {}", isAuth);
         try {
-            if (StringUtils.hasText(token) && !jwtUtil.isExpired(token)) {
+            if (!isAuth || (StringUtils.hasText(token) && !jwtUtil.isExpired(token))) {
 
-                Claims claims = jwtUtil.parseClaims(token);
-                Member member = jwtUtil.claimsToMember(claims);
+                Member member = null;
+                if (isAuth) {
+                    Claims claims = jwtUtil.parseClaims(token);
+                    member = jwtUtil.claimsToMember(claims);
+                } else {
+                    // @test
+                    member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+                    member.setId(1L);
+                }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
-                if (isRefreshTokenExists(member.getUsername())) {
+                if (!isAuth || (isRefreshTokenExists(member.getUsername()))) {
 
                     // 2. security Context 저장
-                    log.debug("유요한 토큰, 정상 접근 {}", token);
+                    log.debug("유효한 토큰, 정상 접근 {}", token);
                     CustomUserDetails principal = new CustomUserDetails(member);
                     UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(principal, principal.getPassword(), principal.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -62,8 +78,10 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            handleException(response, e);
-            return;
+            if (isAuth) {
+                handleException(response, e);
+                return;
+            }
         }
         filterChain.doFilter(request, response);
     }
