@@ -6,7 +6,7 @@ import lombok.Setter;
 
 public class ReactionDto {
     @Getter
-    public static class Request {
+    public static class ReactionRequest {
 
         @Setter
         private long userId;

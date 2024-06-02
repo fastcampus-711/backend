@@ -29,7 +29,7 @@ public class ReactionService {
     private final ReactionRepository reactionRepository;
 
     @Transactional
-    public void savePostReaction(ReactionDto.Request reactionDto) {
+    public void savePostReaction(ReactionDto.ReactionRequest reactionDto) {
 
         Long userId = reactionDto.getUserId();
         Long postId = reactionDto.getTargetId();
@@ -61,7 +61,7 @@ public class ReactionService {
     }
 
     @Transactional
-    public void saveCommentReaction(ReactionDto.Request reactionDto) {
+    public void saveCommentReaction(ReactionDto.ReactionRequest reactionDto) {
 
         Long userId = reactionDto.getUserId();
         Long commentId = reactionDto.getTargetId();

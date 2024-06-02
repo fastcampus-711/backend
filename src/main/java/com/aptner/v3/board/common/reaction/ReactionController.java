@@ -27,7 +27,7 @@ public class ReactionController {
     @Operation(summary = "게시글 공감")
     public ApiResponse<?> savePostReaction(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody ReactionDto.Request reactionDto) {
+            @RequestBody ReactionDto.ReactionRequest reactionDto) {
 
         reactionDto.setUserId(user.getId());
         reactionService.savePostReaction(reactionDto);
@@ -38,7 +38,7 @@ public class ReactionController {
     @Operation(summary = "댓글 공감")
     public ApiResponse<?> saveCommentReaction(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody ReactionDto.Request reactionDto) {
+            @RequestBody ReactionDto.ReactionRequest reactionDto) {
 
         reactionDto.setUserId(user.getId());
         reactionService.saveCommentReaction(reactionDto);

@@ -57,27 +57,31 @@ public class Comment extends BaseTimeEntity {
     @ColumnDefault(value = "true")
     private boolean visible;
 
-    private boolean isAdminComment;
+    private boolean isTop;
 
     private boolean deleted;
 
     protected Comment() {}
 
-    public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible, boolean isAdminComment) {
+    public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible, boolean isTop) {
         this.commonPost = commonPost;
         this.member = member;
         this.content = content;
         this.visible = visible;
-        this.isAdminComment = isAdminComment;
+        this.isTop = isTop;
     }
 
-    public static Comment of(CommonPost commonPost, Member member, String content, boolean visible, boolean isAdminComment) {
-        return new Comment(commonPost, member, content, null, visible, isAdminComment);
+    public static Comment of(CommonPost commonPost, Member member, String content, boolean visible, boolean isTop) {
+        return new Comment(commonPost, member, content, null, visible, isTop);
     }
 
     public void addChildComment(Comment child) {
         child.setParentCommentId(this.getId());
         this.getChildComments().add(child);
+    }
+
+    public Long getMemberId() {
+        return this.member.getId();
     }
 
     public void setReactionColumns(long countReactionTypeGood, long countReactionTypeBad) {
@@ -99,8 +103,7 @@ public class Comment extends BaseTimeEntity {
                 .content(entity.getContent())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .visible(entity.isVisible())
-                .visible(entity.isVisible())
-                .isAdminComment(entity.isAdminComment())
+                .isTop(entity.isTop())
                 // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())

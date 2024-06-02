@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 @Service
 public class PaginationService {
 
-    private static final int BAR_LENGTH = 5;
+    private static final int BAR_LENGTH = 10;
 
     public List<Integer> getPaginationBarNumbers(int currentPageNumber, int totalPages) {
         int startNumber = Math.max(currentPageNumber - (BAR_LENGTH / 2), 0);

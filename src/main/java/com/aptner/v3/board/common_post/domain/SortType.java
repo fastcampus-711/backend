@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum SortType {
 
     LIKE("hits"),
-    RECENT("createdAt"),
-    ADMIN("isAdminComment");
+    RECENT("createdAt");
+
     private final String columnName;
 
     SortType(String columnName) {

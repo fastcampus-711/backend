@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
@@ -48,14 +49,15 @@ public class CommentService {
         CommonPost commonPost = verifyPost(dto);
         Comment comment = dto.toEntity(commonPost, member);
 
-        if (dto.getParentCommentId() != 0) {
+        if (dto.getParentCommentId() != null && dto.getParentCommentId() != 0) {
             log.debug("dto.getParentCommentId()!=null : {}", dto.getParentCommentId());
             Comment parentComment = commentRepository.findById(dto.getParentCommentId())
                     .orElseThrow(InvalidTableIdException::new);
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
             log.debug("dto.getParentCommentId()!=null comment : {}", comment);
-            // 2-depth 이상 제외
-            if (parentComment.getParentCommentId() != null) {
+
+            if (parentComment.getParentCommentId() != null && parentComment.getParentCommentId() != 0) {
+                // 2-depth 이상 제외
                 log.error("dto.getParentCommentId()!=null comment : {}", comment);
                 throw new PostException(ErrorCode.COMMENT_DEPTH_IS_OVER);
             }
@@ -105,16 +107,21 @@ public class CommentService {
                 .stream()
                 .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
 
-//        Map<Long, ReactionType> mapCommentIdAndReactionType =commentReactionRepository.findByUserIdAndDtype(MemberUtil.getMemberId(), "CommentReaction")
-//                .stream()
-//                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return list.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+    }
 
-        return list.map(comment -> {
-            CommentDto dto = comment.toDto();
-            dto.setReactionType(mapCommentIdAndReactionType.getOrDefault(comment.getId(), ReactionType.DEFAULT));
-            return dto;
-        });
+    private CommentDto convertToDto(Comment comment, Map<Long, ReactionType> mapCommentIdAndReactionType) {
+
+        CommentDto dto = comment.toDto();
+        Set<Long> childCommentAuthorIds = getChildCommentAuthorIds(comment.getChildComments());
+        dto.setReactionType(mapCommentIdAndReactionType.getOrDefault(comment.getId(), ReactionType.DEFAULT));
+        return dto;
+    }
+
+    private Set<Long> getChildCommentAuthorIds(Set<Comment> childComments) {
+        return childComments.stream()
+                .map(Comment::getMemberId)
+                .collect(Collectors.toSet());
     }
 
     private Member verifyMember(CommentDto dto) {
