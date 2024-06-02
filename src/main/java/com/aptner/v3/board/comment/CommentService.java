@@ -44,10 +44,12 @@ public class CommentService {
             Comment parentComment = commentRepository.findById(dto.getParentCommentId())
                     .orElseThrow(InvalidTableIdException::new);
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
+            log.debug("dto.getParentCommentId()!=null comment : {}", comment);
             parentComment.addChildComment(comment);
-        } else {
-            comment = commentRepository.save(comment);
         }
+
+        comment = commentRepository.save(comment);
+
         // 댓글 수
         commonPost.setCountOfComments(commonPost.getCountOfComments() + 1);
         return comment.toDto();
