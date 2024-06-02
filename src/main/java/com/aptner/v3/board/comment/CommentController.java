@@ -61,10 +61,11 @@ public class CommentController {
             @PathVariable(name = "post-id") Long postId,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
+            @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort,
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-        Page<CommentDto> list = commentService.getPostWithComment(postId, pageable);
+        Page<CommentDto> list = commentService.getPostWithComment(user.toDto(), postId, pageable);
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
                 list.map(p -> (CommentDto.CommentResponse) p.toResponseDto()),

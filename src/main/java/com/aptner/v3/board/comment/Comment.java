@@ -1,7 +1,6 @@
 package com.aptner.v3.board.comment;
 
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
-import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
@@ -23,8 +22,7 @@ import java.util.Set;
 @ToString
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
 @SQLRestriction("deleted = false")
-public class Comment extends BaseTimeEntity
-        implements ReactionAndCommentCalculator {
+public class Comment extends BaseTimeEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,6 +78,14 @@ public class Comment extends BaseTimeEntity
     public void addChildComment(Comment child) {
         child.setParentCommentId(this.getId());
         this.getChildComments().add(child);
+    }
+
+    public void setReactionColumns(long countReactionTypeGood, long countReactionTypeBad) {
+        if (this.reactionColumns == null) {
+            this.reactionColumns = new ReactionColumns();
+        }
+        this.reactionColumns.setCountReactionTypeGood(countReactionTypeGood);
+        this.reactionColumns.setCountReactionTypeBad(countReactionTypeBad);
     }
 
     public CommentDto toDto() {

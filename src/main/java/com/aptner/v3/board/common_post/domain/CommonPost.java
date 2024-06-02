@@ -4,12 +4,9 @@ import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
-import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
-import com.aptner.v3.global.util.MemberUtil;
-import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.*;
@@ -19,7 +16,6 @@ import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +30,7 @@ import java.util.stream.Collectors;
 @DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
 @SQLRestriction("deleted = false")
-public class CommonPost extends BaseTimeEntity
-        implements ReactionAndCommentCalculator {
+public class CommonPost extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -67,7 +62,6 @@ public class CommonPost extends BaseTimeEntity
     @Setter
     private long hits;
 
-    @Setter
     @Embedded
     private ReactionColumns reactionColumns = new ReactionColumns();
 
@@ -99,72 +93,23 @@ public class CommonPost extends BaseTimeEntity
         this.imageUrls = imageUrls;
         this.visible = visible;
     }
-    public <Q extends CommonPostDto.CommonPostRequest> CommonPost updateByUpdateRequest(Q updateRequest) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        modelMapper.map(updateRequest, this);
-        return this;
-    }
 
     public static CommonPost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
         return new CommonPost(member, category, title, content, imageUrls, visible);
     }
 
-//    public CommonPostDto.CommonPostResponse toResponseDtoWithoutComments() {
-//        ModelMapper modelMapper = (ModelMapperUtil.getModelMapper());
-//
-//        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
-//
-//        CommonPostDto.CommonPostResponse commonPostResponseDto =
-//                modelMapper.map(this, responseDtoClass, "skipComments");
-//
-//        return commonPostResponseDto.blindPostAlgorithm();
-//    }
-
-//    public CommonPostDto.CommonPostResponse toResponseDtoWithComments() {
-//        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-//
-//        Class<? extends CommonPostDto.CommonPostResponse> responseDtoClass = getResponseDtoClassType();
-//
-//        CommonPostDto.CommonPostResponse commonPostResponseDto = modelMapper.map(this, responseDtoClass, "memberToCommentResponse");
-//
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-//
-//        return commonPostResponseDto.blindPostAlgorithm();
-//    }
-
-//    private Class<? extends CommonPostDto.CommonPostResponse> getResponseDtoClassType() {
-//        return Arrays.stream(CategoryCode.values())
-//                .filter(s -> s.getDomain().equals(this.getClass()))
-//                .findFirst()
-//                .orElseThrow()
-//                .getDtoForResponse();
-//    }
+    public void setReactionColumns(long countReactionTypeGood, long countReactionTypeBad) {
+        if (this.reactionColumns == null) {
+            this.reactionColumns = new ReactionColumns();
+        }
+        this.reactionColumns.setCountReactionTypeGood(countReactionTypeGood);
+        this.reactionColumns.setCountReactionTypeBad(countReactionTypeBad);
+    }
 
     public void plusHits() {
         this.hits++;
     }
 
-    public boolean checkIsDtypeIsEquals(String dtype) {
-        return this.getClass().getSimpleName().equals(dtype);
-    }
-
-    public boolean validUpdateOrDeleteAuthority() {
-        return this.member.getId() == MemberUtil.getMember().getId();
-    }
-
-    public CommonPost(Member member, Category category, String title, String content, boolean visible) {
-        this.member = member;
-        this.category = category;
-        this.title = title;
-        this.content = content;
-        this.visible = visible;
-    }
-
-    public static CommonPost of(Member member, Category category, String title, String content, boolean visible) {
-        return new CommonPost(member, category, title, content, visible);
-    }
     public CommonPostDto toDto() {
         CommonPost entity = this;
         CommonPostDto build = CommonPostDto.builder()

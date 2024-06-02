@@ -37,6 +37,9 @@ public class CommentDto extends BaseTimeDto {
     // comment info
     ReactionColumnsDto reactionColumnsDto;
     boolean visible;
+    // icon
+    @Setter
+    ReactionType reactionType;
     boolean isAdminComment;
 
     public static CommentDto of(Long postId, MemberDto memberdto, Long commentId) {
@@ -85,6 +88,7 @@ public class CommentDto extends BaseTimeDto {
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .visible(dto.isVisible())
                 .isAdminComment(dto.isAdminComment())
                 .isOwner(isOwner(dto))
@@ -152,7 +156,7 @@ public class CommentDto extends BaseTimeDto {
         private Long parentCommentId;
         // comment info
         private ReactionColumnsDto reactionColumns;
-        private ReactionType reactionType = ReactionType.DEFAULT;
+        private ReactionType reactionType;
         private boolean visible;
         // icon
         private boolean isAdminComment;

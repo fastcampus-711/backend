@@ -1,10 +1,10 @@
 package com.aptner.v3.board.common.reaction.domain;
 
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
-import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,10 +21,13 @@ public class  Reaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Setter
     private long userId;
 
+    @Setter
     private long targetId;
 
+    @Setter
     private ReactionType reactionType;
 
     @CreatedDate
@@ -33,9 +36,4 @@ public class  Reaction {
 
     @Column(updatable = false, insertable = false)
     private String dtype;
-
-    public Reaction updateReactionType(ReactionType reactionType) {
-        this.reactionType = reactionType;
-        return this;
-    }
 }
