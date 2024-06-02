@@ -191,7 +191,7 @@ public class CommonPostService<E extends CommonPost,
 //                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
 //                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return (T) post.toCommentDto();
+        return (T) post.toDtoWithComment();
     }
 
     public T createPost(T dto) {

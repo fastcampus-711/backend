@@ -4,7 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+
 @Slf4j
 @Getter
 @ToString(callSuper = true)
@@ -39,11 +41,12 @@ public class CommonPostDto extends BaseTimeDto {
     String content;
     List<String> imageUrls;
     boolean visible;
-    Set<Comment> comments;
+    Long parentCommentId;
     // post info
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
+    Set<CommentDto>     commentDto;
     // category
     String boardGroup;
     CategoryDto categoryDto;
@@ -94,6 +97,45 @@ public class CommonPostDto extends BaseTimeDto {
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(isSecret ? null : dto.getImageUrls())
                 .visible(dto.isVisible())
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
+                .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
+                .categoryName(dto.getCategoryDto().getName())
+                // base
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
+                .build();
+    }
+
+    public CommonPostResponse toResponseWithComment() {
+        CommonPostDto dto = this;
+
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return CommonPostResponse.builder()
+                .id(dto.getId())
+                // user
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                // post
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                .comments(organizeChildComments(dto.getCommentDto()))
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
@@ -170,6 +212,7 @@ public class CommonPostDto extends BaseTimeDto {
         protected ReactionColumnsDto reactionColumns;
         private ReactionType reactionType = ReactionType.DEFAULT;
         protected long countOfComments;
+        Set<CommentDto.CommentResponse> comments;
         // category
         protected String boardGroup;
         protected long categoryId;

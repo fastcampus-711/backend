@@ -13,6 +13,10 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+
 @Slf4j
 @Getter
 @ToString(callSuper = true)
@@ -58,6 +62,10 @@ public class CommentDto extends BaseTimeDto {
         String blindTitle = "비밀 댓글입니다.";
         boolean isSecret = CommentResponse.hasSecret(dto);
 
+        Comparator<CommentDto.CommentResponse> childCommentComparator = Comparator
+                .comparing(CommentDto.CommentResponse::getCreatedAt)
+                .thenComparingLong(CommentDto.CommentResponse::getCommentId);
+
         return CommentResponse.builder()
                 .postId(dto.getPostId())
                 .userId(dto.getMemberDto().getId())
@@ -66,6 +74,7 @@ public class CommentDto extends BaseTimeDto {
                 // comment
                 .commentId(dto.getCommentId())
                 .content(isSecret? blindTitle : dto.getContent())
+                .childComments(new TreeSet<>(childCommentComparator))
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
@@ -129,6 +138,7 @@ public class CommentDto extends BaseTimeDto {
         // comment
         private Long commentId;
         private String content;
+        private Set<CommentResponse> childComments;
         private Long parentCommentId;
         // comment info
         private ReactionColumnsDto reactionColumns;
@@ -136,6 +146,10 @@ public class CommentDto extends BaseTimeDto {
         private boolean visible;
         // icon
         private boolean isOwner;
+
+        public boolean hasParentComment() {
+            return parentCommentId != null;
+        }
 
         public static boolean hasSecret(CommentDto dto) {
             // isVisible: false && (user != writer)

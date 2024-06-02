@@ -21,8 +21,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.modelmapper.ModelMapper;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -184,7 +187,7 @@ public class CommonPost extends BaseTimeEntity
         return build;
     }
 
-    public Object toCommentDto() {
+    public CommonPostDto toDtoWithComment() {
         CommonPost entity = this;
         CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
@@ -195,7 +198,11 @@ public class CommonPost extends BaseTimeEntity
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .comments(entity.getComments())
+                .commentDto(Optional.ofNullable(entity.getComments())
+                        .orElse(Collections.emptySet())
+                        .stream().map(Comment::toDto)
+                        .collect(Collectors.toSet())
+                )
                 .visible(entity.isVisible())
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
