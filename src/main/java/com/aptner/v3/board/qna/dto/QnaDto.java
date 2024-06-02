@@ -4,7 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Qna;
 import com.aptner.v3.board.qna.QnaStatus;
 import com.aptner.v3.member.Member;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class QnaDto extends CommonPostDto {
     private String type;
-    private QnaStatus status;
+    private QnaStatus status = QnaStatus.AWAITING_RESPONSE;
 
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
@@ -37,7 +37,9 @@ public class QnaDto extends CommonPostDto {
                 .reactionColumnsDto(null)
                 .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup)
+                .type(request.getType())
+                .status(request.getStatus())
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
                 .createdBy(null)
                 .createdAt(null)
@@ -68,21 +70,35 @@ public class QnaDto extends CommonPostDto {
 
         return QnaResponse.builder()
                 .id(dto.getId())
+                // user
                 .userId(dto.getMemberDto().getId())
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
-                .visible(dto.isVisible())
+                // post
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .hits(dto.getHits())
-                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .countOfComments(dto.getCountOfComments())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
                 .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
+                // qna
+                .status(dto.getStatus())
+                .type(dto.getType())
+                // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
                 .build();
     }
 

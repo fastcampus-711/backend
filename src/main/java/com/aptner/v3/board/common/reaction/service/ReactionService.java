@@ -20,7 +20,7 @@ public abstract class ReactionService<T extends ReactionAndCommentCalculator, E 
     }
 
     public void acceptReaction(ReactionDto.Request reactionDto) {
-        reactionRepository.findByUserIdAndTargetId(reactionDto.getUserId(), reactionDto.getTargetId())
+        reactionRepository.findByUserIdAndTargetIdAndDtype(reactionDto.getUserId(), reactionDto.getTargetId(), "PostReaction")
                 .ifPresentOrElse(reaction ->
                                 reactionRepository.save(
                                         (E) reaction.updateReactionType(reactionDto.getReactionType())),

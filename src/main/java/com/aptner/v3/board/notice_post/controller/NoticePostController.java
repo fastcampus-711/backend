@@ -22,7 +22,7 @@ public class NoticePostController extends CommonPostController<
     NoticePostService noticePostService;
     public NoticePostController(@Qualifier("noticePostService") NoticePostService noticePostService, PaginationService paginationService) {
         super(noticePostService, paginationService);
-        this.noticePostService = (NoticePostService) commonPostService;
+        this.noticePostService = (NoticePostService) noticePostService;
     }
 
     public BoardGroup getBoardGroup() {

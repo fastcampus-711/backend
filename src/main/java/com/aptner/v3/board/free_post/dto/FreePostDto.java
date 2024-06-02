@@ -4,7 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -39,7 +38,7 @@ public class FreePostDto extends CommonPostDto {
                 .reactionColumnsDto(null)
                 .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup)
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
                 .createdBy(null)
                 .createdAt(null)
@@ -97,7 +96,6 @@ public class FreePostDto extends CommonPostDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FreePostRequest extends CommonPostDto.CommonPostRequest {
-        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime blindAt;
         private String blindBy;
 

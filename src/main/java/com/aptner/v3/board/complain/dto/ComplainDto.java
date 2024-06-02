@@ -4,7 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.complain.Complain;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
@@ -32,7 +32,7 @@ public class ComplainDto extends CommonPostDto {
                 .reactionColumnsDto(null)
                 .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup)
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
                 .createdBy(null)
                 .createdAt(null)
@@ -67,6 +67,7 @@ public class ComplainDto extends CommonPostDto {
                 .visible(dto.isVisible())
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .countOfComments(dto.getCountOfComments())
