@@ -79,11 +79,11 @@ public class CommonPostController<E extends CommonPost,
         return ResponseUtil.ok(commonPostService.getPost(postId).toResponse());
     }
 
-    @GetMapping("/{post-id}/comments")
-    @Operation(summary = "게시글 상세 + 댓글")
-    public ApiResponse<?> getPostWithComment(@PathVariable(name = "post-id") Long postId) {
-        return ResponseUtil.ok(commonPostService.getPostWithComment(postId).toResponseWithComment());
-    }
+//    @GetMapping("/{post-id}/comments")
+//    @Operation(summary = "게시글 상세 + 댓글")
+//    public ApiResponse<?> getPostWithComment(@PathVariable(name = "post-id") Long postId) {
+//        return ResponseUtil.ok(commonPostService.getPostWithComment(postId).toResponseWithComment());
+//    }
 
     @PostMapping("/")
     @Operation(summary = "게시글 등록")

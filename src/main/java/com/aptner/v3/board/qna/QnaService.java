@@ -1,14 +1,12 @@
 package com.aptner.v3.board.qna;
 
 import com.aptner.v3.board.category.BoardGroup;
-import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.qna.dto.QnaDto;
-import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +41,13 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     }
 
     @Override
+    public Page<QnaDto> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+
+        Page<Qna> list = super.getPosListByCategoryIdItems(boardGroup, categoryId, status, pageable);
+        return list.map(e -> (QnaDto) e.toDtoWithComment());
+    }
+
+    @Override
     public Page<Qna> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
         return qnaRepository.findByDtypeAndStatus(boardGroup.getTable(), (QnaStatus) status, pageable);
     }
@@ -53,29 +58,10 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     }
 
     @Override
-    public QnaDto updatePost(QnaDto dto) {
-
-        log.debug("updatePost : dto {}", dto);
-        Member member = verifyMember(dto);
-        Category category = verifyCategory(dto);
-        Qna post = verifyPost(dto);
-
-        if (dto.getTitle() != null) {
-            post.setTitle(dto.getTitle());
-        }
-        if (dto.getContent() != null) {
-            post.setContent(dto.getContent());
-        }
-        if (dto.getImageUrls() != null) {
-            post.setImageUrls(dto.getImageUrls());
-        }
-
-        qnaRepository.flush();
-        log.debug("updatePost : {}", post);
-
-        QnaDto postDto = (QnaDto) post.toDto();
-        log.debug("createPost - postDto :{}", postDto);
-        return postDto;
+    public Page<QnaDto> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
+        // 키워드 검색
+        Page<Qna> list = qnaRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
+        return list.map(e -> (QnaDto) e.toDtoWithComment());
     }
 
 }

@@ -45,6 +45,7 @@ public class CommentService {
                     .orElseThrow(InvalidTableIdException::new);
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
             log.debug("dto.getParentCommentId()!=null comment : {}", comment);
+            // 2-depth 이상 제외
             if (parentComment.getParentCommentId() != null) {
                 log.error("dto.getParentCommentId()!=null comment : {}", comment);
                 throw new PostException(ErrorCode.COMMENT_DEPTH_IS_OVER);
