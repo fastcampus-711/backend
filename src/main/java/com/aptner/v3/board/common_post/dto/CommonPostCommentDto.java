@@ -33,8 +33,8 @@ public class CommonPostCommentDto {
                 .collect(Collectors.toCollection(() ->
                         new TreeSet<>(
                                 Comparator
-                                        .comparing(CommentDto.CommentResponse::getCreatedAt)
-                                        .reversed()
+                                        .comparing(CommentDto.CommentResponse::isTop).reversed() // QNA 댓글 상단 고정
+                                        .thenComparing(CommentDto.CommentResponse::getCreatedAt)
                                         .thenComparingLong(CommentDto.CommentResponse::getCommentId)
                         )
                 ));

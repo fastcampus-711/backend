@@ -46,11 +46,13 @@ public class CommonPostDto extends BaseTimeDto {
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
-    Set<CommentDto>     commentDto;
+    Set<CommentDto> commentDto;
     // category
     String boardGroup;
     CategoryDto categoryDto;
     // icon
+    @Setter
+    ReactionType reactionType;
     @Setter
     private boolean isHot;
 
@@ -100,6 +102,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -139,6 +142,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -239,24 +243,4 @@ public class CommonPostDto extends BaseTimeDto {
 
     }
 
-//    @Getter
-//    @Setter
-//    @ToString(callSuper = true)
-//    @NoArgsConstructor
-//    @SuperBuilder
-//    public static class CommonPostWithCommentResponse extends CommonPostResponse {
-//        protected Set<CommentDto.CommentResponse> comments;
-//
-//        public CommonPostDto.CommonPostResponse applyReactionTypeToComments(Map<Long, ReactionType> mapCommentIdAndReactionType) {
-//            for (CommentDto.CommentResponse comment : comments) {
-//                if (mapCommentIdAndReactionType.containsKey(comment.getId()))
-//                    comment.setReactionType(mapCommentIdAndReactionType.get(comment.getId()));
-//                for (CommentDto.CommentResponse childComment : comment.getChildComments())
-//                    if (mapCommentIdAndReactionType.containsKey(childComment.getId()))
-//                        childComment.setReactionType(mapCommentIdAndReactionType.get(childComment.getId()));
-//            }
-//
-//            return this;
-//        }
-//    }
 }

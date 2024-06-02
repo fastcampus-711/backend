@@ -6,7 +6,7 @@ import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
-import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
@@ -17,6 +17,7 @@ import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.repository.MemberRepository;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
@@ -52,7 +54,6 @@ public class CommonPostService<E extends CommonPost,
     private final CommonPostRepository<E> commonPostRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
-    private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
     private final ReactionRepository<PostReaction> postReactionRepository;
     private final ReactionRepository<CommentReaction> commentReactionRepository;
 
@@ -63,7 +64,6 @@ public class CommonPostService<E extends CommonPost,
                              ReactionRepository<CommentReaction> commentReactionRepository) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
-        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
         this.postReactionRepository = postReactionRepository;
         this.commentReactionRepository = commentReactionRepository;
@@ -89,7 +89,7 @@ public class CommonPostService<E extends CommonPost,
                 // 게시판 + 상태값 조회
                 list = findByDtypeAndStatus(boardGroup, status, pageable);
             } else {
-                // 자유 게시판 조회
+//                 자유 게시판 조회
 //                if (BoardGroup.FREES.equals(boardGroup)) {
 //                    return Top3PostsWhenFirstPage(boardGroup, pageable);
 //                }
@@ -164,30 +164,34 @@ public class CommonPostService<E extends CommonPost,
      * 인기 게시글 없음
      */
     public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
-        Page<E> list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
+        Page<E> list;
+        if (categoryId > 0) {
+            list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContaining(boardGroup.getTable(), categoryId, keyword, pageable);
+        } else {
+            list = commonPostRepository.findByDtypeAndTitleContaining(boardGroup.getTable(), keyword, pageable);
+        }
         return list.map(e -> (T) e.toDto());
     }
 
-    public T getPost(long postId) {
-        
+    public T getPost(MemberDto memberDto, long postId) {
+        // post
         E post = commonPostRepository.findByComments_CommonPostId(postId)
                 .orElse(
                         commonPostRepository.findById(postId)
                                 .orElseThrow(InvalidTableIdException::new)
                 );
-        // 조회수 증가
+        // 조회수
         post.plusHits();
-
-//        S commonPostDtoResponse = (S) commonPost.toResponseDtoWithComments();
-//        postReactionRepository.findByUserIdAndTargetIdAndDtype(MemberUtil.getMemberId(), postId, "PostReaction")
-//                .ifPresent(rst -> commonPostDtoResponse.setReactionType(rst.getReactionType()));
-//
-//        Map<Long, ReactionType> mapCommentIdAndReactionType =commentReactionRepository.findByUserIdAndDtype(MemberUtil.getMemberId(), "CommentReaction")
-//                .stream()
-//                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
         return (T) post.toDto();
+    }
+
+    public ReactionType getPostReactionType(Long userId, Long postId) {
+        AtomicReference<ReactionType> reactionTypeRef = new AtomicReference<>(ReactionType.DEFAULT);
+
+        postReactionRepository.findByUserIdAndTargetIdAndDtype(userId, postId, "PostReaction")
+                .ifPresent(reaction -> reactionTypeRef.set(reaction.getReactionType()));
+
+        return reactionTypeRef.get();
     }
 
     public T createPost(T dto) {

@@ -4,6 +4,7 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Qna;
 import com.aptner.v3.board.qna.QnaStatus;
@@ -13,11 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
 
 import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
 
-@Slf4j
 @Getter
 @ToString(callSuper = true)
 @SuperBuilder
@@ -28,25 +27,21 @@ public class QnaDto extends CommonPostDto {
 
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
-        log.debug("qna of");
         return QnaDto.builder()
                 .id(request.getId())
+                // member
                 .memberDto(memberDto)
+                // post
                 .title(request.getTitle())
                 .content(request.getContent())
                 .imageUrls(request.getImageUrls())
-                .hits(null)
-                .reactionColumnsDto(null)
-                .countOfComments(null)
                 .visible(request.isVisible())
+                // qna
                 .type(request.getType())
                 .status(request.getStatus())
+                // category
                 .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
-                .createdBy(null)
-                .createdAt(null)
-                .modifiedAt(null)
-                .modifiedBy(null)
                 .build();
     }
 
@@ -63,7 +58,8 @@ public class QnaDto extends CommonPostDto {
         );
     }
 
-    public QnaDto.QnaResponse toResponse() {
+    @Override
+    public QnaResponse toResponse() {
 
         QnaDto dto = this;
         String blindTitle = "비밀 게시글입니다.";
@@ -84,6 +80,7 @@ public class QnaDto extends CommonPostDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -104,9 +101,10 @@ public class QnaDto extends CommonPostDto {
                 .build();
     }
 
+    @Override
     public QnaDto.QnaResponse toResponseWithComment() {
-        QnaDto dto = this;
 
+        QnaDto dto = this;
         String blindTitle = "비밀 게시글입니다.";
         String blindContent = "비밀 게시글입니다.";
         boolean isSecret = QnaDto.QnaResponse.hasSecret(dto);
@@ -126,6 +124,7 @@ public class QnaDto extends CommonPostDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -145,6 +144,7 @@ public class QnaDto extends CommonPostDto {
                 .isHot(dto.isHot())
                 .build();
     }
+
     @Getter
     @ToString(callSuper = true)
     @SuperBuilder
