@@ -18,10 +18,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,25 +35,30 @@ import static com.aptner.v3.CommunityApplication.passwordEncoder;
 import static com.aptner.v3.global.util.JwtUtil.BEARER_PREFIX;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Value("${server.auth}")
+    private Boolean isAuth;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        boolean isTest = true;
+
         // 1. Request Header 에서 토큰을 꺼냄
         String token = resolveToken(request);
+        log.debug("isAuth: {}", isAuth);
         try {
-            if (isTest || (StringUtils.hasText(token) && !jwtUtil.isExpired(token))) {
+            if (!isAuth || (StringUtils.hasText(token) && !jwtUtil.isExpired(token))) {
 
                 Member member = null;
-                if(!isTest) {
+                if (isAuth) {
                     Claims claims = jwtUtil.parseClaims(token);
                     member = jwtUtil.claimsToMember(claims);
                 } else {
@@ -60,7 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     member.setId(1L);
                 }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
-                if (isTest || (isRefreshTokenExists(member.getUsername()))) {
+                if (!isAuth || (isRefreshTokenExists(member.getUsername()))) {
 
                     // 2. security Context 저장
                     log.debug("유효한 토큰, 정상 접근 {}", token);
@@ -71,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            if(!isTest) {
+            if (isAuth) {
                 handleException(response, e);
                 return;
             }
