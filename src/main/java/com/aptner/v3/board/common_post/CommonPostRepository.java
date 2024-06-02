@@ -27,10 +27,6 @@ public interface CommonPostRepository<T extends CommonPost> extends JpaRepositor
     // 게시판 별 + 분류 별 + 검색어 조회
     Page<T> findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(String dtype, Long CategoryId, String title, Pageable pageable);
 
-    Page<T> findByTitleContainingIgnoreCaseAndVisible(String keyword, Pageable pageable, boolean visible);
-
-    Page<T> findByTitleContainingIgnoreCaseAndDtypeAndVisible(String keyword, String dtype, Pageable pageable, boolean visible);
-
     Optional<T> findByComments_CommonPostId(long postId);
 
     List<T> findByCategoryId(Long categoryId);

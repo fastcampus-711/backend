@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "dtype")
 @Getter
-public class Reaction {
+public class  Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -20,7 +20,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@ToString(callSuper = true)
+@ToString
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
 @SQLRestriction("deleted = false")
 public class Comment extends BaseTimeEntity

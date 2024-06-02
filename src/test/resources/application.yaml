@@ -1,6 +1,8 @@
 local:
   server:
     port: 80
+server:
+  auth: true
 
 spring:
   profiles:

@@ -117,7 +117,7 @@ class CommonPostControllerTest {
                 .andExpect(jsonPath("$.data.posts.content.length()").value(10));
     }
 
-    @WithUserDetails(value = "user1")
+//    @WithUserDetails(value = "user1")
     @Test
     void 게시판_통합_검색() throws Exception {
         String keyword = "a";
