@@ -47,7 +47,7 @@ public class QnaController extends CommonPostController<
                                                   @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
         BoardGroup boardGroup = getBoardGroup();
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).ascending());
 
         Page<QnaDto> posts = null;
         if (keyword != null) {

@@ -9,7 +9,10 @@ import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -18,23 +21,29 @@ import java.util.List;
 @DiscriminatorValue("ComplaintPost")
 public class Complain extends CommonPost {
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private ComplainStatus status;
+
     public Complain() {
     }
 
-    public Complain(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
+    public Complain(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, ComplainStatus status) {
         super(member, category, title, content, imageUrls, visible);
+        this.status = status;
     }
 
-    public static Complain of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible) {
-        return new Complain(member, category, title, content, imageUrls, visible);
+    public static Complain of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, ComplainStatus status) {
+        return new Complain(member, category, title, content, imageUrls, visible, status);
     }
     @Override
     public ComplainDto toDto() {
         Complain entity = this;
-
         return ComplainDto.builder()
                 .id(entity.getId())
+                // member
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
@@ -42,8 +51,12 @@ public class Complain extends CommonPost {
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
                 .visible(entity.isVisible())
+                // complaint
+                .status(entity.getStatus())
+                // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())

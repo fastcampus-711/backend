@@ -49,7 +49,9 @@ public class Qna extends CommonPost {
         Qna entity = this;
         return QnaDto.builder()
                 .id(entity.getId())
+                // member
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
@@ -60,9 +62,10 @@ public class Qna extends CommonPost {
                  // qna
                 .type(entity.getType())
                 .status(entity.getStatus())
-                 //
+                 // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                 // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())
