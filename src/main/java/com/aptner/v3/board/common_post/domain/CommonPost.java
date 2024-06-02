@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@ToString(callSuper = true)
+@ToString
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @SQLDelete(sql = "UPDATE common_post SET deleted = true where id = ?")
@@ -77,6 +77,7 @@ public class CommonPost extends BaseTimeEntity
     @Column(insertable = false, updatable = false)
     private String dtype;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 

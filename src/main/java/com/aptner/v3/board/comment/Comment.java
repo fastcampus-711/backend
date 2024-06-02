@@ -59,20 +59,22 @@ public class Comment extends BaseTimeEntity
     @ColumnDefault(value = "true")
     private boolean visible;
 
+    private boolean isAdminComment;
+
     private boolean deleted;
 
     protected Comment() {}
 
-    public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible) {
+    public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible, boolean isAdminComment) {
         this.commonPost = commonPost;
         this.member = member;
         this.content = content;
-        this.reactionColumns = reactionColumns;
         this.visible = visible;
+        this.isAdminComment = isAdminComment;
     }
 
-    public static Comment of(CommonPost commonPost, Member member, String content, boolean visible) {
-        return new Comment(commonPost, member, content, null, visible);
+    public static Comment of(CommonPost commonPost, Member member, String content, boolean visible, boolean isAdminComment) {
+        return new Comment(commonPost, member, content, null, visible, isAdminComment);
     }
 
     public void addChildComment(Comment child) {
@@ -85,11 +87,15 @@ public class Comment extends BaseTimeEntity
         CommentDto build = CommentDto.builder()
                 .memberDto(MemberDto.from(entity.getMember()))
                 .postId(entity.getCommonPost().getId()) // @todo
+                // comment
                 .commentId(entity.getId())
                 .parentCommentId(entity.getParentCommentId())
                 .content(entity.getContent())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .visible(entity.isVisible())
+                .visible(entity.isVisible())
+                .isAdminComment(entity.isAdminComment())
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())

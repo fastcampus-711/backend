@@ -93,7 +93,7 @@ public class CommentService {
     public Page<CommentDto> getPostWithComment(long postId, Pageable pageable) {
 
         CommonPost post = commonPostRepository.findById(postId).orElseThrow(() -> new PostException(_NOT_FOUND));
-        Page<Comment> list = commentRepository.findAllByPostId(post.getId(), pageable);
+        Page<Comment> list = commentRepository.findAllByPostIdSorted(post.getId(), pageable);
         return list.map(e -> (CommentDto) e.toDto());
     }
 

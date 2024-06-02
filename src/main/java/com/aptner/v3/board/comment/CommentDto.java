@@ -7,6 +7,7 @@ import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -17,6 +18,7 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static com.aptner.v3.board.comment.CommentDto.CommentResponse.hasAdminRole;
 import static com.aptner.v3.board.comment.CommentDto.CommentResponse.isOwner;
 
 @Slf4j
@@ -35,11 +37,12 @@ public class CommentDto extends BaseTimeDto {
     // comment info
     ReactionColumnsDto reactionColumnsDto;
     boolean visible;
+    boolean isAdminComment;
 
     public static CommentDto of(Long postId, MemberDto memberdto, Long commentId) {
-        return CommentDto.of(postId, memberdto, commentId, null, null, true);
+        return CommentDto.of(postId, memberdto, commentId, null, null, true, false);
     }
-    public static CommentDto of(Long postId, MemberDto memberdto, Long commentId, Long parentCommentId, String content, boolean visible) {
+    public static CommentDto of(Long postId, MemberDto memberdto, Long commentId, Long parentCommentId, String content, boolean visible, boolean isAdminComment) {
         return CommentDto.builder()
                 .postId(postId)
                 .memberDto(memberdto)
@@ -47,6 +50,7 @@ public class CommentDto extends BaseTimeDto {
                 .parentCommentId(parentCommentId)
                 .content(content)
                 .visible(visible)
+                .isAdminComment(isAdminComment)
                 .build();
     }
 
@@ -55,7 +59,8 @@ public class CommentDto extends BaseTimeDto {
                 commonPost,
                 member,
                 content,
-                visible
+                visible,
+                CommentResponse.hasAdminRole()
         );
     }
 
@@ -81,6 +86,7 @@ public class CommentDto extends BaseTimeDto {
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .visible(dto.isVisible())
+                .isAdminComment(dto.isAdminComment())
                 .isOwner(isOwner(dto))
                 // base
                 .createdAt(dto.getCreatedAt())
@@ -124,7 +130,8 @@ public class CommentDto extends BaseTimeDto {
                     commentId,
                     parentCommentId,
                     content,
-                    visible
+                    visible,
+                    hasAdminRole()
             );
         }
     }
@@ -148,6 +155,7 @@ public class CommentDto extends BaseTimeDto {
         private ReactionType reactionType = ReactionType.DEFAULT;
         private boolean visible;
         // icon
+        private boolean isAdminComment;
         private boolean isOwner;
 
         public boolean hasParentComment() {
@@ -162,6 +170,10 @@ public class CommentDto extends BaseTimeDto {
 
         public static boolean isOwner(CommentDto dto) {
             return MemberUtil.getMember().getId().equals(dto.getMemberDto().getId());
+        }
+
+        public static boolean hasAdminRole() {
+            return MemberUtil.getMember().getRoles().contains(MemberRole.ROLE_ADMIN);
         }
     }
 }
