@@ -7,9 +7,9 @@ import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.CategoryException;
@@ -177,18 +177,6 @@ public class CommonPostService<E extends CommonPost,
                 );
         // 조회수 증가
         post.plusHits();
-        return (T) post.toDto();
-    }
-
-    public T getPostWithComment(long postId, Pageable pageable) {
-
-        E post = commonPostRepository.findById(postId)
-                .orElse(
-                        commonPostRepository.findById(postId)
-                                .orElseThrow(InvalidTableIdException::new)
-                );
-        // 조회수 증가
-        post.plusHits();
 
 //        S commonPostDtoResponse = (S) commonPost.toResponseDtoWithComments();
 //        postReactionRepository.findByUserIdAndTargetIdAndDtype(MemberUtil.getMemberId(), postId, "PostReaction")
@@ -199,7 +187,7 @@ public class CommonPostService<E extends CommonPost,
 //                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
 //                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return (T) post.toDtoWithComment();
+        return (T) post.toDto();
     }
 
     public T createPost(T dto) {

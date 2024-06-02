@@ -44,21 +44,26 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-
+        boolean isTest = true;
         // 1. Request Header 에서 토큰을 꺼냄
         String token = resolveToken(request);
         try {
-            if (StringUtils.hasText(token) && !jwtUtil.isExpired(token)) {
+            if (isTest || (StringUtils.hasText(token) && !jwtUtil.isExpired(token))) {
 
-                Claims claims = jwtUtil.parseClaims(token);
-                Member member = jwtUtil.claimsToMember(claims);
-                // @test
-                member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+                Member member = null;
+                if(!isTest) {
+                    Claims claims = jwtUtil.parseClaims(token);
+                    member = jwtUtil.claimsToMember(claims);
+                } else {
+                    // @test
+                    member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+                    member.setId(1L);
+                }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
-                if (isRefreshTokenExists(member.getUsername())) {
+                if (isTest || (isRefreshTokenExists(member.getUsername()))) {
 
                     // 2. security Context 저장
-                    log.debug("유요한 토큰, 정상 접근 {}", token);
+                    log.debug("유효한 토큰, 정상 접근 {}", token);
                     CustomUserDetails principal = new CustomUserDetails(member);
                     UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(principal, principal.getPassword(), principal.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -66,8 +71,10 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            handleException(response, e);
-            return;
+            if(!isTest) {
+                handleException(response, e);
+                return;
+            }
         }
         filterChain.doFilter(request, response);
     }

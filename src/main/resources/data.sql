@@ -1,3 +1,6 @@
+-- refresh token
+insert into refresh_tokens (expire_at,token_value,token_key) values (1719994805831,'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpbWFnZSI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS83OTI3MDIyOD92PTQiLCJwYXNzd29yZCI6IiQyYSQxMCRoTWcuYzhDL3VseFJkSjdLMEs4L2F1bVVPdTQ5UmtUTEF0eUliYVh0aDFIUWVGUU9MMC9iSyIsInBob25lIjoiMDEwMTExMTIyMjIiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwibmlja25hbWUiOiJuaWNrbmFtZTEiLCJpZCI6MjEsInVzZXJuYW1lIjoidXNlciIsImF1dGgiOiJST0xFX1VTRVIiLCJpYXQiOjE3MTczMTY0MDUsImV4cCI6MTcxOTk5NDgwNX0.uAuo_EaWOx-ghXxByoXFnMl8iXqWFPjQQexXRZp6uZHosH8ksNUjk6BxOzICDQeYNrH-vg-OGPJEa6DkBIN0FA','user');
+
 -- user
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick1','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user1',default);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick2','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user2',default);
@@ -194,28 +197,28 @@ insert into qna (id, status) values (59, 'AWAITING_RESPONSE');
 insert into qna (id, status) values (60, 'AWAITING_RESPONSE');
 
 -- comments
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 32, null, false, 1, 1, '2024-06-02 00:14:23', true);
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 1, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 1, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 1, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (5, 3, 'child comment1', null, 1, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (6, 1, 'child comment2', null, 1, true, 1, 1, '2024-06-02 00:14:23', true);
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (7, 3, 'child comment1', null, 3, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 1, null, true, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', null, 8, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', null, 8, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 32, null, false, 1, 1, '2024-06-02 00:14:23', true);
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 1, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 1, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 1, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (5, 3, 'child comment1', null, 1, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (6, 1, 'child comment2', null, 1, true, 1, 1, '2024-06-02 00:14:23', true);
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (7, 3, 'child comment1', null, 3, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 1, null, true, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', null, 8, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', null, 8, false, 1, 1, '2024-06-02 00:14:23');
 
 -- comments
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 60, null, false, 1, 1, '2024-06-02 00:14:23', true);
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 60, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 60, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 60, null, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (5, 3, 'child comment1', 60, 1, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (6, 1, 'child comment2', 60, 1, true, 1, 1, '2024-06-02 00:14:23', true);
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (7, 3, 'child comment1', 60, 3, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 60, null, true, true, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', 60, 8, false, 1, 1, '2024-06-02 00:14:23');
-insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', 60, 8, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (1, 1, 'parent comment1', 60, null, false, 1, 1, '2024-06-02 00:14:23', true);
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (2, 2, 'parent comment2', 60, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (3, 3, 'parent comment3', 60, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (4, 4, 'parent comment4', 60, null, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (5, 3, 'child comment1', 60, 1, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at, writer) values (6, 1, 'child comment2', 60, 1, true, 1, 1, '2024-06-02 00:14:23', true);
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (7, 3, 'child comment1', 60, 3, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, admin, count_reaction_type_good, count_reaction_type_bad, created_at) values (8, 4, 'admin comment', 60, null, true, true, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (9, 3, 'child comment1', 60, 8, false, 1, 1, '2024-06-02 00:14:23');
+--insert into comment(id, user_id, content, post_id, comment_id, visible, count_reaction_type_good, count_reaction_type_bad, created_at) values (10, 3, 'child comment1', 60, 8, false, 1, 1, '2024-06-02 00:14:23');
 
 insert into reaction(id, user_id, target_id, reaction_type, dtype) values (1, 1, 1, 0, 'PostReaction');
 insert into reaction(id, user_id, target_id, reaction_type, dtype) values (2, 1, 2, 1, 'CommentReaction');
