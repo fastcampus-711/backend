@@ -6,6 +6,7 @@ import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.global.util.ResponseUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.MemberRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static com.aptner.v3.CommunityApplication.passwordEncoder;
 import static com.aptner.v3.global.util.JwtUtil.BEARER_PREFIX;
 
 @Slf4j
@@ -50,6 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 Claims claims = jwtUtil.parseClaims(token);
                 Member member = jwtUtil.claimsToMember(claims);
+                // @test
+                member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
                 if (isRefreshTokenExists(member.getUsername())) {
 

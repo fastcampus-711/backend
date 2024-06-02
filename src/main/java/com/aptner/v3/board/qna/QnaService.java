@@ -44,7 +44,7 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     public Page<QnaDto> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
 
         Page<Qna> list = super.getPosListByCategoryIdItems(boardGroup, categoryId, status, pageable);
-        return list.map(e -> (QnaDto) e.toDtoWithComment());
+        return list.map(e -> (QnaDto) e.toDtoWithComment()); // toDto() -> toDtoWithComment()
     }
 
     @Override
@@ -61,7 +61,7 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     public Page<QnaDto> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
         // 키워드 검색
         Page<Qna> list = qnaRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
-        return list.map(e -> (QnaDto) e.toDtoWithComment());
+        return list.map(e -> (QnaDto) e.toDtoWithComment());  // toDto() -> toDtoWithComment()
     }
 
 }

@@ -91,6 +91,7 @@ public class Qna extends CommonPost {
                 // qna
                 .type(entity.getType())
                 .status(entity.getStatus())
+                //
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
