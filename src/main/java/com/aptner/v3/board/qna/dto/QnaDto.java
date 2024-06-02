@@ -15,6 +15,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+
 @Slf4j
 @Getter
 @ToString(callSuper = true)
@@ -102,6 +104,47 @@ public class QnaDto extends CommonPostDto {
                 .build();
     }
 
+    public QnaDto.QnaResponse toResponseWithComment() {
+        QnaDto dto = this;
+
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = QnaDto.QnaResponse.hasSecret(dto);
+
+        return QnaDto.QnaResponse.builder()
+                .id(dto.getId())
+                // user
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                // post
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                .comments(organizeChildComments(dto.getCommentDto()))
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
+                .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
+                .categoryName(dto.getCategoryDto().getName())
+                // qna
+                .status(dto.getStatus())
+                .type(dto.getType())
+                // base
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
+                .build();
+    }
     @Getter
     @ToString(callSuper = true)
     @SuperBuilder

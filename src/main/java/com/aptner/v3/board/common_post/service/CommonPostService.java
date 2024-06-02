@@ -7,9 +7,9 @@ import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.CategoryException;
@@ -29,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +75,13 @@ public class CommonPostService<E extends CommonPost,
      */
     public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
 
+        Page<E> list = getPosListByCategoryIdItems(boardGroup, categoryId, status, pageable);
+        return list.map(e -> (T) e.toDto());
+    }
+
+    protected Page<E> getPosListByCategoryIdItems(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+
+        this.logGenericTypes();
         Page<E> list = null;
         if (categoryId == 0) {
             if (status != null) {
@@ -81,9 +90,9 @@ public class CommonPostService<E extends CommonPost,
                 list = findByDtypeAndStatus(boardGroup, status, pageable);
             } else {
                 // 자유 게시판 조회
-                if (BoardGroup.FREES.equals(boardGroup)) {
-                    return Top3PostsWhenFirstPage(boardGroup, pageable);
-                }
+//                if (BoardGroup.FREES.equals(boardGroup)) {
+//                    return Top3PostsWhenFirstPage(boardGroup, pageable);
+//                }
                 // 게시판 조회
                 list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
             }
@@ -96,8 +105,7 @@ public class CommonPostService<E extends CommonPost,
                 list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
             }
         }
-
-        return list.map(e -> (T) e.toDto());
+        return list;
     }
 
     private Page<T> Top3PostsWhenFirstPage(BoardGroup boardGroup, Pageable pageable) {
@@ -169,18 +177,6 @@ public class CommonPostService<E extends CommonPost,
                 );
         // 조회수 증가
         post.plusHits();
-        return (T) post.toDto();
-    }
-
-    public T getPostWithComment(long postId) {
-
-        E post = commonPostRepository.findByComments_CommonPostId(postId)
-                .orElse(
-                        commonPostRepository.findById(postId)
-                                .orElseThrow(InvalidTableIdException::new)
-                );
-        // 조회수 증가
-        post.plusHits();
 
 //        S commonPostDtoResponse = (S) commonPost.toResponseDtoWithComments();
 //        postReactionRepository.findByUserIdAndTargetIdAndDtype(MemberUtil.getMemberId(), postId, "PostReaction")
@@ -191,7 +187,7 @@ public class CommonPostService<E extends CommonPost,
 //                .map(commentReaction -> Map.entry(commentReaction.getTargetId(), commentReaction.getReactionType()))
 //                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return (T) post.toDtoWithComment();
+        return (T) post.toDto();
     }
 
     public T createPost(T dto) {
@@ -298,6 +294,20 @@ public class CommonPostService<E extends CommonPost,
         } catch (EntityNotFoundException e) {
             log.error("MEMBER ID DBd에 없음");
             throw new UserException(_NOT_FOUND);
+        }
+    }
+
+    private void logGenericTypes() {
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) superclass).getActualTypeArguments();
+            log.debug("Generic types: (E)Entity = {}, (T)DTO = {}, (Q)Request = {}, (S)Response = {}",
+                    typeArguments[0].getTypeName(),
+                    typeArguments[1].getTypeName(),
+                    typeArguments[2].getTypeName(),
+                    typeArguments[3].getTypeName());
+        } else {
+            log.debug("No generic type information available.");
         }
     }
 }
