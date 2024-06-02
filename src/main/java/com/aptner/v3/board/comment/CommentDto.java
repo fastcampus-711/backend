@@ -17,6 +17,8 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static com.aptner.v3.board.comment.CommentDto.CommentResponse.isOwner;
+
 @Slf4j
 @Getter
 @ToString(callSuper = true)
@@ -79,6 +81,7 @@ public class CommentDto extends BaseTimeDto {
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
                 .visible(dto.isVisible())
+                .isOwner(isOwner(dto))
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -155,6 +158,10 @@ public class CommentDto extends BaseTimeDto {
             // isVisible: false && (user != writer)
             return (!dto.isVisible()
                     && !MemberUtil.getMember().getId().equals(dto.getMemberDto().getId()));
+        }
+
+        public static boolean isOwner(CommentDto dto) {
+            return MemberUtil.getMember().getId().equals(dto.getMemberDto().getId());
         }
     }
 }

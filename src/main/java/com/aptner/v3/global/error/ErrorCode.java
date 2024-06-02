@@ -17,6 +17,7 @@ public enum ErrorCode {
     INVALID_PASSWORD_FORMAT(BAD_REQUEST, "비밀번호는 대소문자 영문과 숫자 조합으로 8자 이상 15자 이하로 입력해주세요."),
     INCORRECT_TARGET_BOARD(BAD_REQUEST, "다른 게시판에 대한 수정/삭제 요청입니다."),
     INSUFFICIENT_AUTHORITY(BAD_REQUEST, "본인의 게시글이 아닌 게시글에 대한 수정/삭제 요청입니다."),
+    COMMENT_DEPTH_IS_OVER(BAD_REQUEST, "댓글은 2DEPTH 까지 허용 됩니다."),
 
     // 409 Conflict
     DUPLICATE_RESOURCE(CONFLICT, "중복된 이메일 또는 닉네임입니다."),
