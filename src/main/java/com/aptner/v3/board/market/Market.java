@@ -1,12 +1,10 @@
 package com.aptner.v3.board.market;
 
-import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.dto.MarketDto;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -15,8 +13,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 import java.util.List;
 
@@ -31,8 +27,7 @@ public class Market extends CommonPost {
     @Setter
     private Integer price;
 
-    public Market() {
-    }
+    public Market() {}
 
     public Market(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, String type, MarketStatus status, Integer price) {
         super(member, category, title, content, imageUrls, visible);
@@ -58,10 +53,10 @@ public class Market extends CommonPost {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
+                .visible(entity.isVisible())
                 .status(entity.getStatus())
                 .price(entity.getPrice())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
+                .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())

@@ -1,12 +1,10 @@
 package com.aptner.v3.board.notice_post.domain;
 
-import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.notice_post.dto.NoticePostDto;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -49,8 +47,8 @@ public class NoticePost extends CommonPost {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
+                .visible(entity.isVisible())
+                .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())

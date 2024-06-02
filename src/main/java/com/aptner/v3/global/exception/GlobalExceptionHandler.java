@@ -4,6 +4,7 @@ import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -54,6 +55,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ApiResponse<?> handleCustomException(CustomException e) {
         return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ApiResponse<?> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseUtil.error(HttpStatus.BAD_REQUEST, List.of(e.getMessage()));
     }
 
     @Override

@@ -1,10 +1,14 @@
 package com.aptner.v3.board.market;
 
+import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
-import com.aptner.v3.board.common_post.CommonPostRepository;
+import com.aptner.v3.board.common.reaction.ReactionRepository;
+import com.aptner.v3.board.common.reaction.domain.CommentReaction;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
+import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.member.Member;
@@ -13,21 +17,35 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
 
 @Service
-@Qualifier("marketService")
 @Slf4j
+@Qualifier("marketService")
 public class MarketService extends CommonPostService<Market, MarketDto, MarketDto.MarketRequest, MarketDto.MarketResponse> {
 
     private final MarketRepository marketRepository;
 
-    public MarketService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<Market> commonPostRepository, @Qualifier("marketRepository") MarketRepository marketRepository) {
-        super(memberRepository, categoryRepository, commonPostRepository);
+    public MarketService(MemberRepository memberRepository,
+                         CategoryRepository categoryRepository,
+                         @Qualifier("marketRepository") MarketRepository marketRepository,
+                         ReactionRepository<PostReaction> postReactionRepository,
+                         ReactionRepository<CommentReaction> commentReactionRepository) {
+        super(memberRepository, categoryRepository, marketRepository, postReactionRepository, commentReactionRepository);
         this.marketRepository = marketRepository;
 
+    }
+
+    public MarketDto setStatus(MarketDto dto) {
+        Market market = verifyPost(dto);
+        // update
+        market.setStatus(dto.getStatus());
+        marketRepository.flush();
+        return market.toDto();
     }
 
     @Override
@@ -47,11 +65,12 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
         if (dto.getImageUrls() != null) {
             post.setImageUrls(dto.getImageUrls());
         }
-        if (dto.getStatus() != null)
+        if (dto.getStatus() != null) {
             post.setStatus(dto.getStatus());
-
-        if (dto.getPrice() != null)
+        }
+        if (dto.getPrice() != null) {
             post.setPrice(dto.getPrice());
+        }
 
         marketRepository.flush();
         log.debug("updatePost : {}", post);
@@ -79,36 +98,20 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
 
         // Board 속한 게시글 수정/삭제
         if (StringUtils.isNotEmpty(post.getDtype())
-                && !post.getDtype().equals(dto.getBoardGroup().getTable())) {
-            log.error("속한 카테고리가 아님: {} | {}", post.getDtype(), dto.getBoardGroup().getTable());
+                && !post.getDtype().equals(dto.getBoardGroup())) {
+            log.error("속한 카테고리가 아님: {} | {}", post.getDtype(), dto.getBoardGroup());
             throw new PostException(INVALID_REQUEST);
         }
         return post;
     }
 
-
-
-
-    /*public List<MarketDto.MarketResponse> getMarketListByStatus(Long categoryId, MarketStatus status, Integer limit, Integer page, SortType sort) {
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<Market> list = marketRepository.findAllByCategoryIdAndStatus(categoryId, status, pageable);
-
-        return list.getContent()
-                .stream()
-                .map(market -> MarketDto.MarketResponse.from(MarketDto.fromMarketEntity(market)))
-                .toList();
+    @Override
+    public Page<Market> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
+        return marketRepository.findByDtypeAndStatus(boardGroup, (MarketStatus) status, pageable);
     }
 
-    public List<MarketDto.MarketResponse> getMarketListByStatusAndKeyword(Long categoryId, MarketStatus status, String keyword, Integer limit, Integer page, SortType sort) {
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<Market> list = marketRepository.findByCategoryIdAndStatusAndTitleContainingIgnoreCase(categoryId, status,keyword,  pageable);
-
-        return list.getContent()
-                .stream()
-                .map(market -> MarketDto.MarketResponse.from(MarketDto.fromMarketEntity(market)))
-                .toList();
-    }*/
-
+    @Override
+    public Page<Market> findByDtypeAndCategoryIdAndStatus(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+        return marketRepository.findByDtypeAndCategoryIdAndStatus(boardGroup.getTable(), categoryId, (MarketStatus) status, pageable);
+    }
 }

@@ -1,15 +1,17 @@
 package com.aptner.v3.board.market;
 
+import com.aptner.v3.board.qna.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MarketStatus {
+public enum MarketStatus implements Status {
     //MARKET
-    SALE("판매중"),
-    RESERVED("예약중"),
-    SOLD_OUT("판매완료");
+    SALE("SALE","판매중"),
+    RESERVED("SALE_DONE","예약중"),
+    SOLD_OUT("SOLD_OUT","판매완료");
 
+    private final String code;
     private final String description;
 }

@@ -9,6 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserException extends GlobalException {
 
     public UserException(ErrorCode responseCode) {
-        super("사용자", responseCode);
+        super(responseCode, "사용자");
     }
 }

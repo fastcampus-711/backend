@@ -1,12 +1,10 @@
 package com.aptner.v3.board.qna;
 
-import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.qna.dto.QnaDto;
-import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -14,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -23,6 +22,7 @@ import java.util.List;
 public class Qna extends CommonPost {
     private String type;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private QnaStatus status;
 
@@ -51,8 +51,10 @@ public class Qna extends CommonPost {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(MemberUtil.getMemberId() != entity.getMember().getId())
-                .boardGroup(BoardGroup.getByTable(entity.getDtype()))
+                .visible(entity.isVisible())
+                .type(entity.getType())
+                .status(entity.getStatus())
+                .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())

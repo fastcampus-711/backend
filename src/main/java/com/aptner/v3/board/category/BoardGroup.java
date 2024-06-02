@@ -13,10 +13,12 @@ public enum BoardGroup {
     FREES(4L, "자유게시판", 11L, "FreePost"),
     QNAS(5L, "QNA", 13L, "QnaPost"),
     MARKETS(6L, "나눔장터", 12L, "MarketPost");
-    private final Long id;
-    private final String domain;
-    private final Long menuId;
-    private final String table;
+    private Long id;
+    private String domain;
+    private Long menuId;
+    private String table;
+
+    BoardGroup(){}
 
     public static BoardGroup getById(Long id) {
         if (id == null) return null;

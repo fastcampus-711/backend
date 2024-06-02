@@ -1,94 +1,101 @@
 package com.aptner.v3.board.comment;
 
+import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
-import com.aptner.v3.global.util.ModelMapperUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
-import org.modelmapper.ModelMapper;
+import org.hibernate.annotations.SQLRestriction;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
+@ToString(callSuper = true)
 @SQLDelete(sql = "UPDATE comment SET deleted = true where id = ?")
-@NoArgsConstructor
-public class Comment extends BaseTimeEntity implements ReactionAndCommentCalculator {
+@SQLRestriction("deleted = false")
+public class Comment extends BaseTimeEntity
+        implements ReactionAndCommentCalculator {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ListIndexBase(1)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private CommonPost commonPost;
+
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
+    @Setter
+    @Column(nullable = false, length = 500)
     private String content;
 
     @Embedded
     private ReactionColumns reactionColumns = new ReactionColumns();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "common_post_id")
-    private CommonPost commonPost;
+    @Setter
+    @Column(updatable = false)
+    private Long parentCommentId;
 
-    @OneToMany(mappedBy = "parentComment", fetch = FetchType.EAGER)
-    private List<Comment> childComments;
+    @ToString.Exclude
+    @OrderBy("createdAt ASC")
+    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.ALL)
+    private Set<Comment> childComments;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment parentComment;
-
+    @Setter
     @ColumnDefault(value = "true")
     private boolean visible;
 
-    @ColumnDefault(value = "false")
-    private boolean admin;
+    private boolean deleted;
 
-    @ColumnDefault(value = "false")
-    private boolean writer;
+    protected Comment() {}
 
-    @ColumnDefault(value = "false")
-    private Boolean deleted;
-
-    public static Comment of(CommonPost commonPost, CommentDto.Request request) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        return modelMapper
-                .map(request, Comment.class).setCommonPost(commonPost);
-    }
-
-    public static Comment of(Comment comment, CommentDto.Request request) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        return modelMapper.map(request, Comment.class).setParentComment(comment);
-    }
-
-    public Comment updateByRequestDto(CommentDto.Request requestDto) {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        modelMapper.map(requestDto, this);
-        return this;
-    }
-
-    public CommentDto.Response toResponseDto() {
-        ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-
-        return modelMapper.map(this, CommentDto.Response.class);
-    }
-
-    private Comment setCommonPost(CommonPost commonPost) {
+    public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible) {
         this.commonPost = commonPost;
-        return this;
+        this.member = member;
+        this.content = content;
+        this.reactionColumns = reactionColumns;
+        this.visible = visible;
     }
 
-    private Comment setParentComment(Comment parentComment) {
-        this.parentComment = parentComment;
-        return this;
+    public static Comment of(CommonPost commonPost, Member member, String content, boolean visible) {
+        return new Comment(commonPost, member, content, null, visible);
+    }
+
+    public void addChildComment(Comment child) {
+        child.setParentCommentId(this.getId());
+        this.getChildComments().add(child);
+    }
+
+    public CommentDto toDto() {
+        Comment entity = this;
+        CommentDto build = CommentDto.builder()
+                .memberDto(MemberDto.from(entity.getMember()))
+                .postId(entity.getCommonPost().getId()) // @todo
+                .commentId(entity.getId())
+                .parentCommentId(entity.getParentCommentId())
+                .content(entity.getContent())
+                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .visible(entity.isVisible())
+                .createdAt(entity.getCreatedAt())
+                .createdBy(entity.getCreatedBy())
+                .modifiedAt(entity.getModifiedAt())
+                .modifiedBy(entity.getModifiedBy())
+                .build();
+
+        return build;
     }
 }
