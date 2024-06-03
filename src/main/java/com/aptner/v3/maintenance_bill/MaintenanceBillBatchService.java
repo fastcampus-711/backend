@@ -212,8 +212,10 @@ public class MaintenanceBillBatchService {
         keySet.sort((o1, o2) -> fees.get(o2).compareTo(fees.get(o1)));
 
         int etcValue = 0;
-        for (int i = 5; i < keySet.size(); i++)
-            etcValue += fees.get(keySet.get(i));
+        for (int i = 5; i < keySet.size(); i++){
+            if (fees.get(keySet.get(i)) > 0)
+                etcValue += fees.get(keySet.get(i));
+        }
 
         return CircularChart.builder()
                 .rankFirstColumnName(keySet.get(0))
