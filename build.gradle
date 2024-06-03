@@ -89,6 +89,15 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
 	implementation 'org.hibernate.validator:hibernate-validator'
 
+	// mapstruct
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+	// POI
+	implementation 'org.apache.poi:poi:4.1.2'
+	implementation 'org.apache.poi:poi-ooxml:4.1.2'
+	implementation 'org.apache.poi:poi-scratchpad:4.1.2'
 
 }
 

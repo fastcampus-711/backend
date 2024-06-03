@@ -110,6 +110,7 @@ class CommonPostControllerTest {
         prefix = "http://localhost:" + port;
     }
 
+    @Disabled("commonPost로 조회하지 않음")
     @WithUserDetails(value = "user1")
     @Test
     void 게시판_전체_조회() throws Exception {
@@ -142,7 +143,7 @@ class CommonPostControllerTest {
         jsonObject.put("category_id", 2);
 
         mockMvc.perform(
-                        put(prefix + "/boards/notices/" + 1)
+                        put(prefix + "/boards/notices/" + 22)
                                 .content(jsonObject.toJSONString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -160,7 +161,7 @@ class CommonPostControllerTest {
     void 타인의_게시글_삭제시_error() throws Exception {
 
         mockMvc.perform(
-                        delete(prefix + "/boards/notices/" + 1)
+                        delete(prefix + "/boards/notices/" + 22)
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -179,7 +180,7 @@ class CommonPostControllerTest {
         jsonObject.put("category_id", 2);
 
         mockMvc.perform(
-                        put(prefix + "/boards/notices/" + 1)
+                        put(prefix + "/boards/notices/" + 22)
                                 .content(jsonObject.toJSONString())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
