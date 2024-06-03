@@ -52,20 +52,9 @@ public class CommonPostController<E extends CommonPost,
                                                   @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                                                   @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
-        this.logGenericTypes();
         BoardGroup boardGroup = getBoardGroup();
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<T> posts = null;
-        if (keyword != null) {
-            // 키워드 검색
-            log.debug("keyword search : boardGroup: {}, categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, keyword, limit, page, sort);
-            posts = commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable);
-        } else {
-            // 카테고리 - 분류 검색
-            log.debug("category search : boardGroup: {},  categoryId: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, limit, page, sort);
-            posts = commonPostService.getPostListByCategoryId(boardGroup, categoryId, status, pageable);
-        }
+        Page<T> posts = commonPostService.getPostList(boardGroup, categoryId, keyword, status, null, pageable);
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
                 posts.map(p -> (S) p.toResponse()),
@@ -80,7 +69,7 @@ public class CommonPostController<E extends CommonPost,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
 
-        T post = commonPostService.getPost(user.toDto(), postId);
+        T post = commonPostService.getPost(user.toDto().getId(), postId);
         post.setReactionType(commonPostService.getPostReactionType(user.toDto().getId(), postId));
         return ResponseUtil.ok(post.toResponse());
     }
