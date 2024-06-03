@@ -37,9 +37,9 @@ public class QnaController extends CommonPostController<
         this.qnaService = qnaService;
     }
 
-    @GetMapping("/comment")
+    @GetMapping("")
     @Operation(summary = "게시글 별 검색 (댓글 포함)")
-    public ApiResponse<?> getPostListByCategoryIdWithComment(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
+    public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "keyword", required = false) String keyword,
                                                   @RequestParam(name = "status", required = false) Status status,
                                                   @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
@@ -47,18 +47,8 @@ public class QnaController extends CommonPostController<
                                                   @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
         BoardGroup boardGroup = getBoardGroup();
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).ascending());
-
-        Page<QnaDto> posts = null;
-        if (keyword != null) {
-            // 키워드 검색
-            log.debug("keyword search : boardGroup: {}, categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, keyword, limit, page, sort);
-            posts = qnaService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable);
-        } else {
-            // 카테고리 - 분류 검색
-            log.debug("category search : boardGroup: {},  categoryId: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, limit, page, sort);
-            posts = qnaService.getPostListByCategoryId(boardGroup, categoryId, status, pageable);
-        }
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
+        Page<QnaDto> posts = qnaService.getPostListWithComment(boardGroup, categoryId, keyword, status, null, pageable);
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
                 posts.map(p -> p.toResponseWithComment()),
@@ -78,10 +68,10 @@ public class QnaController extends CommonPostController<
             @RequestBody QnaStatusDto.QnaStatusRequest request
             , @AuthenticationPrincipal CustomUserDetails user) {
 
-        QnaDto dto = QnaDto.of(
+        QnaStatusDto dto = QnaStatusDto.of(
                 getBoardGroup(),
                 user.toDto(),
-                QnaDto.QnaRequest.of(request.getPostId(), null)
+                request
         );
         return ResponseUtil.ok(qnaService.setStatus(dto).toResponse());
     }

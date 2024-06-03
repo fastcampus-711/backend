@@ -47,50 +47,14 @@ public class CommonPostController<E extends CommonPost,
     @Operation(summary = "게시글 별 검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
                                                   @RequestParam(name = "keyword", required = false) String keyword,
-                                                  @RequestParam(name = "keyword2", required = false) String keyword2,
                                                   @RequestParam(name = "status", required = false) Status status,
                                                   @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
                                                   @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                                                   @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort
     ) {
-        this.logGenericTypes();
         BoardGroup boardGroup = getBoardGroup();
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<T> posts = null;
-        if (keyword != null) {
-            // 키워드 검색
-            log.debug("keyword search : boardGroup: {}, categoryId: {}, keyword: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, keyword, limit, page, sort);
-            posts = commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable);
-        } else {
-            // 카테고리 - 분류 검색
-            log.debug("category search : boardGroup: {},  categoryId: {}, limit: {}, page: {}, sort: {}", boardGroup, categoryId, limit, page, sort);
-            posts = commonPostService.getPostListByCategoryId(boardGroup, categoryId, status, pageable);
-        }
-
-        return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
-                posts.map(p -> (S) p.toResponse()),
-                paginationService.getPaginationBarNumbers(pageable.getPageNumber(), posts.getTotalPages())
-        )));
-    }
-
-    @GetMapping("/posts2")
-    @Operation(summary = "게시글 별 검색2")
-    public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "category-id", defaultValue = "0") Long categoryId,
-                                                  @RequestParam(name = "keyword", required = false) String keyword,
-                                                  @RequestParam(name = "status", required = false) Status status,
-                                                  @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                                  @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                                                  @RequestParam(name = "sort", required = false, defaultValue = "RECENT") SortType sort) {
-        BoardGroup boardGroup = getBoardGroup();
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(sort.getColumnName()).descending());
-
-        Page<T> posts;
-        if (keyword != null) {
-            posts = commonPostService.getPostListByCategoryIdAndTitle(boardGroup, categoryId, keyword, pageable);
-        } else {
-            posts = commonPostService.getPostList(boardGroup, categoryId, keyword, status, pageable);
-        }
+        Page<T> posts = commonPostService.getPostList(boardGroup, categoryId, keyword, status, null, pageable);
 
         return ResponseUtil.ok(SearchDto.SearchResponse.from(SearchDto.of(
                 posts.map(p -> (S) p.toResponse()),
@@ -105,7 +69,7 @@ public class CommonPostController<E extends CommonPost,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
 
-        T post = commonPostService.getPost(user.toDto(), postId);
+        T post = commonPostService.getPost(user.toDto().getId(), postId);
         post.setReactionType(commonPostService.getPostReactionType(user.toDto().getId(), postId));
         return ResponseUtil.ok(post.toResponse());
     }

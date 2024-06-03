@@ -36,15 +36,26 @@ public enum ErrorCode {
     NOT_MATCHED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰의 유저 정보가 일치하지 않습니다."),
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
 
+    // 302 NOT MODIFIED
+    DELETE_NOT_AVAILABLE(NOT_MODIFIED, "삭제할 수 없습니다."),
+
     //  500
     TOKEN_CREATION_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "토큰을 생성하는 과정에서 알 수 없는 오류가 발생했습니다."),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
+
     NOT_EXISTS_MENU_ID_EXCEPTION(HttpStatus.NOT_FOUND, "not existed menu id"),
+
     NOT_EXISTS_CATEGORY_ID_EXCEPTION(HttpStatus.NOT_FOUND, "not existed category id"),
+
     ALREADY_EXISTS_CATEGORY_NAME_EXCEPTION(HttpStatus.CONFLICT, "already existed category name"),
+
     INVALID_URI_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid URI"),
+
     INVALID_TABLE_ID_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid table id exception"),
+
     BINDING_EXCEPTION(HttpStatus.BAD_REQUEST, "binding exception"),
+
     ALREADY_REGISTERED_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "Already Registered Username"),
 
     PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "Password Mismatch");

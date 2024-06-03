@@ -78,7 +78,7 @@ public class MenuInitializer implements CommandLineRunner {
         menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOTALFEE.name(), MenuCode.TOTALFEE.getKo(), fee.getId()));
         menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.MYFEE.name(), MenuCode.MYFEE.getKo(), fee.getId()));
 
-        // 공지사항 분류
+        // 공지사항(의무) 분류
         categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "1", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("공사안내", "2", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("선거관리위원회", "3", BoardGroup.NOTICES));
@@ -105,21 +105,21 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "23", BoardGroup.FREES));
         // QNA 게시판 분류
         categoryService.createCategory(CategoryDto.CategoryRequest.of("QNA", "24", BoardGroup.QNAS));
-        // 나눔장터 게시판 분류
+        // 나눔 장터 게시판 분류
         categoryService.createCategory(CategoryDto.CategoryRequest.of("무료나눔", "25", BoardGroup.MARKETS));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("중고거래", "26", BoardGroup.MARKETS));
         // 민원 게시판 분류
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "24", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "25", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "26", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "27", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안경비", "28", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "29", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "30", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "31", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "32", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "33", BoardGroup.COMPLAINT));
-//        categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "34", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "27", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "28", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "29", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "30", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안경비", "31", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "32", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "33", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "34", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "35", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "36", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "37", BoardGroup.COMPLAINT));
 
 
         // 가짜 로그인 사용자 지정

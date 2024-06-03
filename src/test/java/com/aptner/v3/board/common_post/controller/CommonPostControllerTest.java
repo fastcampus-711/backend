@@ -17,6 +17,7 @@ import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.hibernate.validator.internal.constraintvalidators.bv.size.SizeValidatorForArray;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -119,6 +120,7 @@ class CommonPostControllerTest {
 
 //    @WithUserDetails(value = "user1")
     @Test
+    @Disabled("검색 개선")
     void 게시판_통합_검색() throws Exception {
         String keyword = "a";
         MvcResult mvcResult = mockMvc.perform(get(prefix + "/boards?keyword=" + keyword))

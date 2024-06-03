@@ -4,7 +4,6 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
-import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
@@ -18,15 +17,12 @@ import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
-import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.repository.MemberRepository;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -34,11 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
@@ -57,153 +49,49 @@ public class CommonPostService<E extends CommonPost,
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final ReactionRepository<PostReaction> postReactionRepository;
-    private final ReactionRepository<CommentReaction> commentReactionRepository;
 
     public CommonPostService(MemberRepository memberRepository,
                              CategoryRepository categoryRepository,
                              @Qualifier("commonPostRepository") CommonPostRepository<E> commonPostRepository,
-                             ReactionRepository<PostReaction> postReactionRepository,
-                             ReactionRepository<CommentReaction> commentReactionRepository) {
+                             ReactionRepository<PostReaction> postReactionRepository
+    ) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
         this.commonPostRepository = commonPostRepository;
         this.postReactionRepository = postReactionRepository;
-        this.commentReactionRepository = commentReactionRepository;
     }
 
-    /**
-     * 게시판 + 분류 검색
-     * 자유게시판 : 인기게시글
-     */
-    public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+    public Page<T> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
 
-        Page<E> list = getPosListByCategoryIdItems(boardGroup, categoryId, status, pageable);
-        return list.map(e -> (T) e.toDto());
+        Specification<E> spec = geteSpecification(boardGroup, categoryId, keyword, status, userId);
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDto());
     }
 
-    protected Page<E> getPosListByCategoryIdItems(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
+    public Page<T> getPostListWithComment(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
 
-        this.logGenericTypes();
-        Page<E> list = null;
-        if (categoryId == 0) {
-            if (status != null) {
-                // 민원 게시판, 나눔 게시판, Qna 게시판
-                // 게시판 + 상태값 조회
-                list = findByDtypeAndStatus(boardGroup, status, pageable);
-            } else {
-//                 자유 게시판 조회
-//                if (BoardGroup.FREES.equals(boardGroup)) {
-//                    return Top3PostsWhenFirstPage(boardGroup, pageable);
-//                }
-                // 게시판 조회
-                list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
-            }
-        } else {
-            if (status != null) {
-                // 게시판 + 카테고리 + 상태값 조회
-                list = findByDtypeAndCategoryIdAndStatus(boardGroup, categoryId, status, pageable);
-            } else {
-                // 게시판 + 카테고리 조회 ( 자유게시판 )
-                list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
-            }
-        }
-        return list;
+        Specification<E> spec = geteSpecification(boardGroup, categoryId, keyword, status, userId);
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDtoWithComment());
     }
 
-    private Page<T> Top3PostsWhenFirstPage(BoardGroup boardGroup, Pageable pageable) {
-
-        // 7일간 인기 게시글 목록
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        List<E> topPosts = commonPostRepository.findTop3ByOrderByHitsAndReactionCountDescAndCreatedAtAfterAndDtype(sevenDaysAgo, boardGroup.getTable(), pageable);
-        log.debug("topPost : {}", topPosts);
-        if (!topPosts.isEmpty() && pageable.getPageNumber() == 0) {
-            List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
-
-            // 자유 게시판 ( 7일간 인기 게시글 중복 제거 리스트 )
-            Page<E> posts = commonPostRepository
-                    .findAllExcludingTopPostsAndDtype(
-                            topPostIds, boardGroup.getTable(),
-                            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() - topPosts.size(), pageable.getSort())
-                    );
-            log.debug("page 0 : {}", posts.getContent());
-
-            List<T> combined = getCombinedPosts(topPosts, posts);
-            return new PageImpl<T>(combined, pageable, posts.getTotalElements() + topPosts.size());
-        } else {
-            // 게시판 조회
-            Page<E> list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
-            return list.map(e -> (T) e.toDto());
-        }
+    private static <E extends CommonPost> Specification<E> geteSpecification(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId) {
+        Specification<E> spec = (Specification<E>) Specification
+                .where(PostSpecification.hasBoardGroup(boardGroup))
+                .and(PostSpecification.hasCategoryId(categoryId))
+                .and(PostSpecification.hasKeyword(keyword))
+                .and(PostSpecification.hasStatus(status))
+                .and(PostSpecification.hasAuthor(userId));
+        return spec;
     }
 
-    private List<T> getCombinedPosts(List<E> topPosts, Page<E> posts) {
-
-        List<T> topPostsDto = topPosts.stream().map(e -> {
-            // 인기글 ICON 설정  //@todo
-            T dto = (T) e.toDto();
-            dto.setHot(true);
-            return dto;
-        }).toList();
-        List<T> postsDto = posts.map(e -> (T) e.toDto()).getContent();
-
-        List<T> combined = new ArrayList<>(topPostsDto);
-        combined.addAll(postsDto);
-        log.debug("page 0 : dto {} + {} ", topPostsDto, postsDto);
-        log.debug("page 0 : {} ", combined);
-        return combined;
-    }
-
-    public Page<E> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
-        return commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
-    }
-
-    public Page<E> findByDtypeAndCategoryIdAndStatus(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
-        return commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
-    }
-
-    /**
-     * 게시판 + 분류 + 검색어 검색
-     * 인기 게시글 없음
-     */
-    public Page<T> getPostListByCategoryIdAndTitle1(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
-        Page<E> list;
-        if (categoryId > 0) {
-            list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContaining(boardGroup.getTable(), categoryId, keyword, pageable);
-        } else {
-            list = commonPostRepository.findByDtypeAndTitleContaining(boardGroup.getTable(), keyword, pageable);
-        }
-        return list.map(e -> (T) e.toDto());
-    }
-
-    public T getPost(MemberDto memberDto, long postId) {
+    public T getPost(Long userId, long postId) {
         // post
-        E post = commonPostRepository.findByComments_CommonPostId(postId)
-                .orElse(
-                        commonPostRepository.findById(postId)
-                                .orElseThrow(InvalidTableIdException::new)
-                );
+        E post = commonPostRepository.findById(postId)
+                .orElseThrow(InvalidTableIdException::new);
         // 조회수
         post.plusHits();
         return (T) post.toDto();
-    }
-
-    public Page<T> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Pageable pageable) {
-        Specification<E> spec = (Specification<E>) Specification.where(PostSpecification.hasBoardGroup(boardGroup))
-                .and(PostSpecification.hasCategoryId(categoryId))
-                .and(PostSpecification.hasKeyword(keyword))
-                .and(PostSpecification.hasStatus(status));
-
-        Page<E> posts = commonPostRepository.findAll(spec, pageable);
-        return posts.map(e -> (T) e.toDto());
-    }
-
-    public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
-        Specification<E> spec = (Specification<E>) Specification.where(PostSpecification.hasBoardGroup(boardGroup))
-                .and(PostSpecification.hasCategoryId(categoryId))
-                .and(PostSpecification.hasKeyword(keyword));
-
-        Page<E> posts = commonPostRepository.findAll(spec, pageable);
-        return posts.map(e -> (T) e.toDto());
     }
 
     public ReactionType getPostReactionType(Long userId, Long postId) {
@@ -253,8 +141,7 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public long deletePost(long postId, T dto) {
-        verifyPost(dto);
-
+        verifyDeletePost(dto);
         commonPostRepository.deleteById(postId);
         return postId;
     }
@@ -266,6 +153,10 @@ public class CommonPostService<E extends CommonPost,
             log.error("createPost - image count exceed : {}", dto.getImageUrls().size());
             throw new PostException(INVALID_REQUEST);
         }
+    }
+
+    protected E verifyDeletePost(T dto) {
+        return verifyPost(dto);
     }
 
     protected E verifyPost(T dto) {
