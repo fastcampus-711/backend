@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/maintenance-bill")
+@RequestMapping("/maintenance-bills")
 @RequiredArgsConstructor
 public class MaintenanceBillController {
     private final MaintenanceBillBatchService maintenanceBillBatchService;
