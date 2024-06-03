@@ -1,5 +1,5 @@
 -- user
-insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick1','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user1',default);
+insert into users (image,nickname,password,phone,username,id, house_id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick1','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user1',default, 1);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick2','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user2',default);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick3','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user3',default);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick4','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user4',default);

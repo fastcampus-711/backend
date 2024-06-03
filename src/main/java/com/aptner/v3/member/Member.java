@@ -1,5 +1,6 @@
 package com.aptner.v3.member;
 
+import com.aptner.v3.maintenance_bill.embed.maintenance_bill.ResidentInfo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,6 +14,9 @@ import java.util.Objects;
 @Builder
 @ToString
 @Entity(name = "users")
+@Table(indexes = {
+        @Index(name = "resident_info_idx", columnList = "apartment_code, apartment_square_meter, dong, ho")
+})
 public class Member {
 
     @Id
@@ -47,6 +51,9 @@ public class Member {
     @CollectionTable(name = "user_roles", joinColumns = { @JoinColumn(name = "user_id") })
     @Column(name = "user_role")
     private List<MemberRole> roles;
+
+    @Embedded
+    private ResidentInfo residentInfo;
 
     public Member(String username, String password, String nickname, String image, String phone, List<MemberRole> roles) {
         this.username = username;
