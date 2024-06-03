@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
@@ -99,29 +98,26 @@ public class CommentService {
     }
 
     public Page<CommentDto> getPostWithComment(MemberDto memberDto, long postId, Pageable pageable) {
-
+        // check
         CommonPost post = commonPostRepository.findById(postId).orElseThrow(() -> new PostException(_NOT_FOUND));
-        Page<Comment> list = commentRepository.findAllByPostIdSorted(post.getId(), pageable);
 
+        // get
+        Page<Comment> commentsPage = commentRepository.findAllByPostIdAndParentCommentIdIsNull(postId, pageable);
+
+        // reaction
         Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByUserIdAndDtype(memberDto.getId(), "CommentReaction")
                 .stream()
                 .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
 
-        return list.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+        Page<CommentDto> commentDtosPage = commentsPage.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+        return commentDtosPage;
     }
 
     private CommentDto convertToDto(Comment comment, Map<Long, ReactionType> mapCommentIdAndReactionType) {
-
+        log.debug("comment : {}", comment);
         CommentDto dto = comment.toDto();
-        Set<Long> childCommentAuthorIds = getChildCommentAuthorIds(comment.getChildComments());
         dto.setReactionType(mapCommentIdAndReactionType.getOrDefault(comment.getId(), ReactionType.DEFAULT));
         return dto;
-    }
-
-    private Set<Long> getChildCommentAuthorIds(Set<Comment> childComments) {
-        return childComments.stream()
-                .map(Comment::getMemberId)
-                .collect(Collectors.toSet());
     }
 
     private Member verifyMember(CommentDto dto) {
