@@ -1,6 +1,5 @@
 package com.aptner.v3.maintenance_bill;
 
-import com.aptner.v3.global.error.SuccessCode;
 import com.aptner.v3.global.exception.custom.InValidUserInfoException;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.maintenance_bill.domain.MaintenanceBill;
@@ -119,7 +118,7 @@ public class MaintenanceBillService {
     }
 
     private long getHouseId() {
-        return memberRepository.findById(MemberUtil.getMemberId())
+        return memberRepository.findById(MemberUtil.getMember().getId())
                 .orElseThrow(InValidUserInfoException::new)
                 .getResidentInfo()
                 .getHouse()
