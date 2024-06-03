@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,63 +31,75 @@ public class MaintenanceBillService {
 
 
     public CircularChartDto circularChart(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
-                .maintenanceBillMonthlyStaticToCircularChartDto(
-                        maintenanceBillMonthlyStatic.getCircularChart()
-                );
+        return maintenanceBillMonthlyStatic.map(
+                        billMonthlyStatic -> maintenanceBillMonthlyStaticMapper
+                                .maintenanceBillMonthlyStaticToCircularChartDto(
+                                        billMonthlyStatic.getCircularChart()
+                                ))
+                .orElse(null);
     }
 
     public MaintenanceBillSummaryDto summary(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
-                .maintenanceBillMonthlyStaticToMaintenanceBillSummaryDto(
-                        maintenanceBillMonthlyStatic.getMaintenanceBillSummary()
-                );
+        return maintenanceBillMonthlyStatic.map(
+                        billMonthlyStatic -> maintenanceBillMonthlyStaticMapper
+                                .maintenanceBillMonthlyStaticToMaintenanceBillSummaryDto(
+                                        billMonthlyStatic.getMaintenanceBillSummary()
+                                ))
+                .orElse(null);
     }
 
     public MonthOnMonthInfoDto monthOnMonth(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
+        return maintenanceBillMonthlyStatic.map(billMonthlyStatic ->
+                maintenanceBillMonthlyStaticMapper
                 .maintenanceBillMonthlyStaticToMonthOnMonthDto(
-                        maintenanceBillMonthlyStatic.getMonthOnMonthInfo()
-                );
+                        billMonthlyStatic.getMonthOnMonthInfo()
+                ))
+                .orElse(null);
     }
 
     public YearOnYearInfoDto yearOnYear(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
+        return maintenanceBillMonthlyStatic.map(billMonthlyStatic ->
+                maintenanceBillMonthlyStaticMapper
                 .maintenanceBillMonthlyStaticToYearOnYearDto(
-                        maintenanceBillMonthlyStatic.getYearOnYearInfo()
-                );
+                        billMonthlyStatic.getYearOnYearInfo()
+                ))
+                .orElse(null);
     }
 
     public SquareOnSquareInfoDto squareOnSquare(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
+        return maintenanceBillMonthlyStatic.map(billMonthlyStatic ->
+                maintenanceBillMonthlyStaticMapper
                 .maintenanceBillMonthlyStaticToSquareOnSquareInfoDto(
-                        maintenanceBillMonthlyStatic.getSquareOnSquareInfo()
-                );
+                        billMonthlyStatic.getSquareOnSquareInfo()
+                ))
+                .orElse(null);
     }
 
     public List<EnergyUsageDto> energyConsumptionStatus(int year, int month) {
-        MaintenanceBillMonthlyStatic maintenanceBillMonthlyStatic =
+        Optional<MaintenanceBillMonthlyStatic> maintenanceBillMonthlyStatic =
                 getMaintenanceBillMonthlyStatic(year, month);
 
-        return maintenanceBillMonthlyStaticMapper
+        return maintenanceBillMonthlyStatic.map(billMonthlyStatic ->
+                maintenanceBillMonthlyStaticMapper
                 .maintenanceBillMonthlyStaticToEnergyUsageDtos(
-                        maintenanceBillMonthlyStatic.getEnergyUsages()
-                );
+                        billMonthlyStatic.getEnergyUsages()
+                ))
+                .orElse(null);
     }
 
     public MaintenanceBillDto details(int year, int month) {
@@ -97,13 +110,12 @@ public class MaintenanceBillService {
         return maintenanceBillMapper.maintenanceBillToMaintenanceBillDto(maintenanceBill);
     }
 
-    private MaintenanceBillMonthlyStatic getMaintenanceBillMonthlyStatic(int year, int month) {
+    private Optional<MaintenanceBillMonthlyStatic> getMaintenanceBillMonthlyStatic(int year, int month) {
         long houseId = getHouseId();
 
         LocalDate targetDate = LocalDate.of(year, month, 1);
 
-        return maintenanceBillMonthlyStaticRepository.findByHouseIdAndTargetDate(houseId, targetDate)
-                .orElseThrow();
+        return maintenanceBillMonthlyStaticRepository.findByHouseIdAndTargetDate(houseId, targetDate);
     }
 
     private long getHouseId() {

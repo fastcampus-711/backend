@@ -18,8 +18,17 @@ public class MaintenanceBillController {
 
     @GetMapping("/test")
     public ApiResponse<?> getAllMaintenanceBills() {
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 6, 1));
         maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 5, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 4, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 3, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 2, 1));
 
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2023, 6, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2023, 5, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2023, 4, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2023, 3, 1));
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2023, 2, 1));
         return null;
     }
 

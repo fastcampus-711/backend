@@ -115,18 +115,18 @@ public class MaintenanceBillBatchService {
                 .energyType(EnergyType.ELECTRICITY)
                 .presentUsage(maintenanceBill.getEnergyUsage().getElectricityUsage())
                 .presentFee(maintenanceBill.getFareCollectionFee().getHouseholdElectricityFee())
-                .lastYearUsage(lastYearMaintenanceBill.getEnergyUsage().getElectricityUsage())
-                .lastYearFee(lastYearMaintenanceBill.getFareCollectionFee().getHouseholdElectricityFee())
-                        .averageUsageOfSameSquare(houseAverageMaintenanceFee.getAverageElectricityUsage())
-                        .averageFeeOfSameSquare(houseAverageMaintenanceFee.getAverageElectricityFee())
+                .lastYearUsage(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getEnergyUsage().getElectricityUsage() : 0)
+                .lastYearFee(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getFareCollectionFee().getHouseholdElectricityFee() : 0)
+                .averageUsageOfSameSquare(houseAverageMaintenanceFee.getAverageElectricityUsage())
+                .averageFeeOfSameSquare(houseAverageMaintenanceFee.getAverageElectricityFee())
                 .build());
 
         energyUsages.add(EnergyUsage.builder()
                 .energyType(EnergyType.WATER)
                 .presentUsage(maintenanceBill.getEnergyUsage().getWaterUsage())
                 .presentFee(maintenanceBill.getFareCollectionFee().getHouseholdWaterFee())
-                .lastYearUsage(lastYearMaintenanceBill.getEnergyUsage().getWaterUsage())
-                .lastYearFee(lastYearMaintenanceBill.getFareCollectionFee().getHouseholdWaterFee())
+                .lastYearUsage(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getEnergyUsage().getWaterUsage() : 0)
+                .lastYearFee(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getFareCollectionFee().getHouseholdWaterFee() : 0)
                 .averageUsageOfSameSquare(houseAverageMaintenanceFee.getAverageWaterUsage())
                 .averageFeeOfSameSquare(houseAverageMaintenanceFee.getAverageWaterFee())
                 .build());
@@ -135,8 +135,8 @@ public class MaintenanceBillBatchService {
                 .energyType(EnergyType.HOTWATER)
                 .presentUsage(maintenanceBill.getEnergyUsage().getHotWaterUsage())
                 .presentFee(maintenanceBill.getFareCollectionFee().getHouseholdHotWaterFee())
-                .lastYearUsage(lastYearMaintenanceBill.getEnergyUsage().getHotWaterUsage())
-                .lastYearFee(lastYearMaintenanceBill.getFareCollectionFee().getHouseholdHotWaterFee())
+                .lastYearUsage(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getEnergyUsage().getHotWaterUsage() : 0)
+                .lastYearFee(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getFareCollectionFee().getHouseholdHotWaterFee() : 0)
                 .averageUsageOfSameSquare(houseAverageMaintenanceFee.getAverageHotWaterUsage())
                 .averageFeeOfSameSquare(houseAverageMaintenanceFee.getAverageHotWaterFee())
                 .build());
@@ -145,8 +145,8 @@ public class MaintenanceBillBatchService {
                 .energyType(EnergyType.HEATING)
                 .presentUsage(maintenanceBill.getEnergyUsage().getHeatingUsage())
                 .presentFee(maintenanceBill.getFareCollectionFee().getHouseholdHeatingFee())
-                .lastYearUsage(lastYearMaintenanceBill.getEnergyUsage().getHeatingUsage())
-                .lastYearFee(lastYearMaintenanceBill.getFareCollectionFee().getHouseholdHeatingFee())
+                .lastYearUsage(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getEnergyUsage().getHeatingUsage() : 0)
+                .lastYearFee(lastYearMaintenanceBill != null ? lastYearMaintenanceBill.getFareCollectionFee().getHouseholdHeatingFee() : 0)
                 .averageUsageOfSameSquare(houseAverageMaintenanceFee.getAverageHeatingUsage())
                 .averageFeeOfSameSquare(houseAverageMaintenanceFee.getAverageHeatingFee())
                 .build());
@@ -212,7 +212,7 @@ public class MaintenanceBillBatchService {
         keySet.sort((o1, o2) -> fees.get(o2).compareTo(fees.get(o1)));
 
         int etcValue = 0;
-        for (int i = 5; i < keySet.size(); i++){
+        for (int i = 5; i < keySet.size(); i++) {
             if (fees.get(keySet.get(i)) > 0)
                 etcValue += fees.get(keySet.get(i));
         }
