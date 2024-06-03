@@ -7,6 +7,7 @@ import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
+import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static com.aptner.v3.board.comment.CommentDto.CommentResponse.isOwner;
+import static com.aptner.v3.board.comment.CommentDto.CommentResponse.*;
 
 @Slf4j
 @Getter
@@ -32,14 +33,20 @@ public class CommentDto extends BaseTimeDto {
     Long commentId;
     String content;
     Long parentCommentId;
+    Set<CommentDto> childComments;
+    Set<Long> childCommentAuthorIds;
     // comment info
     ReactionColumnsDto reactionColumnsDto;
     boolean visible;
+    // icon
+    @Setter
+    ReactionType reactionType;
+    boolean isTop;
 
     public static CommentDto of(Long postId, MemberDto memberdto, Long commentId) {
-        return CommentDto.of(postId, memberdto, commentId, null, null, true);
+        return CommentDto.of(postId, memberdto, commentId, 0L, null, true, false);
     }
-    public static CommentDto of(Long postId, MemberDto memberdto, Long commentId, Long parentCommentId, String content, boolean visible) {
+    public static CommentDto of(Long postId, MemberDto memberdto, Long commentId, Long parentCommentId, String content, boolean visible, boolean isTop) {
         return CommentDto.builder()
                 .postId(postId)
                 .memberDto(memberdto)
@@ -47,6 +54,7 @@ public class CommentDto extends BaseTimeDto {
                 .parentCommentId(parentCommentId)
                 .content(content)
                 .visible(visible)
+                .isTop(isTop)
                 .build();
     }
 
@@ -55,7 +63,8 @@ public class CommentDto extends BaseTimeDto {
                 commonPost,
                 member,
                 content,
-                visible
+                visible,
+                isTop
         );
     }
 
@@ -80,7 +89,10 @@ public class CommentDto extends BaseTimeDto {
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .visible(dto.isVisible())
+                .isTop(dto.isTop())
+                .isAdminComment(isAdmin(dto.getMemberDto()))
                 .isOwner(isOwner(dto))
                 // base
                 .createdAt(dto.getCreatedAt())
@@ -101,6 +113,7 @@ public class CommentDto extends BaseTimeDto {
         @NotBlank
         private String content;
         private boolean visible;
+        private boolean isTop;
 
         // 부모 댓글
         public static CommentRequest of(Long postId, String content, boolean visible) {
@@ -124,7 +137,8 @@ public class CommentDto extends BaseTimeDto {
                     commentId,
                     parentCommentId,
                     content,
-                    visible
+                    visible,
+                    hasAdminRole()
             );
         }
     }
@@ -145,10 +159,12 @@ public class CommentDto extends BaseTimeDto {
         private Long parentCommentId;
         // comment info
         private ReactionColumnsDto reactionColumns;
-        private ReactionType reactionType = ReactionType.DEFAULT;
+        private ReactionType reactionType;
         private boolean visible;
         // icon
+        private boolean isTop;
         private boolean isOwner;
+        private boolean isAdminComment;
 
         public boolean hasParentComment() {
             return parentCommentId != null;
@@ -157,11 +173,26 @@ public class CommentDto extends BaseTimeDto {
         public static boolean hasSecret(CommentDto dto) {
             // isVisible: false && (user != writer)
             return (!dto.isVisible()
-                    && !MemberUtil.getMember().getId().equals(dto.getMemberDto().getId()));
+                    && !hasAuthToSeeComment(dto));
+        }
+
+        public static boolean hasAuthToSeeComment(CommentDto dto) {
+
+            Long currentUser = MemberUtil.getMember().getId();
+            return ( currentUser.equals(dto.getMemberDto().getId()))             // 작성자 동일
+                    || dto.getChildCommentAuthorIds().contains(currentUser);     // 하위 댓글 작성자
         }
 
         public static boolean isOwner(CommentDto dto) {
             return MemberUtil.getMember().getId().equals(dto.getMemberDto().getId());
+        }
+
+        public static boolean hasAdminRole() {
+            return MemberUtil.getMember().getRoles().contains(MemberRole.ROLE_ADMIN);
+        }
+
+        public static boolean isAdmin(MemberDto dto) {
+            return dto.getRoles().contains(MemberRole.ROLE_ADMIN);
         }
     }
 }

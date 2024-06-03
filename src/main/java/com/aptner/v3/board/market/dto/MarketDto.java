@@ -4,8 +4,8 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
-import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.Market;
 import com.aptner.v3.board.market.MarketStatus;
 import com.aptner.v3.member.Member;
@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
 
 @Getter
 @ToString(callSuper = true)
@@ -29,43 +31,19 @@ public class MarketDto extends CommonPostDto {
 
         return MarketDto.builder()
                 .id(request.getId())
+                // member
                 .memberDto(memberDto)
+                // post
                 .title(request.getTitle())
                 .content(request.getContent())
                 .imageUrls(request.getImageUrls())
-                .hits(null)
-                .reactionColumnsDto(null)
-                .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup.getTable())
+                // market
                 .status(request.getStatus())
                 .price(request.getPrice())
+                // category
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
-                .createdBy(null)
-                .createdAt(null)
-                .modifiedAt(null)
-                .modifiedBy(null)
-                .build();
-    }
-
-    public static MarketDto fromMarketEntity(Market entity) {
-
-        return MarketDto.builder()
-                .id(entity.getId())
-                .memberDto(MemberDto.from(entity.getMember()))
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .imageUrls(entity.getImageUrls())
-                .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .visible(entity.isVisible())
-                .boardGroup(entity.getDtype())
-                .categoryDto(CategoryDto.from(entity.getCategory()))
-                .createdAt(entity.getCreatedAt())
-                .createdBy(entity.getCreatedBy())
-                .modifiedAt(entity.getModifiedAt())
-                .modifiedBy(entity.getModifiedBy())
                 .build();
     }
 
@@ -105,6 +83,7 @@ public class MarketDto extends CommonPostDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -123,6 +102,52 @@ public class MarketDto extends CommonPostDto {
                 .isNew(CommonPostResponse.isNew(dto))
                 .isHot(dto.isHot())
                 .build();
+
+    }
+
+    @Override
+    public MarketResponse toResponseWithComment() {
+
+        MarketDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return MarketResponse.builder()
+                .id(dto.getId())
+                // user
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                // post
+                .title(isSecret ? blindTitle : dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                .comments(organizeChildComments(dto.getCommentDto()))
+                // post info
+                .hits(dto.getHits())                                            // 조회수
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .countOfComments(dto.getCountOfComments())                      // 댓글 수
+                // category
+                .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
+                .categoryName(dto.getCategoryDto().getName())
+                // market
+                .price(dto.getPrice())
+                .status(dto.getStatus())
+                // base
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
+                .build();
+
     }
 
     @Getter
@@ -131,10 +156,9 @@ public class MarketDto extends CommonPostDto {
     @NoArgsConstructor
     public static class MarketRequest extends CommonPostDto.CommonPostRequest {
         private String type;
-        private MarketStatus status;
-
+        private MarketStatus status = MarketStatus.SALE;
         @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
-        private Integer price;
+        private Integer price = 0;
 
         public static MarketDto.MarketRequest of(Long id, Long categoryId) {
             return MarketDto.MarketRequest.builder()
