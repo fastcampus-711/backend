@@ -10,7 +10,7 @@ import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +19,24 @@ import java.util.List;
 @Getter
 @DiscriminatorValue("NoticePost")
 public class NoticePost extends CommonPost {
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    /**
+     * 중요글 
+     **/
+    @ColumnDefault(value = "false")
+    private boolean isImport;
+    /**
+     * 의무 공개
+     **/
+    @ColumnDefault(value = "false")
+    private boolean isDuty;
+    /**
+     * 일정 등록
+     **/
+    private LocalDateTime scheduleStartAt;
+    private LocalDateTime scheduleEndAt;
+    /**
+     * 등록 게시
+     **/
     private LocalDateTime postAt;
 
     public NoticePost() {
@@ -40,16 +57,21 @@ public class NoticePost extends CommonPost {
         NoticePost entity = this;
         return NoticePostDto.builder()
                 .id(entity.getId())
+                // user
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
+                .visible(entity.isVisible())
+                // post info
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .visible(entity.isVisible())
+                // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())

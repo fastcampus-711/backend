@@ -1,14 +1,11 @@
 package com.aptner.v3.board.market;
 
-import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
-import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
-import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.member.Member;
@@ -17,8 +14,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
@@ -33,9 +28,9 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
     public MarketService(MemberRepository memberRepository,
                          CategoryRepository categoryRepository,
                          @Qualifier("marketRepository") MarketRepository marketRepository,
-                         ReactionRepository<PostReaction> postReactionRepository,
-                         ReactionRepository<CommentReaction> commentReactionRepository) {
-        super(memberRepository, categoryRepository, marketRepository, postReactionRepository, commentReactionRepository);
+                         ReactionRepository<PostReaction> postReactionRepository
+    ) {
+        super(memberRepository, categoryRepository, marketRepository, postReactionRepository);
         this.marketRepository = marketRepository;
 
     }
@@ -105,13 +100,4 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
         return post;
     }
 
-    @Override
-    public Page<Market> findByDtypeAndStatus(BoardGroup boardGroup, Status status, Pageable pageable) {
-        return marketRepository.findByDtypeAndStatus(boardGroup, (MarketStatus) status, pageable);
-    }
-
-    @Override
-    public Page<Market> findByDtypeAndCategoryIdAndStatus(BoardGroup boardGroup, Long categoryId, Status status, Pageable pageable) {
-        return marketRepository.findByDtypeAndCategoryIdAndStatus(boardGroup.getTable(), categoryId, (MarketStatus) status, pageable);
-    }
 }

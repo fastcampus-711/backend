@@ -23,7 +23,11 @@ import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeC
 @SuperBuilder
 @NoArgsConstructor
 public class NoticePostDto extends CommonPostDto {
-    private LocalDateTime postAt; // 공지사항 등록 시간 != 생성시간
+    private boolean isImport;
+    private boolean isDuty;
+    private LocalDateTime scheduleStartAt = LocalDateTime.now();
+    private LocalDateTime scheduleEndAt = LocalDateTime.now().plusDays(1);
+    private LocalDateTime postAt = LocalDateTime.now();
     public static NoticePostDto of(BoardGroup boardGroup, MemberDto memberDto, NoticePostDto.NoticeRequest request) {
 
         return NoticePostDto.builder()
@@ -36,6 +40,10 @@ public class NoticePostDto extends CommonPostDto {
                 .imageUrls(request.getImageUrls())
                 .visible(request.isVisible())
                 // notice
+                .isImport(request.isImport())
+                .isDuty(request.isDuty())
+                .scheduleStartAt(request.getScheduleStartAt())
+                .scheduleEndAt(request.getScheduleEndAt())
                 .postAt(request.getPostAt())
                 //category
                 .boardGroup(boardGroup.getTable())
@@ -84,6 +92,10 @@ public class NoticePostDto extends CommonPostDto {
                 .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // notice
+                .isImport(dto.isImport())
+                .isDuty(dto.isDuty())
+                .scheduleStartAt(dto.getScheduleStartAt())
+                .scheduleEndAt(dto.getScheduleEndAt())
                 .postAt(dto.getPostAt())
                 // base
                 .createdAt(dto.getCreatedAt())
@@ -145,6 +157,10 @@ public class NoticePostDto extends CommonPostDto {
     @SuperBuilder
     @NoArgsConstructor
     public static class NoticeRequest extends CommonPostDto.CommonPostRequest {
+        private boolean isImport;
+        private boolean isDuty;
+        private LocalDateTime scheduleStartAt;
+        private LocalDateTime scheduleEndAt;
         private LocalDateTime postAt;
 
         public static NoticePostDto.NoticeRequest of(Long id, Long categoryId) {
@@ -168,6 +184,10 @@ public class NoticePostDto extends CommonPostDto {
     @NoArgsConstructor
     @SuperBuilder
     public static class NoticeResponse extends CommonPostDto.CommonPostResponse {
+        private boolean isImport;
+        private boolean isDuty;
+        private LocalDateTime scheduleStartAt;
+        private LocalDateTime scheduleEndAt;
         private LocalDateTime postAt;
 
     }

@@ -57,6 +57,8 @@ public class Comment extends BaseTimeEntity {
     @ColumnDefault(value = "true")
     private boolean visible;
 
+    @Setter
+    @ColumnDefault(value = "false")
     private boolean isTop;
 
     private boolean deleted;
