@@ -2,9 +2,12 @@ package com.aptner.v3.board.market;
 
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.dto.MarketDto;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -44,6 +47,15 @@ public class Market extends CommonPost {
     public MarketDto toDto() {
 
         Market entity = this;
+
+        Long currentUserId = MemberUtil.getMember().getId();
+
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+
         return MarketDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
@@ -52,6 +64,7 @@ public class Market extends CommonPost {
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
                 .countOfComments(entity.getCountOfComments())
                 .visible(entity.isVisible())
                 .status(entity.getStatus())

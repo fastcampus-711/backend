@@ -3,10 +3,13 @@ package com.aptner.v3.board.qna;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.qna.dto.QnaDto;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -47,6 +50,15 @@ public class Qna extends CommonPost {
     @Override
     public QnaDto toDto() {
         Qna entity = this;
+
+        Long currentUserId = MemberUtil.getMember().getId();
+
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+
         return QnaDto.builder()
                 .id(entity.getId())
                 // member
@@ -57,6 +69,7 @@ public class Qna extends CommonPost {
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
                 .countOfComments(entity.getCountOfComments())
                 .visible(entity.isVisible())
                  // qna

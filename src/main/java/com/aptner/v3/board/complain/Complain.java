@@ -2,9 +2,12 @@ package com.aptner.v3.board.complain;
 
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.complain.dto.ComplainDto;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -39,16 +42,25 @@ public class Complain extends CommonPost {
     @Override
     public ComplainDto toDto() {
         Complain entity = this;
+
+        Long currentUserId = MemberUtil.getMember().getId();
+
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+
         return ComplainDto.builder()
                 .id(entity.getId())
                 // member
                 .memberDto(MemberDto.from(entity.getMember()))
                 // post
-                .title(entity.getTitle())
-                .content(entity.getContent())
+                .title(entity.getTitle())                .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
                 .countOfComments(entity.getCountOfComments())
                 .visible(entity.isVisible())
                 // complaint

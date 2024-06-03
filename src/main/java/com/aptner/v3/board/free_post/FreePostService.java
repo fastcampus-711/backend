@@ -48,6 +48,10 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
         return super.getPostList(boardGroup, categoryId, keyword, status, userId, pageable);
     }
 
+    public Page<FreePostDto> getPostListWithoutHotPost(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
+        return super.getPostList(boardGroup, categoryId, keyword, status, userId, pageable);
+    }
+
     private Page<FreePostDto> getFirstPageWithTopPosts(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
 
         LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);

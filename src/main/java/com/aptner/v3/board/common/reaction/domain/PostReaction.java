@@ -13,6 +13,6 @@ public class PostReaction extends Reaction {
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private CommonPost post;
 }

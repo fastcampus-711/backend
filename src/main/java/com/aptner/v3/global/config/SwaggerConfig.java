@@ -29,8 +29,8 @@ public class SwaggerConfig {
     public static final Map<String, String[]> GROUPS = Stream.of(
             new SimpleEntry<>("메뉴", new String[]{"/menu/**", "/categories/**"}),
             new SimpleEntry<>("회원", new String[]{"/user/**", "/auth/**"}),
-            new SimpleEntry<>("게시판", new String[]{"/boards/**", "/reactions/**",}
-            )
+            new SimpleEntry<>("게시판", new String[]{"/boards/**", "/reactions/**"}),
+            new SimpleEntry<>("관리비", new String[]{"/maintenance-bills/**"})
     ).collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
 
     @Bean

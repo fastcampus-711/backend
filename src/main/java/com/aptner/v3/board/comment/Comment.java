@@ -15,7 +15,10 @@ import org.hibernate.annotations.ListIndexBase;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -82,10 +85,6 @@ public class Comment extends BaseTimeEntity {
         this.getChildComments().add(child);
     }
 
-    public Long getMemberId() {
-        return this.member.getId();
-    }
-
     public void setReactionColumns(long countReactionTypeGood, long countReactionTypeBad) {
         if (this.reactionColumns == null) {
             this.reactionColumns = new ReactionColumns();
@@ -96,12 +95,20 @@ public class Comment extends BaseTimeEntity {
 
     public CommentDto toDto() {
         Comment entity = this;
+
+        Set<CommentDto> commentDtos = Optional.ofNullable(entity.getChildComments())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(Comment::toDto)
+                .collect(Collectors.toSet());
+
         CommentDto build = CommentDto.builder()
                 .memberDto(MemberDto.from(entity.getMember()))
                 .postId(entity.getCommonPost().getId()) // @todo
                 // comment
                 .commentId(entity.getId())
                 .parentCommentId(entity.getParentCommentId())
+                .childComments(commentDtos)
                 .content(entity.getContent())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .visible(entity.isVisible())

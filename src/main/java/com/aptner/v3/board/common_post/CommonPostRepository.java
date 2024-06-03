@@ -14,12 +14,16 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 @Qualifier("commonPostRepository")
 public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long>, JpaSpecificationExecutor<T> {
 
     // 게시판 별 조회
     Page<T> findByDtype(String dtype, Pageable pageable);
+
+    Optional<T> findByDtypeAndId(String dtype, long postId);
 
     // 7일 이내의 조회수(hits) + 공감수(reactionColumns.countReactionTypeGood) 높은 목록
     @Convert(converter = LocalDateTimeAttributeConverter.class)
