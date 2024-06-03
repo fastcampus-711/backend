@@ -84,9 +84,9 @@ public class ComplainDto extends CommonPostDto {
                 .boardGroup(dto.getBoardGroup())
                 .categoryName(dto.getCategoryDto().getName())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -126,9 +126,9 @@ public class ComplainDto extends CommonPostDto {
                 .boardGroup(dto.getBoardGroup())
                 .categoryName(dto.getCategoryDto().getName())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))

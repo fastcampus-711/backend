@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.text.DecimalFormat;
+
 import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
 
 @Getter
@@ -90,12 +92,12 @@ public class MarketDto extends CommonPostDto {
                 .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // market
-                .price(dto.getPrice())
+                .price(priceWithCommas(dto))
                 .status(dto.getStatus())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -105,6 +107,15 @@ public class MarketDto extends CommonPostDto {
 
     }
 
+    @Override
+    public String createdAtFormat(CommonPostDto dto) {
+        return super.createdAtFormat(dto);
+    }
+
+    public String priceWithCommas(MarketDto dto){
+        String price = new DecimalFormat("###,###").format(dto.getPrice());
+        return price;
+    }
     @Override
     public MarketResponse toResponseWithComment() {
 
@@ -135,12 +146,12 @@ public class MarketDto extends CommonPostDto {
                 .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // market
-                .price(dto.getPrice())
+                .price(priceWithCommas(dto))
                 .status(dto.getStatus())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -184,6 +195,6 @@ public class MarketDto extends CommonPostDto {
     public static class MarketResponse extends CommonPostDto.CommonPostResponse {
         private String type;
         private MarketStatus status;
-        private Integer price;
+        private String price;
     }
 }

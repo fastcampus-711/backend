@@ -90,9 +90,9 @@ public class QnaDto extends CommonPostDto {
                 .status(dto.getStatus())
                 .type(dto.getType())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -134,9 +134,9 @@ public class QnaDto extends CommonPostDto {
                 .status(dto.getStatus())
                 .type(dto.getType())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))

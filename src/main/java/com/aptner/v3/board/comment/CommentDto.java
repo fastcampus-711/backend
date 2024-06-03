@@ -14,6 +14,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -95,13 +96,19 @@ public class CommentDto extends BaseTimeDto {
                 .isAdminComment(isAdmin(dto.getMemberDto()))
                 .isOwner(isOwner(dto))
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 .build();
     }
+    public String createdAtFormat(CommentDto dto){
+        return dto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
 
+    public String modifiedAtFormat(CommentDto dto){
+        return dto.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
     @Getter
     @Setter
     @ToString

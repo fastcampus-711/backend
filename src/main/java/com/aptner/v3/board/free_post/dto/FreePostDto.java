@@ -93,9 +93,9 @@ public class FreePostDto extends CommonPostDto {
                 .blindBy(dto.getBlindBy())
                 .blindAt(dto.getBlindAt())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -137,9 +137,9 @@ public class FreePostDto extends CommonPostDto {
                 .blindBy(dto.getBlindBy())
                 .blindAt(dto.getBlindAt())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))

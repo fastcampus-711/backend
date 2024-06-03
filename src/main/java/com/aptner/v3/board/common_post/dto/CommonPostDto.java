@@ -19,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -108,9 +109,9 @@ public class CommonPostDto extends BaseTimeDto {
                 .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -118,7 +119,6 @@ public class CommonPostDto extends BaseTimeDto {
                 .isHot(dto.isHot())
                 .build();
     }
-
     public CommonPostResponse toResponseWithComment() {
         CommonPostDto dto = this;
 
@@ -148,9 +148,9 @@ public class CommonPostDto extends BaseTimeDto {
                 .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
                 // base
-                .createdAt(dto.getCreatedAt())
+                .createdAt(createdAtFormat(dto))
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(dto.getModifiedAt())
+                .modifiedAt(modifiedAtFormat(dto))
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -159,6 +159,12 @@ public class CommonPostDto extends BaseTimeDto {
                 .build();
     }
 
+    public String createdAtFormat(CommonPostDto dto){
+        return dto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+    public String modifiedAtFormat(CommonPostDto dto){
+        return dto.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
     @Getter
     @Setter
     @ToString

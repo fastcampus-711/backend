@@ -33,8 +33,8 @@ public class BaseTimeDto {
     @SuperBuilder
     public static class BaseResponse {
         protected String createdBy;
-        protected LocalDateTime createdAt;
+        protected String createdAt;
         protected String modifiedBy;
-        protected LocalDateTime modifiedAt;
+        protected String modifiedAt;
     }
 }
