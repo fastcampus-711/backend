@@ -15,7 +15,6 @@ import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.CategoryException;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
 import io.micrometer.common.util.StringUtils;
@@ -88,10 +87,12 @@ public class CommonPostService<E extends CommonPost,
     public T getPost(BoardGroup boardGroup, long postId, Long userId) {
         // post
         E post = commonPostRepository.findByDtypeAndId(boardGroup.getTable(), postId)
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
         // 조회수
         post.plusHits();
-        return (T) post.toDto();
+
+        // @Notice 좋아요 매핑 하지 않고, 연관 관계 넣음 B.다른 조회시 반영 필요.
+        return (T) post.toDtoWithComment();
     }
 
     public ReactionType getPostReactionType(Long userId, Long postId) {

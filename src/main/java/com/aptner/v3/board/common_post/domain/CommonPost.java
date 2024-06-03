@@ -3,6 +3,7 @@ package com.aptner.v3.board.common_post.domain;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
@@ -152,6 +153,13 @@ public class CommonPost extends BaseTimeEntity {
 
     public CommonPostDto toDtoWithComment() {
         CommonPost entity = this;
+
+        Set<CommentDto> commentDtos = Optional.ofNullable(entity.getComments())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(Comment::toDto)
+                .collect(Collectors.toSet());
+
         CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
@@ -161,11 +169,7 @@ public class CommonPost extends BaseTimeEntity {
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .countOfComments(entity.getCountOfComments())
-                .commentDto(Optional.ofNullable(entity.getComments())
-                        .orElse(Collections.emptySet())
-                        .stream().map(Comment::toDto)
-                        .collect(Collectors.toSet())
-                )
+                .commentDto(commentDtos)
                 .visible(entity.isVisible())
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))

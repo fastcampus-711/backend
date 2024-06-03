@@ -71,7 +71,7 @@ public class CommonPostController<E extends CommonPost,
         BoardGroup boardGroup = getBoardGroup();
         T post = commonPostService.getPost(boardGroup, postId, user.toDto().getId());
         post.setReactionType(commonPostService.getPostReactionType(user.toDto().getId(), postId));
-        return ResponseUtil.ok(post.toResponse());
+        return ResponseUtil.ok(post.toResponseWithComment());
     }
 
     @PostMapping("/")

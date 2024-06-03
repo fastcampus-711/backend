@@ -6,9 +6,9 @@ import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.CommentException;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.repository.MemberRepository;
@@ -52,7 +52,7 @@ public class CommentService {
         if (dto.getParentCommentId() != null && dto.getParentCommentId() != 0) {
             log.debug("dto.getParentCommentId()!=null : {}", dto.getParentCommentId());
             Comment parentComment = commentRepository.findById(dto.getParentCommentId())
-                    .orElseThrow(InvalidTableIdException::new);
+                    .orElseThrow(() -> new CommentException(_NOT_FOUND));
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
             log.debug("dto.getParentCommentId()!=null comment : {}", comment);
 
@@ -132,7 +132,7 @@ public class CommentService {
         }
         log.debug("verifyMember : {}", dto.getMemberDto().getId());
         return memberRepository.findById(dto.getMemberDto().getId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new UserException(_NOT_FOUND));
     }
 
     private CommonPost verifyPost(CommentDto dto) {
@@ -143,7 +143,7 @@ public class CommentService {
         }
         log.debug("verifyPost : {}", dto.getPostId());
         CommonPost commonPost = commonPostRepository.findById(dto.getPostId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
         return commonPost;
     }
 
@@ -157,7 +157,7 @@ public class CommentService {
         log.debug("verifyComment : {}", dto.getCommentId());
         // exists
         Comment comment = commentRepository.findById(dto.getCommentId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new CommentException(_NOT_FOUND));
 
         // 자신이 작성한 글이 아닌 경우
         if (!comment.getMember().getId().equals(dto.getMemberDto().getId())) {
