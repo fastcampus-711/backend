@@ -68,10 +68,10 @@ public class CommonPostController<E extends CommonPost,
             @PathVariable(name = "post-id") Long postId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-
-        T post = commonPostService.getPost(user.toDto().getId(), postId);
+        BoardGroup boardGroup = getBoardGroup();
+        T post = commonPostService.getPost(boardGroup, postId, user.toDto().getId());
         post.setReactionType(commonPostService.getPostReactionType(user.toDto().getId(), postId));
-        return ResponseUtil.ok(post.toResponse());
+        return ResponseUtil.ok(post.toResponseWithComment());
     }
 
     @PostMapping("/")

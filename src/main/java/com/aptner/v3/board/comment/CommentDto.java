@@ -14,9 +14,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.aptner.v3.board.comment.CommentDto.CommentResponse.*;
 
@@ -34,11 +33,12 @@ public class CommentDto extends BaseTimeDto {
     String content;
     Long parentCommentId;
     Set<CommentDto> childComments;
-    Set<Long> childCommentAuthorIds;
     // comment info
     ReactionColumnsDto reactionColumnsDto;
     boolean visible;
     // icon
+    @Setter
+    Set<Long> childCommentAuthorIds;
     @Setter
     ReactionType reactionType;
     boolean isTop;
@@ -77,6 +77,12 @@ public class CommentDto extends BaseTimeDto {
                 .comparing(CommentDto.CommentResponse::getCreatedAt)
                 .thenComparingLong(CommentDto.CommentResponse::getCommentId);
 
+        Set<CommentResponse> childCommentResponses = Optional.ofNullable(dto.getChildComments())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(CommentDto::toResponseDto)
+                .collect(Collectors.toCollection(() -> new TreeSet<>(childCommentComparator)));
+
         return CommentResponse.builder()
                 .postId(dto.getPostId())
                 .userId(dto.getMemberDto().getId())
@@ -84,8 +90,8 @@ public class CommentDto extends BaseTimeDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 // comment
                 .commentId(dto.getCommentId())
-                .content(isSecret? blindTitle : dto.getContent())
-                .childComments(new TreeSet<>(childCommentComparator))
+                .content(isSecret ? blindTitle : dto.getContent())
+                .childComments(childCommentResponses)
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
@@ -162,9 +168,9 @@ public class CommentDto extends BaseTimeDto {
         private ReactionType reactionType;
         private boolean visible;
         // icon
-        private boolean isTop;
-        private boolean isOwner;
-        private boolean isAdminComment;
+        private boolean isTop;          // 상단 고정 댓글
+        private boolean isOwner;        // 내가 작성한 댓글
+        private boolean isAdminComment; // 어드민이 작성한 댓글
 
         public boolean hasParentComment() {
             return parentCommentId != null;
@@ -172,6 +178,7 @@ public class CommentDto extends BaseTimeDto {
 
         public static boolean hasSecret(CommentDto dto) {
             // isVisible: false && (user != writer)
+            CommentResponse.setChildCommentAuthorIds(dto);
             return (!dto.isVisible()
                     && !hasAuthToSeeComment(dto));
         }
@@ -193,6 +200,14 @@ public class CommentDto extends BaseTimeDto {
 
         public static boolean isAdmin(MemberDto dto) {
             return dto.getRoles().contains(MemberRole.ROLE_ADMIN);
+        }
+
+        public static void setChildCommentAuthorIds(CommentDto dto) {          // 하위 댓글 작성자 목록
+            Set<CommentDto> childComments = dto.getChildComments();
+            Set<Long> authorIds = childComments.stream()
+                    .map(c -> c.getMemberDto().getId())
+                    .collect(Collectors.toSet());
+            dto.setChildCommentAuthorIds(authorIds);
         }
     }
 }

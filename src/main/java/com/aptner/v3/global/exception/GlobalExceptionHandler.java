@@ -47,6 +47,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseUtil.error(e.getSubject(), e.getErrorCode());
     }
 
+    @ExceptionHandler(CommentException.class)
+    public ApiResponse<?> handlePostException(CommentException e) {
+        return ResponseUtil.error(e.getSubject(), e.getErrorCode());
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     protected ApiResponse<?> handleAccessDeniedException(final AccessDeniedException e) {
         return ResponseUtil.error("권한", ErrorCode.INVALID_REQUEST);

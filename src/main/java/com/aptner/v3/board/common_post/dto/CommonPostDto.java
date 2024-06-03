@@ -102,7 +102,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -214,7 +214,7 @@ public class CommonPostDto extends BaseTimeDto {
         // post info
         protected Long hits;
         protected ReactionColumnsDto reactionColumns;
-        private ReactionType reactionType = ReactionType.DEFAULT;
+        private ReactionType reactionType;
         protected long countOfComments;
         Set<CommentDto.CommentResponse> comments;
         // category

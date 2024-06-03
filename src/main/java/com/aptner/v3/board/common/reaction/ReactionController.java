@@ -3,7 +3,6 @@ package com.aptner.v3.board.common.reaction;
 import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.common.reaction.dto.ReactionDto;
 import com.aptner.v3.board.common.reaction.service.ReactionService;
-import com.aptner.v3.global.error.SuccessCode;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,8 +29,7 @@ public class ReactionController {
             @RequestBody ReactionDto.ReactionRequest reactionDto) {
 
         reactionDto.setUserId(user.getId());
-        reactionService.savePostReaction(reactionDto);
-        return ResponseUtil.ok(SuccessCode.REACTION_APPLY_SUCCESS);
+        return ResponseUtil.ok(reactionService.savePostReaction(reactionDto));
     }
 
     @PostMapping("/comment")
@@ -41,7 +39,6 @@ public class ReactionController {
             @RequestBody ReactionDto.ReactionRequest reactionDto) {
 
         reactionDto.setUserId(user.getId());
-        reactionService.saveCommentReaction(reactionDto);
-        return ResponseUtil.ok(SuccessCode.REACTION_APPLY_SUCCESS);
+        return ResponseUtil.ok(reactionService.saveCommentReaction(reactionDto));
     }
 }

@@ -6,9 +6,9 @@ import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.CommentException;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.repository.MemberRepository;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
@@ -52,7 +51,7 @@ public class CommentService {
         if (dto.getParentCommentId() != null && dto.getParentCommentId() != 0) {
             log.debug("dto.getParentCommentId()!=null : {}", dto.getParentCommentId());
             Comment parentComment = commentRepository.findById(dto.getParentCommentId())
-                    .orElseThrow(InvalidTableIdException::new);
+                    .orElseThrow(() -> new CommentException(_NOT_FOUND));
             log.debug("dto.getParentCommentId()!=null : {}", parentComment);
             log.debug("dto.getParentCommentId()!=null comment : {}", comment);
 
@@ -99,29 +98,26 @@ public class CommentService {
     }
 
     public Page<CommentDto> getPostWithComment(MemberDto memberDto, long postId, Pageable pageable) {
-
+        // check
         CommonPost post = commonPostRepository.findById(postId).orElseThrow(() -> new PostException(_NOT_FOUND));
-        Page<Comment> list = commentRepository.findAllByPostIdSorted(post.getId(), pageable);
 
+        // get
+        Page<Comment> commentsPage = commentRepository.findAllByPostIdAndParentCommentIdIsNull(postId, pageable);
+
+        // reaction
         Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByUserIdAndDtype(memberDto.getId(), "CommentReaction")
                 .stream()
                 .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
 
-        return list.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+        Page<CommentDto> commentDtosPage = commentsPage.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+        return commentDtosPage;
     }
 
     private CommentDto convertToDto(Comment comment, Map<Long, ReactionType> mapCommentIdAndReactionType) {
-
+        log.debug("comment : {}", comment);
         CommentDto dto = comment.toDto();
-        Set<Long> childCommentAuthorIds = getChildCommentAuthorIds(comment.getChildComments());
         dto.setReactionType(mapCommentIdAndReactionType.getOrDefault(comment.getId(), ReactionType.DEFAULT));
         return dto;
-    }
-
-    private Set<Long> getChildCommentAuthorIds(Set<Comment> childComments) {
-        return childComments.stream()
-                .map(Comment::getMemberId)
-                .collect(Collectors.toSet());
     }
 
     private Member verifyMember(CommentDto dto) {
@@ -132,7 +128,7 @@ public class CommentService {
         }
         log.debug("verifyMember : {}", dto.getMemberDto().getId());
         return memberRepository.findById(dto.getMemberDto().getId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new UserException(_NOT_FOUND));
     }
 
     private CommonPost verifyPost(CommentDto dto) {
@@ -143,7 +139,7 @@ public class CommentService {
         }
         log.debug("verifyPost : {}", dto.getPostId());
         CommonPost commonPost = commonPostRepository.findById(dto.getPostId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
         return commonPost;
     }
 
@@ -157,7 +153,7 @@ public class CommentService {
         log.debug("verifyComment : {}", dto.getCommentId());
         // exists
         Comment comment = commentRepository.findById(dto.getCommentId())
-                .orElseThrow(InvalidTableIdException::new);
+                .orElseThrow(() -> new CommentException(_NOT_FOUND));
 
         // 자신이 작성한 글이 아닌 경우
         if (!comment.getMember().getId().equals(dto.getMemberDto().getId())) {

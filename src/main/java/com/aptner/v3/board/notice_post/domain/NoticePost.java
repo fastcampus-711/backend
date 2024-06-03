@@ -2,9 +2,12 @@ package com.aptner.v3.board.notice_post.domain;
 
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.notice_post.dto.NoticePostDto;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.DiscriminatorValue;
@@ -55,6 +58,15 @@ public class NoticePost extends CommonPost {
     public NoticePostDto toDto() {
 
         NoticePost entity = this;
+
+        Long currentUserId = MemberUtil.getMember().getId();
+
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+
         return NoticePostDto.builder()
                 .id(entity.getId())
                 // user
@@ -67,6 +79,7 @@ public class NoticePost extends CommonPost {
                 // post info
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
                 .countOfComments(entity.getCountOfComments())
                 // category
                 .boardGroup(entity.getDtype())

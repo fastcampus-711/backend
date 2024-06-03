@@ -13,6 +13,6 @@ public class CommentReaction extends Reaction {
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 }
