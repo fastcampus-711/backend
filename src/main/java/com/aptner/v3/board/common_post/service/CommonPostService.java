@@ -8,6 +8,7 @@ import com.aptner.v3.board.common.reaction.domain.CommentReaction;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
+import com.aptner.v3.board.common_post.PostSpecification;
 import com.aptner.v3.board.common_post.domain.CommonPost;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Status;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -163,7 +165,7 @@ public class CommonPostService<E extends CommonPost,
      * 게시판 + 분류 + 검색어 검색
      * 인기 게시글 없음
      */
-    public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
+    public Page<T> getPostListByCategoryIdAndTitle1(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
         Page<E> list;
         if (categoryId > 0) {
             list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContaining(boardGroup.getTable(), categoryId, keyword, pageable);
@@ -183,6 +185,25 @@ public class CommonPostService<E extends CommonPost,
         // 조회수
         post.plusHits();
         return (T) post.toDto();
+    }
+
+    public Page<T> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Pageable pageable) {
+        Specification<E> spec = (Specification<E>) Specification.where(PostSpecification.hasBoardGroup(boardGroup))
+                .and(PostSpecification.hasCategoryId(categoryId))
+                .and(PostSpecification.hasKeyword(keyword))
+                .and(PostSpecification.hasStatus(status));
+
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDto());
+    }
+
+    public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
+        Specification<E> spec = (Specification<E>) Specification.where(PostSpecification.hasBoardGroup(boardGroup))
+                .and(PostSpecification.hasCategoryId(categoryId))
+                .and(PostSpecification.hasKeyword(keyword));
+
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDto());
     }
 
     public ReactionType getPostReactionType(Long userId, Long postId) {

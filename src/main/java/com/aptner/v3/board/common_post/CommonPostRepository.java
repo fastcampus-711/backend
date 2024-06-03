@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 @Qualifier("commonPostRepository")
-public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long> {
+public interface CommonPostRepository<T extends CommonPost> extends JpaRepository<T, Long>, JpaSpecificationExecutor<T> {
 
     // 게시판 별 조회
     Page<T> findByDtype(String dtype, Pageable pageable);
