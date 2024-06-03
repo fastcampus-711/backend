@@ -16,8 +16,11 @@ public class MaintenanceBillController {
     private final MaintenanceBillBatchService maintenanceBillBatchService;
     private final MaintenanceBillService maintenanceBillService;
 
-    @GetMapping("/test")
-    public ApiResponse<?> getAllMaintenanceBills() {
+    @GetMapping("/make-statistics")
+    public ApiResponse<?> makeStatistics(@RequestParam("year") int year,
+                                         @RequestParam("month") int month) {
+        maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(year, month, 1));
+
         maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 6, 1));
         maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 5, 1));
         maintenanceBillBatchService.makeMaintenanceBillMonthlyStatistics(LocalDate.of(2024, 4, 1));
