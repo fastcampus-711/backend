@@ -2,7 +2,7 @@
 insert into refresh_tokens (expire_at,token_value,token_key) values (1719994805831,'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpbWFnZSI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS83OTI3MDIyOD92PTQiLCJwYXNzd29yZCI6IiQyYSQxMCRoTWcuYzhDL3VseFJkSjdLMEs4L2F1bVVPdTQ5UmtUTEF0eUliYVh0aDFIUWVGUU9MMC9iSyIsInBob25lIjoiMDEwMTExMTIyMjIiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwibmlja25hbWUiOiJuaWNrbmFtZTEiLCJpZCI6MjEsInVzZXJuYW1lIjoidXNlciIsImF1dGgiOiJST0xFX1VTRVIiLCJpYXQiOjE3MTczMTY0MDUsImV4cCI6MTcxOTk5NDgwNX0.uAuo_EaWOx-ghXxByoXFnMl8iXqWFPjQQexXRZp6uZHosH8ksNUjk6BxOzICDQeYNrH-vg-OGPJEa6DkBIN0FA','user');
 
 -- user
-insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick1','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user1',default);
+insert into users (image,nickname,password,phone,username,id, house_id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick1','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user1',default, 1);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick2','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user2',default);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick3','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user3',default);
 insert into users (image,nickname,password,phone,username,id) values ('https://avatars.githubusercontent.com/u/79270228?s=80&v=4','nick4','$2a$10$Pg9UFHmGqfDBvqydetjeweDJLpgos79DnpvZfMWOTOIUnx4oBADFq',NULL,'user4',default);

@@ -15,8 +15,8 @@ public enum SuccessCode {
     USER_SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     POST_CREATE_SUCCESS(CREATED, "게시글이 등록되었습니다."),
     COMMENT_CREATE_SUCCESS(CREATED, "댓글이 등록되었습니다."),
-    REACTION_APPLY_SUCCESS(ACCEPTED, "반응이 반영되었습니다.")
-    ;
+    REACTION_APPLY_SUCCESS(ACCEPTED, "반응이 반영되었습니다."),
+    UPLOAD_MAINTENANCE_BILLS_SUCCESS(CREATED, "관리비 파일이 업로드되었습니다.");
     private final HttpStatus httpStatus;
     private final String detail;
 

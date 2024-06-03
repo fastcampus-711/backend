@@ -47,7 +47,10 @@ public enum ErrorCode {
     BINDING_EXCEPTION(HttpStatus.BAD_REQUEST, "binding exception"),
     ALREADY_REGISTERED_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "Already Registered Username"),
 
-    PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "Password Mismatch");
+    PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "Password Mismatch"),
+    UNREADABLE_FILE_EXCEPTION(BAD_REQUEST, "읽을 수 없는 파일입니다."),
+    INVALID_HOUSE_ID_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "세대 정보를 찾을 수 없습니다."),
+    INVALID_USER_INFO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 유저 정보입니다.");
 
     private final HttpStatus httpStatus;
     private final String detail;
