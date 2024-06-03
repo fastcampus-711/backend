@@ -86,9 +86,9 @@ public class NoticePostDto extends CommonPostDto {
                 // notice
                 .postAt(dto.getPostAt())
                 // base
-                .createdAt(createdAtFormat(dto))
+                .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(modifiedAtFormat(dto))
+                .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -129,9 +129,9 @@ public class NoticePostDto extends CommonPostDto {
                 // notice
                 .postAt(dto.getPostAt())
                 // base
-                .createdAt(createdAtFormat(dto))
+                .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(modifiedAtFormat(dto))
+                .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))

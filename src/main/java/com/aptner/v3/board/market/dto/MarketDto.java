@@ -95,9 +95,9 @@ public class MarketDto extends CommonPostDto {
                 .price(priceWithCommas(dto))
                 .status(dto.getStatus())
                 // base
-                .createdAt(createdAtFormat(dto))
+                .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(modifiedAtFormat(dto))
+                .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))
@@ -149,9 +149,9 @@ public class MarketDto extends CommonPostDto {
                 .price(priceWithCommas(dto))
                 .status(dto.getStatus())
                 // base
-                .createdAt(createdAtFormat(dto))
+                .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(modifiedAtFormat(dto))
+                .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
                 // icon
                 .isOwner(CommonPostResponse.isOwner(dto))

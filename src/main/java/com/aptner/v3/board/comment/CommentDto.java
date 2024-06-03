@@ -96,9 +96,9 @@ public class CommentDto extends BaseTimeDto {
                 .isAdminComment(isAdmin(dto.getMemberDto()))
                 .isOwner(isOwner(dto))
                 // base
-                .createdAt(createdAtFormat(dto))
+                .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .modifiedAt(modifiedAtFormat(dto))
+                .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
                 .build();
     }

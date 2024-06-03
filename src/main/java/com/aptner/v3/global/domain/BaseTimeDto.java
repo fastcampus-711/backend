@@ -1,5 +1,6 @@
 package com.aptner.v3.global.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,8 +16,10 @@ import java.time.LocalDateTime;
 public class BaseTimeDto {
 
     protected String createdBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     protected LocalDateTime createdAt;
     protected String modifiedBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     protected LocalDateTime modifiedAt;
 
     public BaseTimeDto(String createdBy, LocalDateTime createdAt, String modifiedBy, LocalDateTime modifiedAt) {
@@ -33,8 +36,13 @@ public class BaseTimeDto {
     @SuperBuilder
     public static class BaseResponse {
         protected String createdBy;
-        protected String createdAt;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        protected LocalDateTime createdAt;
+
         protected String modifiedBy;
-        protected String modifiedAt;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        protected LocalDateTime modifiedAt;
     }
 }
