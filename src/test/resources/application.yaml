@@ -8,6 +8,7 @@ spring:
   sql:
     init:
       mode: always
+      data-locations: classpath:maintenance-bill.sql, classpath:data.sql
 
   jpa:
     defer-datasource-initialization: true
