@@ -21,13 +21,15 @@ spring:
         init:
             mode: always
             platform: mysql
-            data-locations: classpath:data.sql
+            data-locations: classpath:maintenance-bill.sql, classpath:data.sql
 
     jpa:
         defer-datasource-initialization: true
         hibernate:
             dialect: org.hibernate.dialect.h2
-            ddl-auto: create-drop
+            ddl-auto: update
+#            naming:
+#              implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
         properties:
             hibernate:
                 format_sql: true
