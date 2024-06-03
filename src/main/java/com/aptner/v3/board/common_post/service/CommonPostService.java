@@ -85,9 +85,9 @@ public class CommonPostService<E extends CommonPost,
         return spec;
     }
 
-    public T getPost(Long userId, long postId) {
+    public T getPost(BoardGroup boardGroup, long postId, Long userId) {
         // post
-        E post = commonPostRepository.findById(postId)
+        E post = commonPostRepository.findByDtypeAndId(boardGroup.getTable(), postId)
                 .orElseThrow(InvalidTableIdException::new);
         // 조회수
         post.plusHits();

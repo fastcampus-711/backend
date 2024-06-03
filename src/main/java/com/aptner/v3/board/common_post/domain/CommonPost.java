@@ -3,26 +3,28 @@ package com.aptner.v3.board.common_post.domain;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.domain.ReactionColumns;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.global.domain.BaseTimeEntity;
+import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Entity
 @Getter
 @ToString
@@ -73,7 +75,11 @@ public class CommonPost extends BaseTimeEntity {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "commonPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostReaction> reactions = new HashSet<>();
 
     private boolean deleted;
 
@@ -112,6 +118,16 @@ public class CommonPost extends BaseTimeEntity {
 
     public CommonPostDto toDto() {
         CommonPost entity = this;
+        Long currentUserId = MemberUtil.getMember().getId();
+
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+
+        log.debug("reaction : {}", userReaction);
+
         CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
                 .memberDto(MemberDto.from(entity.getMember()))
@@ -120,6 +136,7 @@ public class CommonPost extends BaseTimeEntity {
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
                 .countOfComments(entity.getCountOfComments())
                 .visible(entity.isVisible())
                 .boardGroup(entity.getDtype())

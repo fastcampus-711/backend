@@ -16,6 +16,7 @@ import com.aptner.v3.board.qna.dto.QnaDto;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@Tag(name = "통합검색")
 @RequestMapping("/boards")
 public class SearchController {
 
@@ -56,7 +58,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "통합검색")
+    @Operation(summary = "검색")
     public ApiResponse<?> getPostListByCategoryId(@RequestParam(name = "keyword", required = false) String keyword,
                                                   @RequestParam(name = "status", required = false) Status status,
                                                   @RequestParam(name = "limit", required = false, defaultValue = "4") Integer limit,

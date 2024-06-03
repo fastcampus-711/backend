@@ -8,7 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class PostException extends GlobalException {
 
-    public PostException(ErrorCode errorCode) {
-        super(errorCode);
+    public PostException(ErrorCode responseCode) {
+        super(responseCode, "게시글");
+    }
+
+    public PostException(String message) {
+        super(message);
     }
 }

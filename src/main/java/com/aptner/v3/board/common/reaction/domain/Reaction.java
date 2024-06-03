@@ -22,7 +22,7 @@ public class  Reaction {
     private long id;
 
     @Setter
-    private long userId;
+    private Long userId;
 
     @Setter
     private long targetId;
