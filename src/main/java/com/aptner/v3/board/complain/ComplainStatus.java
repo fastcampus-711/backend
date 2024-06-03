@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ComplainStatus implements Status {
+public enum  ComplainStatus implements Status {
     RECEIVED("RECEIVED","접수"),
     IN_PROGRESS("IN_PROGRESS","처리중"),
     COMPLETED("COMPLETED", "처리완료")

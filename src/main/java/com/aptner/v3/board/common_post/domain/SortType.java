@@ -7,6 +7,7 @@ public enum SortType {
 
     LIKE("hits"),
     RECENT("createdAt");
+
     private final String columnName;
 
     SortType(String columnName) {

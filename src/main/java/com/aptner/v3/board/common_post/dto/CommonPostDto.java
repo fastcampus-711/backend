@@ -13,9 +13,7 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +45,13 @@ public class CommonPostDto extends BaseTimeDto {
     Long hits;
     ReactionColumnsDto reactionColumnsDto;
     Long countOfComments;
-    Set<CommentDto>     commentDto;
+    Set<CommentDto> commentDto;
     // category
     String boardGroup;
     CategoryDto categoryDto;
     // icon
+    @Setter
+    ReactionType reactionType;
     @Setter
     private boolean isHot;
 
@@ -101,6 +101,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -140,6 +141,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -164,14 +166,14 @@ public class CommonPostDto extends BaseTimeDto {
     @NoArgsConstructor
     public static class CommonPostRequest {
         protected Long id;
-        @NotBlank
+        @NotNull
         @Min(1L)
         protected Long categoryId;
         @NotBlank
-        @Max(value = 200, message = "제목은 200자 이내로 작성해주세요.")
+        @Size(max = 200, message = "제목은 200자 이내로 작성해주세요.")
         protected String title;
         @NotBlank
-        @Max(value = 500, message = "제목은 500자 이내로 작성해주세요.")
+        @Size(max = 500, message = "제목은 500자 이내로 작성해주세요.")
         protected String content;
         protected boolean visible;
         protected List<String> imageUrls;
@@ -242,24 +244,4 @@ public class CommonPostDto extends BaseTimeDto {
 
     }
 
-//    @Getter
-//    @Setter
-//    @ToString(callSuper = true)
-//    @NoArgsConstructor
-//    @SuperBuilder
-//    public static class CommonPostWithCommentResponse extends CommonPostResponse {
-//        protected Set<CommentDto.CommentResponse> comments;
-//
-//        public CommonPostDto.CommonPostResponse applyReactionTypeToComments(Map<Long, ReactionType> mapCommentIdAndReactionType) {
-//            for (CommentDto.CommentResponse comment : comments) {
-//                if (mapCommentIdAndReactionType.containsKey(comment.getId()))
-//                    comment.setReactionType(mapCommentIdAndReactionType.get(comment.getId()));
-//                for (CommentDto.CommentResponse childComment : comment.getChildComments())
-//                    if (mapCommentIdAndReactionType.containsKey(childComment.getId()))
-//                        childComment.setReactionType(mapCommentIdAndReactionType.get(childComment.getId()));
-//            }
-//
-//            return this;
-//        }
-//    }
 }

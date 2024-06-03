@@ -76,8 +76,14 @@ public class CommonPostController<E extends CommonPost,
 
     @GetMapping("/{post-id}")
     @Operation(summary = "게시글 상세")
-    public ApiResponse<?> getPost(@PathVariable(name = "post-id") Long postId) {
-        return ResponseUtil.ok(commonPostService.getPost(postId).toResponse());
+    public ApiResponse<?> getPost(
+            @PathVariable(name = "post-id") Long postId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+
+        T post = commonPostService.getPost(user.toDto(), postId);
+        post.setReactionType(commonPostService.getPostReactionType(user.toDto().getId(), postId));
+        return ResponseUtil.ok(post.toResponse());
     }
 
     @PostMapping("/")

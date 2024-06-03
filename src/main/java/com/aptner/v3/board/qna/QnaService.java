@@ -60,7 +60,7 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     @Override
     public Page<QnaDto> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
         // 키워드 검색
-        Page<Qna> list = qnaRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
+        Page<Qna> list = qnaRepository.findByDtypeAndCategoryIdAndTitleContaining(boardGroup.getTable(), categoryId, keyword, pageable);
         return list.map(e -> (QnaDto) e.toDtoWithComment());  // toDto() -> toDtoWithComment()
     }
 

@@ -79,16 +79,16 @@ public class MenuInitializer implements CommandLineRunner {
         menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.MYFEE.name(), MenuCode.MYFEE.getKo(), fee.getId()));
 
         // 공지사항 분류
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "1", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "2", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "3", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "4", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안/경비", "5", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "6", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "7", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "8", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "9", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "10", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "1", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공사안내", "2", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("선거관리위원회", "3", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("입주자대표회의", "4", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("관리비", "5", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("계약서", "6", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("관리규약", "7", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("장기수선충당금", "8", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("안전관리계획", "9", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("입찰정보", "10", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "11", BoardGroup.NOTICES));
         // 자유 게시판 분류
         categoryService.createCategory(CategoryDto.CategoryRequest.of("취미/운동", "12", BoardGroup.FREES));
