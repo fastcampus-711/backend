@@ -90,6 +90,15 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi getMaintenance() {
+        return GroupedOpenApi
+                .builder()
+                .group("관리비")
+                .pathsToMatch(GROUPS.get("관리비"))
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi getETC() {
 
         String[] excludes = GROUPS.entrySet().stream()
