@@ -4,6 +4,7 @@ import com.aptner.v3.global.error.SuccessCode;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,11 +36,10 @@ public class MaintenanceBillController {
         return null;
     }
 
-    @Deprecated
-    @PostMapping("/upload")
-    public ApiResponse<?> uploadMaintenanceBills(@RequestBody MultipartFile file) {
+    //    @Deprecated
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<?> uploadMaintenanceBills(@RequestPart(value = "file") MultipartFile file) {
         maintenanceBillBatchService.uploadMaintenanceBills(file);
-
         return ResponseUtil.ok(SuccessCode.UPLOAD_MAINTENANCE_BILLS_SUCCESS);
     }
 
