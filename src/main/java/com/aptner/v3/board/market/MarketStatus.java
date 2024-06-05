@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum MarketStatus implements Status {
     //MARKET
     SALE("SALE","판매중"),
-    RESERVED("SALE_DONE","예약중"),
+    RESERVED("RESERVED","예약중"),
     SOLD_OUT("SOLD_OUT","판매완료");
 
     private final String code;
