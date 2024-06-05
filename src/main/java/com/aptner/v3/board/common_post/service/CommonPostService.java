@@ -101,6 +101,7 @@ public class CommonPostService<E extends CommonPost,
 
         // @Notice 좋아요 매핑 하지 않고, 연관 관계 넣음 B.다른 조회시 반영 필요.
         return commonPostDto;
+
     }
 
     public ReactionType getPostReactionType(Long userId, Long postId) {
@@ -165,7 +166,7 @@ public class CommonPostService<E extends CommonPost,
     }
 
     protected E verifyDeletePost(T dto) {
-        return verifyPost(dto);
+        return this.verifyPost(dto);
     }
 
     protected E verifyPost(T dto) {
@@ -176,7 +177,8 @@ public class CommonPostService<E extends CommonPost,
         }
 
         // exists
-        E post = commonPostRepository.findById(dto.getId()).orElseThrow(EntityNotFoundException::new);
+        E post = commonPostRepository.findById(dto.getId())
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {

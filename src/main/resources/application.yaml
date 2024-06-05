@@ -1,5 +1,5 @@
 frontend:
-  url: aptner.ha-ving.store:80
+  url: https://aptner.ha-ving.store
 
 server:
     port: 80

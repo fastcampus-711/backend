@@ -7,7 +7,6 @@ import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
-import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.global.domain.BaseTimeDto;
 import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
@@ -63,7 +62,7 @@ public class CommonPostDto extends BaseTimeDto {
 
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest request) {
 
-        return FreePostDto.builder()
+        return CommonPostDto.builder()
                 .id(request.getId())
                 .memberDto(memberDto)
                 .title(request.getTitle())
@@ -141,7 +140,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
                 // post
-                .title(isSecret ? blindTitle : dto.getTitle())
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(isSecret ? null : dto.getImageUrls())
                 .visible(dto.isVisible())

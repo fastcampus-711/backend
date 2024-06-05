@@ -11,13 +11,13 @@ import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
+import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 @Service
 @Slf4j
@@ -85,7 +85,8 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
         }
         // exists
 
-        Market post = marketRepository.findById(dto.getId()).orElseThrow(EntityNotFoundException::new);
+        Market post = marketRepository.findById(dto.getId())
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {
