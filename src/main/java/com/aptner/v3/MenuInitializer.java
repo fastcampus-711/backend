@@ -70,7 +70,7 @@ public class MenuInitializer implements CommandLineRunner {
 
         // complaint
         Menu complaint = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_COMPLAINT.name(), MenuCode.TOP_COMPLAINT.getKo(), null));
-        menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.COMPLAINT.name(), MenuCode.COMPLAINT.getKo(), BoardGroup.COMPLAINT));    //** 게시판..형태가 필터넹...
+        menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.COMPLAINT.name(), MenuCode.COMPLAINT.getKo(), BoardGroup.COMPLAINT));
         menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.MYCOMPLAINT.name(), MenuCode.MYCOMPLAINT.getKo(), BoardGroup.MYCOMPLAINT));
 
         // fee

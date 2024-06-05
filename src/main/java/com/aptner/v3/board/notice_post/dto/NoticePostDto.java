@@ -78,7 +78,7 @@ public class NoticePostDto extends CommonPostDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
                 // post
-                .title(isSecret ? blindTitle : dto.getTitle())
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(isSecret ? null : dto.getImageUrls())
                 .visible(dto.isVisible())
@@ -124,7 +124,7 @@ public class NoticePostDto extends CommonPostDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
                 // post
-                .title(isSecret ? blindTitle : dto.getTitle())
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(isSecret ? null : dto.getImageUrls())
                 .visible(dto.isVisible())

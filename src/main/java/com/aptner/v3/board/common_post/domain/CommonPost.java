@@ -117,31 +117,33 @@ public class CommonPost extends BaseTimeEntity {
         this.hits++;
     }
 
+    /* 댓글을 포함 하지 않는 경우 */
     public CommonPostDto toDto() {
         CommonPost entity = this;
         Long currentUserId = MemberUtil.getMember().getId();
 
-        ReactionType userReaction = entity.getReactions().stream()
-                .filter(reaction -> reaction.getUserId().equals(currentUserId))
-                .map(PostReaction::getReactionType)
-                .findFirst()
-                .orElse(null);
-
-        log.debug("reaction : {}", userReaction);
+        // reaction
+        ReactionType userReaction = getReactionType(entity, currentUserId);
 
         CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
+                // member
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
+                .visible(entity.isVisible())
+                // reaction
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .reactionType(userReaction)
+                // comment
                 .countOfComments(entity.getCountOfComments())
-                .visible(entity.isVisible())
+                // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())
@@ -151,9 +153,15 @@ public class CommonPost extends BaseTimeEntity {
         return build;
     }
 
+    /* 댓글을 포함 하는 경우 */
     public CommonPostDto toDtoWithComment() {
         CommonPost entity = this;
+        Long currentUserId = MemberUtil.getMember().getId();
 
+        // reaction
+        ReactionType userReaction = getReactionType(entity, currentUserId);
+
+        // comment
         Set<CommentDto> commentDtos = Optional.ofNullable(entity.getComments())
                 .orElse(Collections.emptySet())
                 .stream()
@@ -162,17 +170,25 @@ public class CommonPost extends BaseTimeEntity {
 
         CommonPostDto build = CommonPostDto.builder()
                 .id(entity.getId())
+                // member
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
-                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
-                .countOfComments(entity.getCountOfComments())
-                .commentDto(commentDtos)
                 .visible(entity.isVisible())
+                // reaction
+                .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
+                .reactionType(userReaction)
+                // comment
+                .countOfComments(entity.getCountOfComments())
+                 /* 댓글 생성 */
+                .commentDto(commentDtos)
+                // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())
@@ -180,5 +196,14 @@ public class CommonPost extends BaseTimeEntity {
                 .build();
 
         return build;
+    }
+
+    public static ReactionType getReactionType(CommonPost entity, Long currentUserId) {
+        ReactionType userReaction = entity.getReactions().stream()
+                .filter(reaction -> reaction.getUserId().equals(currentUserId))
+                .map(PostReaction::getReactionType)
+                .findFirst()
+                .orElse(null);
+        return userReaction;
     }
 }
