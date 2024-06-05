@@ -10,5 +10,6 @@ import lombok.Getter;
 public class SquareOnSquareInfoDto {
     private long maintenanceFeeOfPresent;
     private long minMaintenanceFeeOfSameSquares;
+    private long averageMaintenanceFeeOfSameSquares;
     private long maxMaintenanceFeeOfSameSquares;
 }

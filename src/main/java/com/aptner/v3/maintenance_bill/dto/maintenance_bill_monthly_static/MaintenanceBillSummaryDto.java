@@ -5,12 +5,29 @@ import com.aptner.v3.maintenance_bill.embed.maintenance_bill.FareCollectionDisco
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 public class MaintenanceBillSummaryDto {
+    LocalDate targetDate;
     private long beforeDeadlineFee;
+    private int fareCollectionTotalDiscount;
     private FareCollectionDiscountDto fareCollectionDiscount;
     private int unpaidFee;
     private int afterDeadlineFee;
+
+    public void calculateFareCollectionTotalDiscount() {
+        fareCollectionTotalDiscount
+                += fareCollectionDiscount.getMaintenanceDiscount()
+                + fareCollectionDiscount.getHiringDiscount()
+                + fareCollectionDiscount.getSummerElectricityDiscount()
+                + fareCollectionDiscount.getParkingFeeDiscount()
+                + fareCollectionDiscount.getVoucherDiscount()
+                + fareCollectionDiscount.getElectricityDiscount()
+                + fareCollectionDiscount.getWaterDiscount();
+    }
 }
