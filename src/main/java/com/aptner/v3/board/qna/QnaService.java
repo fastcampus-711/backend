@@ -4,6 +4,7 @@ import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.comment.Comment;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.qna.dto.QnaDto;
 import com.aptner.v3.board.qna.dto.QnaStatusDto;
@@ -26,9 +27,10 @@ public class QnaService extends CommonPostService<Qna, QnaDto, QnaDto.QnaRequest
     public QnaService(MemberRepository memberRepository,
                       CategoryRepository categoryRepository,
                       @Qualifier("qnaRepository") QnaRepository qnaRepository,
-                      ReactionRepository<PostReaction> postReactionRepository
+                      ReactionRepository<PostReaction> postReactionRepository,
+                      ReportRepository reportRepository
     ) {
-        super(memberRepository, categoryRepository, qnaRepository, postReactionRepository);
+        super(memberRepository, categoryRepository, qnaRepository, postReactionRepository, reportRepository);
         this.qnaRepository = qnaRepository;
     }
 

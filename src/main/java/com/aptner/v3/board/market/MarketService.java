@@ -4,6 +4,7 @@ import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.market.dto.MarketDto;
 import com.aptner.v3.global.error.ErrorCode;
@@ -28,9 +29,10 @@ public class MarketService extends CommonPostService<Market, MarketDto, MarketDt
     public MarketService(MemberRepository memberRepository,
                          CategoryRepository categoryRepository,
                          @Qualifier("marketRepository") MarketRepository marketRepository,
-                         ReactionRepository<PostReaction> postReactionRepository
+                         ReactionRepository<PostReaction> postReactionRepository,
+                         ReportRepository reportRepository
     ) {
-        super(memberRepository, categoryRepository, marketRepository, postReactionRepository);
+        super(memberRepository, categoryRepository, marketRepository, postReactionRepository, reportRepository);
         this.marketRepository = marketRepository;
 
     }

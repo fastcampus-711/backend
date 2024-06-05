@@ -56,6 +56,11 @@ public class CommonPostDto extends BaseTimeDto {
     @Setter
     private boolean isHot;
 
+    int countOfReports;
+
+    @Setter
+    boolean alreadyReport;
+
     public static CommonPostDto of(BoardGroup boardGroup, MemberDto memberDto, CommonPostRequest request) {
 
         return FreePostDto.builder()
@@ -103,6 +108,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
                 .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
+                .alreadyReport(dto.isAlreadyReport())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -119,6 +125,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .isHot(dto.isHot())
                 .build();
     }
+
 
     public CommonPostResponse toResponseWithComment() {
         CommonPostDto dto = this;
@@ -143,6 +150,7 @@ public class CommonPostDto extends BaseTimeDto {
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
                 .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .alreadyReport(dto.isAlreadyReport())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -225,6 +233,7 @@ public class CommonPostDto extends BaseTimeDto {
         protected boolean isOwner;
         protected boolean isNew;
         protected boolean isHot;
+        protected boolean alreadyReport;
 
         public static boolean hasSecret(CommonPostDto dto) {
             // isVisible: false && (user != writer)

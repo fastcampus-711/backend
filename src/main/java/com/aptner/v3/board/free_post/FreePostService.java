@@ -4,6 +4,7 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.PostSpecification;
 import com.aptner.v3.board.common_post.domain.CommonPost;
@@ -33,9 +34,10 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
     public FreePostService(MemberRepository memberRepository,
                            CategoryRepository categoryRepository,
                            CommonPostRepository<FreePost> commonPostRepository,
-                           ReactionRepository<PostReaction> postReactionRepository
+                           ReactionRepository<PostReaction> postReactionRepository,
+                           ReportRepository reportRepository
     ) {
-        super(memberRepository, categoryRepository, commonPostRepository, postReactionRepository);
+        super(memberRepository, categoryRepository, commonPostRepository, postReactionRepository, reportRepository);
         this.commonPostRepository = commonPostRepository;
     }
 

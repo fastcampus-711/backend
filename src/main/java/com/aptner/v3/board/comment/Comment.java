@@ -65,7 +65,7 @@ public class Comment extends BaseTimeEntity {
     private boolean isTop;
 
     private boolean deleted;
-
+    private int countOfReports;
     protected Comment() {}
 
     public Comment(CommonPost commonPost, Member member, String content, Long parentCommentId, boolean visible, boolean isTop) {
@@ -92,7 +92,9 @@ public class Comment extends BaseTimeEntity {
         this.reactionColumns.setCountReactionTypeGood(countReactionTypeGood);
         this.reactionColumns.setCountReactionTypeBad(countReactionTypeBad);
     }
-
+    public int plusCommentReportCount(){
+        return countOfReports++;
+    }
     public CommentDto toDto() {
         Comment entity = this;
 
