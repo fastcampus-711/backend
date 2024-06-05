@@ -15,9 +15,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
 
+@Slf4j
 @Getter
 @ToString(callSuper = true)
 @SuperBuilder
@@ -168,7 +170,7 @@ public class MarketDto extends CommonPostDto {
 
         @Override
         public MarketDto toDto(BoardGroup boardGroup, CustomUserDetails user, CommonPostRequest request) {
-            return MarketDto.of(
+            return new MarketDto().of(
                     boardGroup,
                     user.toDto(),
                     (MarketRequest) request

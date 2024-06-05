@@ -2,9 +2,12 @@ package com.aptner.v3.board.market;
 
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.board.comment.Comment;
+import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.dto.MarketDto;
 import com.aptner.v3.global.util.MemberUtil;
@@ -17,7 +20,11 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -58,19 +65,26 @@ public class Market extends CommonPost {
 
         return MarketDto.builder()
                 .id(entity.getId())
+                // member
                 .memberDto(MemberDto.from(entity.getMember()))
+                // post
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .imageUrls(entity.getImageUrls())
                 .hits(entity.getHits())
+                .visible(entity.isVisible())
+                // reaction
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .reactionType(userReaction)
+                // comment
                 .countOfComments(entity.getCountOfComments())
-                .visible(entity.isVisible())
+                // market
                 .status(entity.getStatus())
                 .price(entity.getPrice())
+                // category
                 .boardGroup(entity.getDtype())
                 .categoryDto(CategoryDto.from(entity.getCategory()))
+                // base
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .modifiedAt(entity.getModifiedAt())
