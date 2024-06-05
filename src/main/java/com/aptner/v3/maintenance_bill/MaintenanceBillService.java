@@ -46,10 +46,17 @@ public class MaintenanceBillService {
                 getMaintenanceBillMonthlyStatic(year, month);
 
         return maintenanceBillMonthlyStatic.map(
-                        billMonthlyStatic -> maintenanceBillMonthlyStaticMapper
-                                .maintenanceBillMonthlyStaticToMaintenanceBillSummaryDto(
-                                        billMonthlyStatic.getMaintenanceBillSummary()
-                                ))
+                        billMonthlyStatic -> {
+                            MaintenanceBillSummaryDto maintenanceBillSummaryDto =
+                                    maintenanceBillMonthlyStaticMapper
+                                    .maintenanceBillMonthlyStaticToMaintenanceBillSummaryDto(
+                                            billMonthlyStatic.getMaintenanceBillSummary()
+                                    );
+                            maintenanceBillSummaryDto.setTargetDate(LocalDate.of(year, month, 1));
+                            maintenanceBillSummaryDto.calculateFareCollectionTotalDiscount();
+
+                            return maintenanceBillSummaryDto;
+                        })
                 .orElse(null);
     }
 
