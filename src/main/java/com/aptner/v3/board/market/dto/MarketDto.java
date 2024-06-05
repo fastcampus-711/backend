@@ -6,6 +6,7 @@ import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import com.aptner.v3.board.market.Market;
 import com.aptner.v3.board.market.MarketStatus;
 import com.aptner.v3.member.Member;
@@ -75,13 +76,13 @@ public class MarketDto extends CommonPostDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
                 // post
-                .title(isSecret ? blindTitle : dto.getTitle())
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(dto.getImageUrls())
                 .visible(dto.isVisible())
                 // post info
                 .hits(dto.getHits())                                            // 조회수
-                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
+                .reactionColumns(isSecret ? new ReactionColumnsDto(0L,0L) : dto.getReactionColumnsDto()) // 공감
                 .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
@@ -119,7 +120,7 @@ public class MarketDto extends CommonPostDto {
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
                 // post
-                .title(isSecret ? blindTitle : dto.getTitle())
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
                 .imageUrls(isSecret ? null : dto.getImageUrls())
                 .visible(dto.isVisible())
