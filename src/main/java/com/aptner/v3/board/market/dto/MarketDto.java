@@ -26,7 +26,7 @@ import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeC
 @NoArgsConstructor
 public class MarketDto extends CommonPostDto {
     private String type;  // @todo check type이 뭐징?
-    private MarketStatus status;
+    private MarketStatus status = MarketStatus.SALE;
     private Integer price;
 
     public static MarketDto of(BoardGroup boardGroup, MemberDto memberDto, MarketDto.MarketRequest request) {

@@ -51,7 +51,7 @@ public class CommonPost extends BaseTimeEntity {
     private String title;
 
     @Setter
-    @Column(length = 500)
+    @Column(length = 2500)
     private String content;
 
     @Setter
