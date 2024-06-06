@@ -21,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @Slf4j
 @RestController
 @Tag(name = "QNA 게시판")
@@ -54,6 +56,22 @@ public class QnaController extends CommonPostController<
                 posts.map(p -> p.toResponseWithComment()),
                 paginationService.getPaginationBarNumbers(pageable.getPageNumber(), posts.getTotalPages())
         )));
+    }
+
+    @DeleteMapping("/{post-id}")
+    @Operation(summary = "게시글 삭제")
+    public ApiResponse<?> deletePost(
+            @PathVariable(name = "post-id") long postId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        QnaDto postDto = QnaDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                QnaDto.QnaRequest.of(postId, null)
+        );
+        log.debug("deletePost - postDto.getId :{}", postDto.getId());
+        long deleted = qnaService.deletePost(postId, postDto);
+        return ResponseUtil.delete(Collections.singletonMap("id", String.valueOf(deleted)));
     }
 
     @GetMapping("/status")
