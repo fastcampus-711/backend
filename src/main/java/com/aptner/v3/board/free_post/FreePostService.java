@@ -12,6 +12,7 @@ import com.aptner.v3.board.free_post.domain.FreePost;
 import com.aptner.v3.board.free_post.dto.FreePostDto;
 import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.member.repository.MemberRepository;
+import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.*;
@@ -41,7 +42,7 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
 
     @Override
     public Page<FreePostDto> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
-        if (pageable.getPageNumber() == 0) {
+        if (pageable.getPageNumber() == 0 && StringUtils.isEmpty(keyword)) {
             // (HOT) 인기 검색 예외 처리
             return getFirstPageWithTopPosts(boardGroup, categoryId, keyword, status, userId, pageable);
         }
