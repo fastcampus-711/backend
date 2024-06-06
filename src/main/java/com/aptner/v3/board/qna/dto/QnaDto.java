@@ -4,7 +4,6 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.comment.CommentDto;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.qna.Qna;
@@ -16,8 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Set;
-
 import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
 
 @Getter
@@ -28,22 +25,6 @@ public class QnaDto extends CommonPostDto {
     private String type;
     private QnaStatus status = QnaStatus.AWAITING_RESPONSE;
 
-    public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaStatusDto.QnaStatusRequest request) {
-
-        return QnaDto.builder()
-                .id(request.getPostId())
-                // member
-                .memberDto(memberDto)
-                // qna
-                .status(request.getStatus())
-                // comment
-                .commentDto(Set.of(CommentDto.of(
-                        request.getPostId(),
-                        memberDto,
-                        request.getCommentId()
-                )))
-                .build();
-    }
     public static QnaDto of(BoardGroup boardGroup, MemberDto memberDto, QnaRequest request) {
 
         return QnaDto.builder()
@@ -170,7 +151,7 @@ public class QnaDto extends CommonPostDto {
     @NoArgsConstructor
     public static class QnaRequest extends CommonPostDto.CommonPostRequest {
         private String type;
-        private QnaStatus status;
+        private QnaStatus status = QnaStatus.AWAITING_RESPONSE;
 
         public static QnaDto.QnaRequest of(Long id, Long categoryId) {
             return QnaDto.QnaRequest.builder()
