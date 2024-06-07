@@ -63,8 +63,8 @@ public class JwtFilter extends OncePerRequestFilter {
                     member = jwtUtil.claimsToMember(claims);
                 } else {
                     // @test
-                    member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
-                    member.setId(1L);
+                    member = Member.of("user1", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+                    member.setId(3L);
                 }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
                 if (!isAuth || (isRefreshTokenExists(member.getUsername()))) {
