@@ -6,6 +6,8 @@ import com.aptner.v3.auth.service.AuthService;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryService;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.maintenance_bill.domain.House;
+import com.aptner.v3.maintenance_bill.domain.type.HouseType;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.member.repository.MemberRepository;
@@ -44,8 +46,8 @@ public class MenuInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
+        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), new House(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "103")));
+        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN), new House(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "103")));
 
         // intro
         Menu intro = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));

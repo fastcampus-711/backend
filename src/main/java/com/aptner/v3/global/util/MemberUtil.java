@@ -1,6 +1,8 @@
 package com.aptner.v3.global.util;
 
 import com.aptner.v3.auth.dto.CustomUserDetails;
+import com.aptner.v3.maintenance_bill.domain.House;
+import com.aptner.v3.maintenance_bill.domain.type.HouseType;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
 import org.springframework.security.core.Authentication;
@@ -24,7 +26,8 @@ public class MemberUtil {
             return ((CustomUserDetails) authentication.getPrincipal()).getMember();
         }
         // @test
-        Member member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+        Member member = Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), new House(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "103"));
+
         member.setId(1L);
         return member;
     }
