@@ -17,6 +17,7 @@ public enum ErrorCode {
     INVALID_PASSWORD_FORMAT(BAD_REQUEST, "비밀번호는 대소문자 영문과 숫자 조합으로 8자 이상 15자 이하로 입력해주세요."),
     INCORRECT_TARGET_BOARD(BAD_REQUEST, "다른 게시판에 대한 수정/삭제 요청입니다."),
     INSUFFICIENT_AUTHORITY(BAD_REQUEST, "본인의 게시글이 아닌 게시글에 대한 수정/삭제 요청입니다."),
+    COMMENT_DEPTH_IS_OVER(BAD_REQUEST, "댓글은 2DEPTH 까지 허용 됩니다."),
 
     // 409 Conflict
     DUPLICATE_RESOURCE(CONFLICT, "중복된 이메일 또는 닉네임입니다."),
@@ -35,15 +36,26 @@ public enum ErrorCode {
     NOT_MATCHED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰의 유저 정보가 일치하지 않습니다."),
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
 
+    // 302 NOT MODIFIED
+    DELETE_NOT_AVAILABLE(NOT_MODIFIED, "삭제할 수 없습니다."),
+
     //  500
     TOKEN_CREATION_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "토큰을 생성하는 과정에서 알 수 없는 오류가 발생했습니다."),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
+
     NOT_EXISTS_MENU_ID_EXCEPTION(HttpStatus.NOT_FOUND, "not existed menu id"),
+
     NOT_EXISTS_CATEGORY_ID_EXCEPTION(HttpStatus.NOT_FOUND, "not existed category id"),
+
     ALREADY_EXISTS_CATEGORY_NAME_EXCEPTION(HttpStatus.CONFLICT, "already existed category name"),
+
     INVALID_URI_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid URI"),
+
     INVALID_TABLE_ID_EXCEPTION(HttpStatus.BAD_REQUEST, "Invalid table id exception"),
+
     BINDING_EXCEPTION(HttpStatus.BAD_REQUEST, "binding exception"),
+
     ALREADY_REGISTERED_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "Already Registered Username"),
 
     PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "Password Mismatch"),

@@ -4,8 +4,8 @@ import com.aptner.v3.auth.dto.CustomUserDetails;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.dto.CategoryDto;
-import com.aptner.v3.board.common_post.CommonPostDto;
-import com.aptner.v3.board.free_post.dto.FreePostDto;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
@@ -16,30 +16,38 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
+import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+
 @Getter
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
 public class NoticePostDto extends CommonPostDto {
-    private LocalDateTime postAt;
+    private boolean isImport;
+    private boolean isDuty;
+    private LocalDateTime scheduleStartAt = LocalDateTime.now();
+    private LocalDateTime scheduleEndAt = LocalDateTime.now().plusDays(1);
+    private LocalDateTime postAt = LocalDateTime.now();
     public static NoticePostDto of(BoardGroup boardGroup, MemberDto memberDto, NoticePostDto.NoticeRequest request) {
 
         return NoticePostDto.builder()
                 .id(request.getId())
+                // member
                 .memberDto(memberDto)
+                // post
                 .title(request.getTitle())
                 .content(request.getContent())
                 .imageUrls(request.getImageUrls())
-                .hits(null)
-                .reactionColumnsDto(null)
-                .countOfComments(null)
                 .visible(request.isVisible())
-                .boardGroup(boardGroup)
+                // notice
+                .isImport(request.isImport())
+                .isDuty(request.isDuty())
+                .scheduleStartAt(request.getScheduleStartAt())
+                .scheduleEndAt(request.getScheduleEndAt())
+                .postAt(request.getPostAt())
+                //category
+                .boardGroup(boardGroup.getTable())
                 .categoryDto(CategoryDto.of(request.getCategoryId()))
-                .createdBy(null)
-                .createdAt(null)
-                .modifiedAt(null)
-                .modifiedBy(null)
                 .build();
     }
 
@@ -49,6 +57,7 @@ public class NoticePostDto extends CommonPostDto {
                 category,
                 this.getTitle(),
                 this.getContent(),
+                this.getImageUrls(),
                 this.isVisible(),
                 postAt
         );
@@ -62,23 +71,84 @@ public class NoticePostDto extends CommonPostDto {
         String blindContent = "비밀 게시글입니다.";
         boolean isSecret = CommonPostResponse.hasSecret(dto);
 
-        return NoticePostDto.NoticeResponse.builder()
+        return NoticeResponse.builder()
                 .id(dto.getId())
+                // user
                 .userId(dto.getMemberDto().getId())
                 .userNickname(dto.getMemberDto().getNickname())
                 .userImage(dto.getMemberDto().getImage())
-                .visible(dto.isVisible())
-                .title(isSecret ? blindTitle : dto.getTitle())
+                // post
+                .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                // post info
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())
+                // category
                 .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
                 .categoryName(dto.getCategoryDto().getName())
+                // notice
+                .isImport(dto.isImport())
+                .isDuty(dto.isDuty())
+                .scheduleStartAt(dto.getScheduleStartAt())
+                .scheduleEndAt(dto.getScheduleEndAt())
+                .postAt(dto.getPostAt())
+                // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
                 .modifiedAt(dto.getModifiedAt())
                 .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
+                .build();
+    }
+
+    @Override
+    public NoticePostDto.NoticeResponse toResponseWithComment() {
+
+        NoticePostDto dto = this;
+        String blindTitle = "비밀 게시글입니다.";
+        String blindContent = "비밀 게시글입니다.";
+        boolean isSecret = CommonPostResponse.hasSecret(dto);
+
+        return NoticeResponse.builder()
+                .id(dto.getId())
+                // user
+                .userId(dto.getMemberDto().getId())
+                .userNickname(dto.getMemberDto().getNickname())
+                .userImage(dto.getMemberDto().getImage())
+                // post
+                .title(dto.getTitle())
+                .content(isSecret ? blindContent : dto.getContent())
+                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .visible(dto.isVisible())
+                .comments(organizeChildComments(dto.getCommentDto()))
+                // post info
+                .hits(dto.getHits())
+                .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
+                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .countOfComments(dto.getCountOfComments())
+                // category
+                .boardGroup(dto.getBoardGroup())
+                .categoryId(dto.getCategoryDto().getId())
+                .categoryName(dto.getCategoryDto().getName())
+                // notice
+                .postAt(dto.getPostAt())
+                // base
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .modifiedAt(dto.getModifiedAt())
+                .modifiedBy(dto.getModifiedBy())
+                // icon
+                .isOwner(CommonPostResponse.isOwner(dto))
+                .isNew(CommonPostResponse.isNew(dto))
+                .isHot(dto.isHot())
                 .build();
     }
 
@@ -87,7 +157,11 @@ public class NoticePostDto extends CommonPostDto {
     @SuperBuilder
     @NoArgsConstructor
     public static class NoticeRequest extends CommonPostDto.CommonPostRequest {
-        private LocalDateTime postAt; // 언제 부터 노출 가능한 시간.
+        private boolean isImport;
+        private boolean isDuty;
+        private LocalDateTime scheduleStartAt;
+        private LocalDateTime scheduleEndAt;
+        private LocalDateTime postAt;
 
         public static NoticePostDto.NoticeRequest of(Long id, Long categoryId) {
             return NoticePostDto.NoticeRequest.builder()
@@ -110,33 +184,11 @@ public class NoticePostDto extends CommonPostDto {
     @NoArgsConstructor
     @SuperBuilder
     public static class NoticeResponse extends CommonPostDto.CommonPostResponse {
+        private boolean isImport;
+        private boolean isDuty;
+        private LocalDateTime scheduleStartAt;
+        private LocalDateTime scheduleEndAt;
         private LocalDateTime postAt;
 
-        public static NoticePostDto.NoticeResponse from(FreePostDto dto) {
-
-            String blindTitle = "비밀 게시글입니다.";
-            String blindContent = "비밀 게시글입니다.";
-            boolean isSecret = hasSecret(dto);
-
-            return NoticePostDto.NoticeResponse.builder()
-                    .id(dto.getId())
-                    .userId(dto.getMemberDto().getId())
-                    .userNickname(dto.getMemberDto().getNickname())
-                    .userImage(dto.getMemberDto().getImage())
-                    .visible(dto.isVisible())
-                    .title(isSecret ? blindTitle : dto.getTitle())
-                    .content(isSecret ? blindContent : dto.getContent())
-                    .hits(dto.getHits())
-                    .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                    .countOfComments(dto.getCountOfComments())
-                    .boardGroup(dto.getBoardGroup())
-                    .categoryName(dto.getCategoryDto().getName())
-                    .createdAt(dto.getCreatedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
-                    .modifiedBy(dto.getModifiedBy())
-                    .build();
-
-        }
     }
 }

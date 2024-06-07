@@ -3,33 +3,39 @@ package com.aptner.v3.board.common_post.service;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.Category;
 import com.aptner.v3.board.category.repository.CategoryRepository;
-import com.aptner.v3.board.common.reaction.service.CountCommentsAndReactionApplyService;
-import com.aptner.v3.board.common_post.CommonPostDto;
+import com.aptner.v3.board.common.reaction.ReactionRepository;
+import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.reaction.dto.ReactionType;
 import com.aptner.v3.board.common_post.CommonPostRepository;
+import com.aptner.v3.board.common_post.PostSpecification;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
+import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.exception.CategoryException;
 import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.global.exception.UserException;
-import com.aptner.v3.global.exception.custom.InvalidTableIdException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.repository.MemberRepository;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.aptner.v3.global.error.ErrorCode.INVALID_REQUEST;
 import static com.aptner.v3.global.error.ErrorCode._NOT_FOUND;
 
 
 @Slf4j
-@Primary
 @Service
 @Transactional
 @Qualifier("commonPostService")
@@ -41,69 +47,68 @@ public class CommonPostService<E extends CommonPost,
     private final CommonPostRepository<E> commonPostRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
-    private final CountCommentsAndReactionApplyService<E> countOfReactionAndCommentApplyService;
+    private final ReactionRepository<PostReaction> postReactionRepository;
 
-    public CommonPostService(MemberRepository memberRepository, CategoryRepository categoryRepository, CommonPostRepository<E> commonPostRepository) {
+    public CommonPostService(MemberRepository memberRepository,
+                             CategoryRepository categoryRepository,
+                             @Qualifier("commonPostRepository") CommonPostRepository<E> commonPostRepository,
+                             ReactionRepository<PostReaction> postReactionRepository
+    ) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
-        this.countOfReactionAndCommentApplyService = new CountCommentsAndReactionApplyService<>(commonPostRepository);
         this.commonPostRepository = commonPostRepository;
+        this.postReactionRepository = postReactionRepository;
     }
 
-    /**
-     * 게시판 + 분류 검색
-     * 자유게시판 : 인기게시글
-     */
-    public Page<T> getPostListByCategoryId(BoardGroup boardGroup, Long categoryId, Pageable pageable) {
+    public Page<T> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
 
-        Page<E> list;
-        if (categoryId == 0) {
-            // 게시판 조회
-            if (BoardGroup.FREES.equals(boardGroup)) {
-                if (pageable.getPageNumber() == 1) {
-                    // 인기 게시글
-                }
-            }
-
-            list = commonPostRepository.findByDtype(boardGroup.getTable(), pageable);
-        } else {
-            // 게시판 + 카테고리 조회
-            list = commonPostRepository.findByDtypeAndCategoryId(boardGroup.getTable(), categoryId, pageable);
-        }
-
-        return list.map(e -> (T) e.toDto());
+        Specification<E> spec = geteSpecification(boardGroup, categoryId, keyword, status, userId);
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDto());
     }
 
-    /**
-     * 게시판 + 분류 + 검색어 검색
-     * 인기 게시글 없음
-     */
-    public Page<T> getPostListByCategoryIdAndTitle(BoardGroup boardGroup, Long categoryId, String keyword, Pageable pageable) {
-        Page<E> list = commonPostRepository.findByDtypeAndCategoryIdAndTitleContainingIgnoreCase(boardGroup.getTable(), categoryId, keyword, pageable);
-        return list.map(e -> (T) e.toDto());
+    public Page<T> getPostListWithComment(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
+
+        Specification<E> spec = geteSpecification(boardGroup, categoryId, keyword, status, userId);
+        Page<E> posts = commonPostRepository.findAll(spec, pageable);
+        return posts.map(e -> (T) e.toDtoWithComment());
     }
 
-    public T getPost(long postId) {
-        //Logic: 조회수 +1
-        E post = commonPostRepository.findByComments_CommonPostId(postId)
-                .orElse(
-                        commonPostRepository.findById(postId)
-                                .orElseThrow(InvalidTableIdException::new)
-                );
+    private static <E extends CommonPost> Specification<E> geteSpecification(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId) {
+        Specification<E> spec = (Specification<E>) Specification
+                .where(PostSpecification.hasBoardGroup(boardGroup))
+                .and(PostSpecification.hasCategoryId(categoryId))
+                .and(PostSpecification.hasKeyword(keyword))
+                .and(PostSpecification.hasStatus(status))
+                .and(PostSpecification.hasAuthor(userId));
+        return spec;
+    }
+
+    public T getPost(BoardGroup boardGroup, long postId, Long userId) {
+        // post
+        E post = commonPostRepository.findByDtypeAndId(boardGroup.getTable(), postId)
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
+        // 조회수
         post.plusHits();
 
-        //Logic: 댓글 수 갱신
-        post.updateCountOfComments(
-                countOfReactionAndCommentApplyService.countComments(post.getComments())
-        );
-
+        // @Notice 좋아요 매핑 하지 않고, 연관 관계 넣음 B.다른 조회시 반영 필요.
         return (T) post.toDto();
+    }
+
+    public ReactionType getPostReactionType(Long userId, Long postId) {
+        AtomicReference<ReactionType> reactionTypeRef = new AtomicReference<>(ReactionType.DEFAULT);
+
+        postReactionRepository.findByUserIdAndTargetIdAndDtype(userId, postId, "PostReaction")
+                .ifPresent(reaction -> reactionTypeRef.set(reaction.getReactionType()));
+
+        return reactionTypeRef.get();
     }
 
     public T createPost(T dto) {
 
         Member member = verifyMember(dto);
         Category category = verifyCategory(dto);
+        verifyCreatePost(dto);
         E entity = (E) dto.toEntity(member, category);
         E saved = commonPostRepository.save(entity);
         T postDto = (T) saved.toDto();
@@ -137,10 +142,22 @@ public class CommonPostService<E extends CommonPost,
     }
 
     public long deletePost(long postId, T dto) {
-        verifyPost(dto);
-
+        verifyDeletePost(dto);
         commonPostRepository.deleteById(postId);
         return postId;
+    }
+
+    private void verifyCreatePost(T dto) {
+        int imageUploadCount = 5;
+        if (dto.getImageUrls() != null &&
+                dto.getImageUrls().size() > imageUploadCount) {
+            log.error("createPost - image count exceed : {}", dto.getImageUrls().size());
+            throw new PostException(INVALID_REQUEST);
+        }
+    }
+
+    protected E verifyDeletePost(T dto) {
+        return this.verifyPost(dto);
     }
 
     protected E verifyPost(T dto) {
@@ -149,14 +166,10 @@ public class CommonPostService<E extends CommonPost,
             log.error("POST ID 없음");
             throw new PostException(INVALID_REQUEST);
         }
+
         // exists
-        E post;
-        try {
-            post = commonPostRepository.findById(dto.getId()).get();
-        } catch (EntityNotFoundException e1) {
-            log.error("POST ID DB에 없음");
-            throw new PostException(_NOT_FOUND);
-        }
+        E post = commonPostRepository.findById(dto.getId())
+                .orElseThrow(() -> new PostException(_NOT_FOUND));
 
         // 자신이 작성한 글이 아닌 경우
         if (!post.getMember().getId().equals(dto.getMemberDto().getId())) {
@@ -166,8 +179,8 @@ public class CommonPostService<E extends CommonPost,
 
         // Board 속한 게시글 수정/삭제
         if (StringUtils.isNotEmpty(post.getDtype())
-                && !post.getDtype().equals(dto.getBoardGroup().getTable())) {
-            log.error("속한 카테고리가 아님: {} | {}", post.getDtype(), dto.getBoardGroup().getTable());
+                && !post.getDtype().equals(dto.getBoardGroup())) {
+            log.error("속한 카테고리가 아님: {} | {}", post.getDtype(), dto.getBoardGroup());
             throw new PostException(INVALID_REQUEST);
         }
         return post;
@@ -199,6 +212,20 @@ public class CommonPostService<E extends CommonPost,
         } catch (EntityNotFoundException e) {
             log.error("MEMBER ID DBd에 없음");
             throw new UserException(_NOT_FOUND);
+        }
+    }
+
+    private void logGenericTypes() {
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) superclass).getActualTypeArguments();
+            log.debug("Generic types: (E)Entity = {}, (T)DTO = {}, (Q)Request = {}, (S)Response = {}",
+                    typeArguments[0].getTypeName(),
+                    typeArguments[1].getTypeName(),
+                    typeArguments[2].getTypeName(),
+                    typeArguments[3].getTypeName());
+        } else {
+            log.debug("No generic type information available.");
         }
     }
 }

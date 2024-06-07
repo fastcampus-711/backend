@@ -13,7 +13,7 @@ import com.aptner.v3.menu.Menu;
 import com.aptner.v3.menu.MenuCode;
 import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,6 @@ import java.util.List;
 import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
 @Component
-@RequiredArgsConstructor
 public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
@@ -30,6 +29,17 @@ public class MenuInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
 
     private final AuthService authService;
+    private final Boolean isTest;
+
+    public MenuInitializer(MenuService menuService, CategoryService categoryService,
+                           MemberRepository memberRepository, AuthService authService,
+                           @Value("${server.auth}") Boolean isTest) {
+        this.menuService = menuService;
+        this.categoryService = categoryService;
+        this.memberRepository = memberRepository;
+        this.authService = authService;
+        this.isTest = isTest;
+    }
 
     @Override
     public void run(String... args) {
@@ -60,7 +70,7 @@ public class MenuInitializer implements CommandLineRunner {
 
         // complaint
         Menu complaint = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_COMPLAINT.name(), MenuCode.TOP_COMPLAINT.getKo(), null));
-        menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.COMPLAINT.name(), MenuCode.COMPLAINT.getKo(), BoardGroup.COMPLAINT));    //** 게시판..형태가 필터넹...
+        menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.COMPLAINT.name(), MenuCode.COMPLAINT.getKo(), BoardGroup.COMPLAINT));
         menuService.createMenu(MenuDto.MenuDtoRequest.of(complaint.getId(), MenuCode.MYCOMPLAINT.name(), MenuCode.MYCOMPLAINT.getKo(), BoardGroup.MYCOMPLAINT));
 
         // fee
@@ -68,20 +78,20 @@ public class MenuInitializer implements CommandLineRunner {
         menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOTALFEE.name(), MenuCode.TOTALFEE.getKo(), fee.getId()));
         menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.MYFEE.name(), MenuCode.MYFEE.getKo(), fee.getId()));
 
-        // 공지사항 분류
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "1", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "2", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "3", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "4", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안/경비", "5", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "6", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "7", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "8", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "9", BoardGroup.NOTICES));
-        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "10", BoardGroup.NOTICES));
+        // 공지사항(의무) 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "1", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공사안내", "2", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("선거관리위원회", "3", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("입주자대표회의", "4", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("관리비", "5", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("계약서", "6", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("관리규약", "7", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("장기수선충당금", "8", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("안전관리계획", "9", BoardGroup.NOTICES));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("입찰정보", "10", BoardGroup.NOTICES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "11", BoardGroup.NOTICES));
-
         // 자유 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("취미/운동", "12", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("생활/편의", "13", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("음식/카페", "14", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("병원/약국", "15", BoardGroup.FREES));
@@ -93,16 +103,32 @@ public class MenuInitializer implements CommandLineRunner {
         categoryService.createCategory(CategoryDto.CategoryRequest.of("살림정보", "21", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("모임/동호회", "22", BoardGroup.FREES));
         categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "23", BoardGroup.FREES));
+        // QNA 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("QNA", "24", BoardGroup.QNAS));
+        // 나눔 장터 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("무료나눔", "25", BoardGroup.MARKETS));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("중고거래", "26", BoardGroup.MARKETS));
+        // 민원 게시판 분류
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("엘리베이터", "27", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동생활", "28", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("공동현관/복도", "29", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("주차장", "30", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("보안경비", "31", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("조명", "32", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("조경", "33", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("커뮤니티시설", "34", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("시공사하자", "35", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("도로/인도", "36", BoardGroup.COMPLAINT));
+        categoryService.createCategory(CategoryDto.CategoryRequest.of("기타", "37", BoardGroup.COMPLAINT));
+
 
         // 가짜 로그인 사용자 지정
-//        CustomUserDetails userDetails = new CustomUserDetails(user);
-//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        TokenDto login = authService.login(LoginDto.builder()
-                .password("p@ssword")
-                .username("user")
-                .build());
-        System.out.println(login.accessToken());
+        if(!isTest) {
+            TokenDto login = authService.login(LoginDto.builder()
+                    .password("p@ssword")
+                    .username("user")
+                    .build());
+            System.out.println(login.accessToken());
+        }
     }
 }

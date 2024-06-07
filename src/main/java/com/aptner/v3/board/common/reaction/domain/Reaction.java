@@ -1,9 +1,10 @@
 package com.aptner.v3.board.common.reaction.domain;
 
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
-import com.aptner.v3.board.common.reaction.service.ReactionAndCommentCalculator;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,23 +14,26 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Reaction {
+@DiscriminatorColumn(name = "dtype")
+@Getter
+public class  Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long userId;
+    @Setter
+    private Long userId;
 
+    @Setter
     private long targetId;
 
+    @Setter
     private ReactionType reactionType;
 
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public Reaction updateReactionType(ReactionType reactionType) {
-        this.reactionType = reactionType;
-        return this;
-    }
+    @Column(updatable = false, insertable = false)
+    private String dtype;
 }

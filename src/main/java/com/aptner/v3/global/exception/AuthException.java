@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class AuthException extends GlobalException {
     public AuthException(ErrorCode responseCode) {
-        super("권한", responseCode);
+        super(responseCode, "권한");
     }
 
     public AuthException(ErrorCode responseCode, String message) {
-        super("권한", responseCode, message);
+        super(responseCode, message, "권한");
     }
 }

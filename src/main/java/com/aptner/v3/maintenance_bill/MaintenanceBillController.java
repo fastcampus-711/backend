@@ -40,7 +40,6 @@ public class MaintenanceBillController {
     }
 
     @Operation(summary = "액셀 파일 업로드")
-    @Deprecated
     @PostMapping("/upload")
     public ApiResponse<?> uploadMaintenanceBills(@RequestBody MultipartFile file) {
         maintenanceBillBatchService.uploadMaintenanceBills(file);

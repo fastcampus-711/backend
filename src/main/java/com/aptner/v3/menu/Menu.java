@@ -20,7 +20,7 @@ import java.util.Objects;
 })
 @Entity
 @SQLDelete(sql = "UPDATE menu SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted is false")
+@SQLRestriction("deleted = false")
 public class Menu {
 
     @Id

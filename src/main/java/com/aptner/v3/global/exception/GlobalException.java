@@ -21,13 +21,13 @@ public class GlobalException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public GlobalException(String subject, ErrorCode errorCode) {
+    public GlobalException(ErrorCode errorCode, String subject) {
         super();
         this.subject = subject;
         this.errorCode = errorCode;
     }
 
-    public GlobalException(String subject, ErrorCode errorCode, String msg) {
+    public GlobalException(ErrorCode errorCode, String msg, String subject) {
         super(msg);
         this.subject = subject;
         this.errorCode = errorCode;

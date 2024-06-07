@@ -1,26 +1,34 @@
 package com.aptner.v3.board.common.reaction.dto;
 
-import com.aptner.v3.board.common.reaction.domain.Reaction;
-import com.aptner.v3.global.util.ModelMapperUtil;
+import com.aptner.v3.board.common_post.dto.ReactionColumnsDto;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.modelmapper.ModelMapper;
+import lombok.Setter;
 
 public class ReactionDto {
     @Getter
-    public static class Request {
-        @NotNull
+    public static class ReactionRequest {
+
+        @Setter
         private long userId;
         @NotNull
-        private ReactionTarget reactionTarget;
+        private long targetId;
+        @NotNull
+        private ReactionType reactionType;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ReactionResponse {
+
+        @Setter
+        private long userId;
         @NotNull
         private long targetId;
         @NotNull
         private ReactionType reactionType;
 
-        public Reaction toEntity() {
-            ModelMapper modelMapper = ModelMapperUtil.getModelMapper();
-            return (Reaction) modelMapper.map(this, reactionTarget.getReactionClazz());
-        }
+        private ReactionColumnsDto reactionColums;
     }
 }
