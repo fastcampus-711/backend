@@ -42,6 +42,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: "500m"
     nginx.ingress.kubernetes.io/proxy-rad-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/send-timeout: "600"
     nginx.ingress.kubernetes.io/limit-connections: "20"
   hosts:
     - host: 711.ha-ving.store
