@@ -23,4 +23,8 @@ public class ResidentInfo {
 
     @Enumerated(EnumType.STRING)
     private residenceType residenceType;
+
+    public ResidentInfo(House house) {
+        this.house = house;
+    }
 }
