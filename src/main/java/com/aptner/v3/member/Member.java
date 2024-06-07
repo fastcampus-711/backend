@@ -1,5 +1,6 @@
 package com.aptner.v3.member;
 
+import com.aptner.v3.maintenance_bill.domain.House;
 import com.aptner.v3.maintenance_bill.embed.maintenance_bill.ResidentInfo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -55,17 +56,18 @@ public class Member {
     @Embedded
     private ResidentInfo residentInfo;
 
-    public Member(String username, String password, String nickname, String image, String phone, List<MemberRole> roles) {
+    public Member(String username, String password, String nickname, String image, String phone, List<MemberRole> roles, House house) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.image = image;
         this.phone = phone;
         this.roles = roles;
+        this.residentInfo = new ResidentInfo(house);
     }
 
-    public static Member of(String username, String password, String nickname, String image, String phone, List<MemberRole> roles) {
-        return new Member(username, password, nickname, image, phone, roles);
+    public static Member of(String username, String password, String nickname, String image, String phone, List<MemberRole> roles, House house) {
+        return new Member(username, password, nickname, image, phone, roles, house);
     }
 
     @Override

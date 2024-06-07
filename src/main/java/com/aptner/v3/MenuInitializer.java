@@ -6,6 +6,9 @@ import com.aptner.v3.auth.service.AuthService;
 import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.CategoryService;
 import com.aptner.v3.board.category.dto.CategoryDto;
+import com.aptner.v3.maintenance_bill.domain.House;
+import com.aptner.v3.maintenance_bill.domain.type.HouseType;
+import com.aptner.v3.maintenance_bill.repository.HouseRepository;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
 import com.aptner.v3.member.repository.MemberRepository;
@@ -27,25 +30,28 @@ public class MenuInitializer implements CommandLineRunner {
     private final MenuService menuService;
     private final CategoryService categoryService;
     private final MemberRepository memberRepository;
+    private final HouseRepository houseRepository;
 
     private final AuthService authService;
     private final Boolean isTest;
 
     public MenuInitializer(MenuService menuService, CategoryService categoryService,
                            MemberRepository memberRepository, AuthService authService,
-                           @Value("${server.auth}") Boolean isTest) {
+                           @Value("${server.auth}") Boolean isTest,
+                           HouseRepository houseRepository) {
         this.menuService = menuService;
         this.categoryService = categoryService;
         this.memberRepository = memberRepository;
         this.authService = authService;
         this.isTest = isTest;
+        this.houseRepository = houseRepository;
     }
 
     @Override
     public void run(String... args) {
-
-        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER)));
-        memberRepository.save(Member.of("admin", passwordEncoder().encode("p@ssword"), "nickname2", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER, MemberRole.ROLE_ADMIN)));
+        House house = House.of(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "103");
+        houseRepository.save(house);
+        Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), house));
 
         // intro
         Menu intro = menuService.createMenu(MenuDto.MenuDtoRequest.of(MenuCode.TOP_INFO.name(), MenuCode.TOP_INFO.getKo(), null));
