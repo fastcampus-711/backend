@@ -5,6 +5,8 @@ import com.aptner.v3.auth.repository.RefreshTokenRepository;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.global.util.ResponseUtil;
+import com.aptner.v3.maintenance_bill.domain.House;
+import com.aptner.v3.maintenance_bill.domain.type.HouseType;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.MemberRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,8 +64,9 @@ public class JwtFilter extends OncePerRequestFilter {
                     Claims claims = jwtUtil.parseClaims(token);
                     member = jwtUtil.claimsToMember(claims);
                 } else {
+                    House house = House.of(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "104");
                     // @test
-                    member = Member.of("user1", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER));
+                    member = Member.of("user1", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), house);
                     member.setId(3L);
                 }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);
