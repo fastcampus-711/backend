@@ -64,8 +64,9 @@ public class JwtFilter extends OncePerRequestFilter {
                     Claims claims = jwtUtil.parseClaims(token);
                     member = jwtUtil.claimsToMember(claims);
                 } else {
+                    House house = House.of(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "104");
                     // @test
-                    member = Member.of("user1", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), new House(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "102"));
+                    member = Member.of("user1", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), house);
                     member.setId(3L);
                 }
                 log.debug("토큰으로 부터 가져온 정보 : {}", member);

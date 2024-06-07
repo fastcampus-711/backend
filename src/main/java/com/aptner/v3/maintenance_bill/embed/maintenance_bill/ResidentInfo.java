@@ -5,11 +5,13 @@ import com.aptner.v3.maintenance_bill.domain.type.ResidentType;
 import com.aptner.v3.maintenance_bill.domain.type.residenceType;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
 @Embeddable
+@NoArgsConstructor
 public class ResidentInfo {
     private String name;
 

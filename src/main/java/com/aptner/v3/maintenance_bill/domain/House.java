@@ -22,12 +22,16 @@ public class House {
     private String ho;
 
     @Builder
-    public House(int code, String name, HouseType houseType, double squareMeter, String dong, String ho) {
+    private House(int code, String name, HouseType houseType, double squareMeter, String dong, String ho) {
         this.code = code;
         this.name = name;
         this.houseType = houseType;
         this.squareMeter = squareMeter;
         this.dong = dong;
         this.ho = ho;
+    }
+
+    public static House of(int code, String name, HouseType houseType, double squareMeter, String dong, String ho) {
+        return new House(code, name, houseType, squareMeter, dong, ho);
     }
 }
