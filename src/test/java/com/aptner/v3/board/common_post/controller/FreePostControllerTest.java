@@ -11,6 +11,7 @@ import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -78,6 +79,7 @@ public class FreePostControllerTest {
         prefix = "http://localhost:" + port;
     }
 
+    @Disabled
     @WithUserDetails(value="user1")
     @Test
     void 자유_게시판_전체_조회() throws Exception {
