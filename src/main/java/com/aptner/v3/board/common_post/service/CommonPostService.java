@@ -75,12 +75,23 @@ public class CommonPostService<E extends CommonPost,
     }
 
     private static <E extends CommonPost> Specification<E> geteSpecification(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId) {
-        Specification<E> spec = (Specification<E>) Specification
-                .where(PostSpecification.hasBoardGroup(boardGroup))
-                .and(PostSpecification.hasCategoryId(categoryId))
-                .and(PostSpecification.hasKeyword(keyword))
-                .and(PostSpecification.hasStatus(status))
-                .and(PostSpecification.hasAuthor(userId));
+        Specification<E> spec = Specification.where(PostSpecification.hasBoardGroup(boardGroup));
+
+        if (categoryId != null && categoryId > 0) {
+            spec = spec.and(PostSpecification.hasCategoryId(categoryId));
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and(PostSpecification.hasKeyword(keyword));
+        }
+
+        if (status != null) {
+            spec = spec.and(PostSpecification.hasStatus(status));
+        }
+
+        if (userId != null) {
+            spec = spec.and(PostSpecification.hasAuthor(userId));
+        }
         return spec;
     }
 

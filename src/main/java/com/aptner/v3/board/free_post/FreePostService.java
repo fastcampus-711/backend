@@ -49,33 +49,68 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
         return super.getPostList(boardGroup, categoryId, keyword, status, userId, pageable);
     }
 
+    /**
+    * 기본 조회
+    * */
     public Page<FreePostDto> getPostListWithoutHotPost(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
         return super.getPostList(boardGroup, categoryId, keyword, status, userId, pageable);
     }
 
+    /**
+     * 인기글 포함된 조회
+     * */
     private Page<FreePostDto> getFirstPageWithTopPosts(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
 
         LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 
-        Specification<FreePost> spec = Specification
-                .where(PostSpecification.<FreePost>hasBoardGroup(boardGroup))
-                .and(PostSpecification.hasCategoryId(categoryId))
-                .and(PostSpecification.hasKeyword(keyword))
-                .and(PostSpecification.hasStatus(status))
-                .and(PostSpecification.hasAuthor(userId));
+//        Specification<FreePost> spec = Specification
+//                .where(PostSpecification.<FreePost>hasBoardGroup(boardGroup))
+//                .and(PostSpecification.hasCategoryId(categoryId))
+//                .and(PostSpecification.hasKeyword(keyword))
+//                .and(PostSpecification.hasStatus(status))
+//                .and(PostSpecification.hasAuthor(userId));
+
+        Specification<FreePost> spec = Specification.where(PostSpecification.hasBoardGroup(boardGroup));
+
+        if (categoryId != null && categoryId > 0) {
+            log.debug("인기글 조건(categoryId) : {}", categoryId);
+            spec = spec.and(PostSpecification.hasCategoryId(categoryId));
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            log.debug("인기글 조건(keyword) : {}", keyword);
+            spec = spec.and(PostSpecification.hasKeyword(keyword));
+        }
+
+        if (status != null) {
+            log.debug("인기글 조건(status) : {}", status);
+            spec = spec.and(PostSpecification.hasStatus(status));
+        }
+
+        if (userId != null) {
+            log.debug("인기글 조건(userId) : {}", userId);
+            spec = spec.and(PostSpecification.hasAuthor(userId));
+        }
 
         // 상위 3개 ORDER BY (p.hits + p.reactionColumns.countReactionTypeGood) DESC
         List<FreePost> topPosts = commonPostRepository.findTopPosts(sevenDaysAgo, boardGroup.getTable(), PageRequest.of(0, 3));
         List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
 
-        Page<FreePost> remainingPosts = commonPostRepository.findAll(Specification.where(spec)
-                .and((root, query, criteriaBuilder) -> root.get("id").in(topPostIds).not()), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
+        Page<FreePost> remainingPosts = null;
+        if (!topPostIds.isEmpty()) {
+            //
+            remainingPosts = commonPostRepository.findAll(Specification.where(spec)
+                    .and((root, query, criteriaBuilder) -> root.get("id").in(topPostIds).not()), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
+        } else {
+            remainingPosts = commonPostRepository.findAll(Specification.where(spec), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
+        }
 
         List<FreePostDto> combinedPosts = Stream.concat(
                 topPosts.stream().map(this::toFreePostDto),
                 remainingPosts.getContent().stream().map(FreePost::toDto)
         ).collect(Collectors.toList());
 
+        log.debug("인기글 : {} 나머지글 : {} -> 전체 : {}", topPosts.size(), remainingPosts.getContent().size(), combinedPosts.size());
         return new PageImpl<>(combinedPosts, pageable, remainingPosts.getTotalElements() + topPosts.size());
     }
 
