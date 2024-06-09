@@ -26,7 +26,7 @@ spring:
     jpa:
         defer-datasource-initialization: true
         hibernate:
-            dialect: org.hibernate.dialect.h2
+            dialect: org.hibernate.dialect.MySQL8Dialect
             ddl-auto: update
 #            naming:
 #              implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl

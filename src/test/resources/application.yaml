@@ -16,7 +16,7 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       dialect: org.hibernate.dialect.MySQLDialect
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
