@@ -1,8 +1,8 @@
 package com.aptner.v3.board.common_post.controller;
 
-import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.domain.CommonPost;
+import com.aptner.v3.board.common_post.dto.CommonPostDto;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.free_post.domain.FreePost;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,6 @@ import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONObject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -79,7 +78,6 @@ public class FreePostControllerTest {
         prefix = "http://localhost:" + port;
     }
 
-    @Disabled
     @WithUserDetails(value="user1")
     @Test
     void 자유_게시판_전체_조회() throws Exception {

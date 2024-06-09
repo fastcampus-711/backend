@@ -56,6 +56,7 @@ public class PostSpecification<E extends CommonPost> {
     public static <E extends CommonPost> Specification<E> hasAuthor(Long authorId) {
         return (root, query, criteriaBuilder) -> {
             if (authorId != null) {
+                log.debug("specification - authorId : {}", authorId);
                 return criteriaBuilder.equal(root.get("member").get("id"), authorId);
             } else {
                 return criteriaBuilder.conjunction();
@@ -66,6 +67,7 @@ public class PostSpecification<E extends CommonPost> {
     public static <E extends CommonPost> Specification<E> isDuty(Boolean isDuty) {
         return (root, query, criteriaBuilder) -> {
             if (isDuty != null) {
+                log.debug("specification - isDuty : {}", isDuty);
                 return criteriaBuilder.equal(root.get("isDuty"), isDuty);
             } else {
                 return criteriaBuilder.conjunction();
