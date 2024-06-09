@@ -68,14 +68,14 @@ public class MemberDto {
                 message = "비밀번호는 영어, 숫자, 특수문자(!@#$%^&*())를 포함한 8~20자리로 입력해주세요.")
         private String password;
 
-        @NotNull(message = "필수 입력값입니다.")
+        @NotNull(message = "비밀번호 확인은 필수 입력값입니다.")
         private String passwordConfirm;
 
         @Pattern(regexp = "[a-zA-Z0-9/_]{4,10}", message = "닉네임은 영어, 숫자를 포함한 4~10자리로 입력해주세요.")
-        @NotNull(message = "필수 입력값입니다.")
+        @NotNull(message = "닉네임은 필수 입력값입니다.")
         private String nickname;
 
-        private String image;
+        private String image = "https://avatars.githubusercontent.com/u/79270228?s=80&v=4";
 
         @Pattern(regexp = "(^\\d{3}\\d{3,4}\\d{4}$)|")
         private String phone;
@@ -99,6 +99,23 @@ public class MemberDto {
             );
         }
 
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class MemberSignUpRequest {
+
+        private String id;
+        private String password;
+        private String token;
+        private String tokentype;
+        private String image;
+        private Object app;
+        private List<String> termsIdx;
+        private List<MemberRole> roles = List.of(new MemberRole[]{MemberRole.ROLE_USER});
     }
 
     @Getter

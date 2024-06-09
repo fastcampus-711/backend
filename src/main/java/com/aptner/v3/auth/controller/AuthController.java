@@ -1,6 +1,7 @@
 package com.aptner.v3.auth.controller;
 
 import com.aptner.v3.auth.dto.LoginDto;
+import com.aptner.v3.auth.dto.TokenDto;
 import com.aptner.v3.auth.service.AuthService;
 import com.aptner.v3.global.error.ErrorCode;
 import com.aptner.v3.global.error.response.ApiResponse;
@@ -9,13 +10,16 @@ import com.aptner.v3.global.util.JwtUtil;
 import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Base64;
 
 import static com.aptner.v3.global.util.JwtUtil.AUTHORIZATION_HEADER;
 
@@ -27,10 +31,23 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Async
     @PostMapping("/token")
     @Operation(summary = " 토큰 발급")
-    public ApiResponse<?> login(@RequestBody LoginDto user) {
-        return ResponseUtil.ok(authService.login(user));
+    public ApiResponse<?> login(@RequestBody LoginDto user, HttpServletResponse response) {
+
+        TokenDto login = authService.login(user);
+
+        // cookie
+        String encodedValue = Base64.getUrlEncoder().encodeToString(login.accessToken().getBytes());
+        Cookie cookie = new Cookie("accesstoken", encodedValue);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효기간 1주일
+        response.addCookie(cookie);
+
+        return ResponseUtil.ok(login);
     }
 
     @PostMapping("/refresh")
