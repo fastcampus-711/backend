@@ -18,6 +18,8 @@ import com.aptner.v3.menu.MenuService;
 import com.aptner.v3.menu.dto.MenuDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 import static com.aptner.v3.CommunityApplication.passwordEncoder;
 
 @Component
+@Profile("dev") // dev 환경에서만 실행되도록 설정
 public class MenuInitializer implements CommandLineRunner {
 
     private final MenuService menuService;
@@ -34,21 +37,30 @@ public class MenuInitializer implements CommandLineRunner {
 
     private final AuthService authService;
     private final Boolean isTest;
+    private final Environment environment;
 
     public MenuInitializer(MenuService menuService, CategoryService categoryService,
                            MemberRepository memberRepository, AuthService authService,
                            @Value("${server.auth}") Boolean isTest,
-                           HouseRepository houseRepository) {
+                           HouseRepository houseRepository,
+                            Environment environment) {
         this.menuService = menuService;
         this.categoryService = categoryService;
         this.memberRepository = memberRepository;
         this.authService = authService;
         this.isTest = isTest;
         this.houseRepository = houseRepository;
+        this.environment = environment;
     }
 
     @Override
     public void run(String... args) {
+
+        String ddlAuto = environment.getProperty("spring.jpa.hibernate.ddl-auto");
+        if (!"create-drop".equals(ddlAuto)) {
+            return; // ddl-auto가 create-drop이 아닌 경우 실행 중단
+        }
+
         House house = House.of(77777, "패캠세븐아파트", HouseType.APARTMENT,115.7,  "701", "103");
         houseRepository.save(house);
         Member user = memberRepository.save(Member.of("user", passwordEncoder().encode("p@ssword"), "nickname1", "https://avatars.githubusercontent.com/u/79270228?v=4", "01011112222", List.of(MemberRole.ROLE_USER), house));
