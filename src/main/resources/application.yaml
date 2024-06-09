@@ -19,7 +19,7 @@ spring:
             path: /h2-console
     sql:
         init:
-            mode: always
+            mode: never
             platform: mysql
             data-locations: classpath:maintenance-bill.sql, classpath:data.sql
 
