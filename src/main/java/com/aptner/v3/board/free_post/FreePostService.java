@@ -42,7 +42,7 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
 
     @Override
     public Page<FreePostDto> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
-        if (pageable.getPageNumber() == 0 && StringUtils.isEmpty(keyword)) {
+        if (pageable.getPageNumber() == 0 && StringUtils.isEmpty(keyword) && categoryId == 0) {
             // (HOT) 인기 검색 예외 처리
             return getFirstPageWithTopPosts(boardGroup, categoryId, keyword, status, userId, pageable);
         }
@@ -97,13 +97,13 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
         List<Long> topPostIds = topPosts.stream().map(CommonPost::getId).collect(Collectors.toList());
 
         Page<FreePost> remainingPosts = null;
-        if (!topPostIds.isEmpty()) {
-            //
-            remainingPosts = commonPostRepository.findAll(Specification.where(spec)
-                    .and((root, query, criteriaBuilder) -> root.get("id").in(topPostIds).not()), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
-        } else {
+//        if (!topPostIds.isEmpty()) {
+//            //
+//            remainingPosts = commonPostRepository.findAll(Specification.where(spec)
+//                    .and((root, query, criteriaBuilder) -> root.get("id").in(topPostIds).not()), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
+//        } else {
             remainingPosts = commonPostRepository.findAll(Specification.where(spec), PageRequest.of(0, pageable.getPageSize() - topPosts.size(), pageable.getSort()));
-        }
+//        }
 
         List<FreePostDto> combinedPosts = Stream.concat(
                 topPosts.stream().map(this::toFreePostDto),

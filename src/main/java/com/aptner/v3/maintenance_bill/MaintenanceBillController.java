@@ -6,6 +6,7 @@ import com.aptner.v3.global.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,8 +41,8 @@ public class MaintenanceBillController {
     }
 
     @Operation(summary = "액셀 파일 업로드")
-    @PostMapping("/upload")
-    public ApiResponse<?> uploadMaintenanceBills(@RequestBody MultipartFile file) {
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<?> uploadMaintenanceBills(@RequestPart(value = "file") MultipartFile file) {
         maintenanceBillBatchService.uploadMaintenanceBills(file);
 
         return ResponseUtil.ok(SuccessCode.UPLOAD_MAINTENANCE_BILLS_SUCCESS);
