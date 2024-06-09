@@ -2,73 +2,72 @@ frontend:
   url: https://aptner.ha-ving.store
 
 server:
-    port: 80
-    auth: false
-    forward-headers-strategy: FRAMEWORK
+  port: 80
+  auth: false
+  forward-headers-strategy: FRAMEWORK
 
 spring:
-    profiles:
-        include: hidden, hidden-dev
+  profiles:
+    include: hidden, hidden-dev
 
-    http:
-        encoding:
-            charset: UTF-8
-    h2:
-        console:
-            enabled: true
-            path: /h2-console
-    sql:
-        init:
-            mode: never
-            platform: mysql
-            data-locations: classpath:maintenance-bill.sql, classpath:data.sql
+  http:
+    encoding:
+      charset: UTF-8
+  h2:
+    console:
+      enabled: false
+      path: /h2-console
+  sql:
+    init:
+      mode: never
+      platform: mysql
+      data-locations: classpath:maintenance-bill.sql, classpath:data.sql
 
-    jpa:
-        defer-datasource-initialization: true
-        hibernate:
-            dialect: org.hibernate.dialect.MySQL8Dialect
-            ddl-auto: update
-#            naming:
-#              implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
-        properties:
-            hibernate:
-                format_sql: true
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      ddl-auto: update
 
-    redis:
-        enabled: false
-        host: 127.0.0.1
-        port: 6379
-        lettuce:
-            pool.max-active: 10
-            pool.max-idle: 10
-            pool.min-idle: 2
+    properties:
+      hibernate:
+        format_sql: true
 
-    jackson:
-        property-naming-strategy: SNAKE_CASE
+  redis:
+    enabled: false
+    host: 127.0.0.1
+    port: 6379
+    lettuce:
+      pool.max-active: 10
+      pool.max-idle: 10
+      pool.min-idle: 2
 
-    servlet:
-        multipart:
-            enabled: true
-            file-size-threshold: 0B
-            location: /temp
-            max-file-size: 100MB
-            max-request-size: 100MB
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B
+      location: /temp
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 ## docs
 springdoc:
-    default-produces-media-type: application/json;charset=UTF-8
-    default-consumes-media-type: application/json;charset=UTF-8
-    swagger-ui:
-        path: /api-docs.html
-        tags-sorter: alpha
-        operations-sorter: alpha
-        disable-swagger-default-url: true
-        display-request-duration: true
-        doc-expansion: none
-        show-login-endpoint: true	# login endpoint 인식
+  default-produces-media-type: application/json;charset=UTF-8
+  default-consumes-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /api-docs.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    disable-swagger-default-url: true
+    display-request-duration: true
+    doc-expansion: none
+    show-login-endpoint: true	# login endpoint 인식
 
-    api-docs:
-        enabled: true
-        path: /api-docs
+  api-docs:
+    enabled: true
+    path: /api-docs
 ---
 
