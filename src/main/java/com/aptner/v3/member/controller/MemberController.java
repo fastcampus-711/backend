@@ -29,6 +29,15 @@ public class MemberController {
     @Operation(summary = "회원가입")
     public ApiResponse<?> signUp(@Valid @RequestBody MemberDto.MemberRequest request) {
 
+//        MemberDto.MemberRequest memberRequest = new MemberDto.MemberRequest(
+//                request.getId(),
+//                request.getPassword(),
+//                request.getPassword(),
+//                request.getId(),
+//                "https://avatars.githubusercontent.com/u/79270228?s=80&v=4",
+//                null,
+//                List.of(new MemberRole[]{MemberRole.ROLE_USER})
+//        );
         return ResponseUtil.create(
                 MemberDto.MemberResponse.of(userService.signUp(request))
         );

@@ -44,7 +44,7 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3'
 
 	// image resize
-	implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+//	implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
 
 	// database
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
