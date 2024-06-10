@@ -84,6 +84,8 @@ public class CommonPost extends BaseTimeEntity {
 
     private boolean deleted;
 
+    private int countOfReports; //신고 누적 횟수
+
     public CommonPost() {
     }
 
@@ -117,7 +119,11 @@ public class CommonPost extends BaseTimeEntity {
         this.hits++;
     }
 
-    /* 댓글을 포함 하지 않는 경우 */
+
+    public void plusPostReportCount() {
+        this.countOfReports++;
+    }
+
     public CommonPostDto toDto() {
         CommonPost entity = this;
         Long currentUserId = MemberUtil.getMember().getId();
@@ -138,7 +144,11 @@ public class CommonPost extends BaseTimeEntity {
                 // reaction
                 .reactionColumnsDto(ReactionColumnsDto.from(entity.getReactionColumns()))
                 .reactionType(userReaction)
+
+                .countOfReports(entity.getCountOfReports())
+
                 // comment
+
                 .countOfComments(entity.getCountOfComments())
                 // category
                 .boardGroup(entity.getDtype())

@@ -42,7 +42,8 @@ public class CommentDto extends BaseTimeDto {
     @Setter
     ReactionType reactionType;
     boolean isTop;
-
+    int countOfReports;
+    boolean alreadyReport;
     public static CommentDto of(Long postId, MemberDto memberdto, Long commentId) {
         return CommentDto.of(postId, memberdto, commentId, 0L, null, true, false);
     }
@@ -100,6 +101,7 @@ public class CommentDto extends BaseTimeDto {
                 .isTop(dto.isTop())
                 .isAdminComment(isAdmin(dto.getMemberDto()))
                 .isOwner(isOwner(dto))
+                .alreadyReport(dto.isAlreadyReport())
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -171,6 +173,8 @@ public class CommentDto extends BaseTimeDto {
         private boolean isTop;          // 상단 고정 댓글
         private boolean isOwner;        // 내가 작성한 댓글
         private boolean isAdminComment; // 어드민이 작성한 댓글
+        private boolean alreadyReport;  // 신고 여부
+
 
         public boolean hasParentComment() {
             return parentCommentId != null;

@@ -3,6 +3,7 @@ package com.aptner.v3.board.complain;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
@@ -19,9 +20,10 @@ public class ComplainService extends CommonPostService<Complain, ComplainDto, Co
     public ComplainService(MemberRepository memberRepository,
                            CategoryRepository categoryRepository,
                            CommonPostRepository<Complain> commonPostRepository,
-                           ReactionRepository<PostReaction> postReactionRepository
+                           ReactionRepository<PostReaction> postReactionRepository,
+                           ReportRepository reportRepository
     ) {
-        super(memberRepository, categoryRepository, commonPostRepository, postReactionRepository);
+        super(memberRepository, categoryRepository, commonPostRepository, postReactionRepository, reportRepository);
         this.commonPostRepository = commonPostRepository;
     }
 }

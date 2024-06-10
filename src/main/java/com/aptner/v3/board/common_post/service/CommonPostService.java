@@ -6,6 +6,7 @@ import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common.reaction.dto.ReactionType;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.PostSpecification;
 import com.aptner.v3.board.common_post.domain.CommonPost;
@@ -48,16 +49,19 @@ public class CommonPostService<E extends CommonPost,
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final ReactionRepository<PostReaction> postReactionRepository;
+    private final ReportRepository reportRepository;
 
     public CommonPostService(MemberRepository memberRepository,
                              CategoryRepository categoryRepository,
                              @Qualifier("commonPostRepository") CommonPostRepository<E> commonPostRepository,
-                             ReactionRepository<PostReaction> postReactionRepository
+                             ReactionRepository<PostReaction> postReactionRepository,
+                             ReportRepository reportRepository
     ) {
         this.memberRepository = memberRepository;
         this.categoryRepository = categoryRepository;
         this.commonPostRepository = commonPostRepository;
         this.postReactionRepository = postReactionRepository;
+        this.reportRepository = reportRepository;
     }
 
     public Page<T> getPostList(BoardGroup boardGroup, Long categoryId, String keyword, Status status, Long userId, Pageable pageable) {
@@ -102,8 +106,13 @@ public class CommonPostService<E extends CommonPost,
         // 조회수
         post.plusHits();
 
+        T commonPostDto = (T) post.toDtoWithComment();
+        reportRepository.findByUserIdAndTargetId(userId, postId)
+                .ifPresent(r -> commonPostDto.setAlreadyReport(true));
+
         // @Notice 좋아요 매핑 하지 않고, 연관 관계 넣음 B.다른 조회시 반영 필요.
-        return (T) post.toDto();
+        return commonPostDto;
+
     }
 
     public ReactionType getPostReactionType(Long userId, Long postId) {
@@ -238,5 +247,13 @@ public class CommonPostService<E extends CommonPost,
         } else {
             log.debug("No generic type information available.");
         }
+    }
+
+    public int reportCount(Boolean isReported) {
+        int reportCount = 0;
+        if (isReported) {
+            reportCount++;
+        }
+        return reportCount;
     }
 }

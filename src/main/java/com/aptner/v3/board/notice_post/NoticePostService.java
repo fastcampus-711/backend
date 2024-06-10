@@ -4,6 +4,7 @@ import com.aptner.v3.board.category.BoardGroup;
 import com.aptner.v3.board.category.repository.CategoryRepository;
 import com.aptner.v3.board.common.reaction.ReactionRepository;
 import com.aptner.v3.board.common.reaction.domain.PostReaction;
+import com.aptner.v3.board.common.report.ReportRepository;
 import com.aptner.v3.board.common_post.PostSpecification;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.notice_post.domain.NoticePost;
@@ -29,9 +30,10 @@ public class NoticePostService extends CommonPostService<NoticePost, NoticePostD
     public NoticePostService(MemberRepository memberRepository,
                              CategoryRepository categoryRepository,
                              @Qualifier("noticePostRepository") NoticePostRepository noticePostRepository,
-                             ReactionRepository<PostReaction> postReactionRepository
+                             ReactionRepository<PostReaction> postReactionRepository,
+                             ReportRepository reportRepository
     ) {
-        super(memberRepository, categoryRepository, noticePostRepository, postReactionRepository);
+        super(memberRepository, categoryRepository, noticePostRepository, postReactionRepository, reportRepository);
         this.noticePostRepository = noticePostRepository;
     }
 
