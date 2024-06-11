@@ -95,7 +95,7 @@ public class CommentDto extends BaseTimeDto {
                 .parentCommentId(dto.getParentCommentId())
                 // comment info
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .visible(dto.isVisible())
                 .isTop(dto.isTop())
                 .isAdminComment(isAdmin(dto.getMemberDto()))
