@@ -93,7 +93,7 @@ public class MarketDto extends CommonPostDto {
                 .categoryName(dto.getCategoryDto().getName())
                 // market
                 .price(dto.getPrice())
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? MarketStatus.SALE : dto.getStatus())
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -138,7 +138,7 @@ public class MarketDto extends CommonPostDto {
                 .categoryName(dto.getCategoryDto().getName())
                 // market
                 .price(dto.getPrice())
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? MarketStatus.SALE : dto.getStatus())
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
