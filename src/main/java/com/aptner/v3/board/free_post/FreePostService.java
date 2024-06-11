@@ -67,7 +67,7 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
 //                .where(PostSpecification.<FreePost>hasBoardGroup(boardGroup))
 //                .and(PostSpecification.hasCategoryId(categoryId))
 //                .and(PostSpecification.hasKeyword(keyword))
-//                .and(PostSpecification.hasStatus(status))
+//                .and(PostSpecification.hasStatus(status, boardGroup))
 //                .and(PostSpecification.hasAuthor(userId));
 
         Specification<FreePost> spec = Specification.where(PostSpecification.hasBoardGroup(boardGroup));
@@ -84,7 +84,7 @@ public class FreePostService extends CommonPostService<FreePost, FreePostDto, Fr
 
         if (status != null) {
             log.debug("인기글 조건(status) : {}", status);
-            spec = spec.and(PostSpecification.hasStatus(status));
+            spec = spec.and(PostSpecification.hasStatus(status, boardGroup));
         }
 
         if (userId != null) {
