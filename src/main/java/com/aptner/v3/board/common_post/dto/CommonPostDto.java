@@ -236,8 +236,8 @@ public class CommonPostDto extends BaseTimeDto {
         }
 
         public static boolean isNew(CommonPostDto dto) {
-            LocalDateTime fourteenDaysAgo = LocalDateTime.now().minusDays(14);
-            return dto.getCreatedAt().isAfter(fourteenDaysAgo);
+            LocalDateTime fortyEightHoursAgo = LocalDateTime.now().minusHours(48);
+            return dto.getCreatedAt().isAfter(fortyEightHoursAgo);
         }
 
     }

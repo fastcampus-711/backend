@@ -40,7 +40,7 @@ public class CommentDto extends BaseTimeDto {
     @Setter
     Set<Long> childCommentAuthorIds;
     @Setter
-    ReactionType reactionType;
+    ReactionType reactionType = ReactionType.DEFAULT;
     boolean isTop;
 
     public static CommentDto of(Long postId, MemberDto memberdto, Long commentId) {

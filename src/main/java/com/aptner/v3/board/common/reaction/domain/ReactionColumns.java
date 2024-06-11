@@ -13,6 +13,7 @@ public class ReactionColumns {
 
     private long countReactionTypeBad;
 
+
     public ReactionColumns() {
     }
 
