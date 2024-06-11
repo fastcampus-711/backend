@@ -86,7 +86,7 @@ public class CommonPostService<E extends CommonPost,
         }
 
         if (status != null) {
-            spec = spec.and(PostSpecification.hasStatus(status));
+            spec = spec.and(PostSpecification.hasStatus(status, boardGroup));
         }
 
         if (userId != null) {

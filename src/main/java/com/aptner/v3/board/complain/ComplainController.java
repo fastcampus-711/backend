@@ -7,6 +7,7 @@ import com.aptner.v3.board.common_post.domain.SortType;
 import com.aptner.v3.board.common_post.dto.SearchDto;
 import com.aptner.v3.board.common_post.service.PaginationService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
+import com.aptner.v3.board.complain.dto.ComplainStatusDto;
 import com.aptner.v3.board.qna.Status;
 import com.aptner.v3.global.error.response.ApiResponse;
 import com.aptner.v3.global.util.ResponseUtil;
@@ -18,10 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name="민원 게시판")
@@ -57,6 +55,26 @@ public class ComplainController extends CommonPostController<
         )));
     }
 
+    @GetMapping("/status")
+    @Operation(summary = "상태 목록")
+    public ApiResponse<?> getStatusList() {
+        return ResponseUtil.ok(ComplainStatusDto.ComplainStatusResponse.toList());
+    }
+
+    @PostMapping("/status")
+    @Operation(summary = "상태 등록")
+    public ApiResponse<?> setStatus(
+            @RequestBody ComplainStatusDto.ComplainStatusRequest request
+            , @AuthenticationPrincipal CustomUserDetails user) {
+
+        ComplainDto dto = ComplainDto.of(
+                getBoardGroup(),
+                user.toDto(),
+                ComplainDto.ComplainRequest.of(request.getPostId(), null)
+        );
+
+        return ResponseUtil.ok(complainService.setStatus(dto).toResponse());
+    }
     @Override
     public BoardGroup getBoardGroup() {
         return  BoardGroup.COMPLAINT;

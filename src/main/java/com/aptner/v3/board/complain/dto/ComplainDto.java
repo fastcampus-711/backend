@@ -79,7 +79,7 @@ public class ComplainDto extends CommonPostDto {
                 .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())
                 // complaint
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? ComplainStatus.RECEIVED : dto.getStatus())
                 // category
                 .boardGroup(dto.getBoardGroup())
                 .categoryName(dto.getCategoryDto().getName())
@@ -121,7 +121,7 @@ public class ComplainDto extends CommonPostDto {
                 .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())
                 // complaint
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? ComplainStatus.RECEIVED : dto.getStatus())
                 // category
                 .boardGroup(dto.getBoardGroup())
                 .categoryName(dto.getCategoryDto().getName())

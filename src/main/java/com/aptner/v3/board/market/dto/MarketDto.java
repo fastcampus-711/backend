@@ -11,6 +11,7 @@ import com.aptner.v3.board.market.Market;
 import com.aptner.v3.board.market.MarketStatus;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -93,7 +94,7 @@ public class MarketDto extends CommonPostDto {
                 .categoryName(dto.getCategoryDto().getName())
                 // market
                 .price(dto.getPrice())
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? MarketStatus.SALE : dto.getStatus())
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -138,7 +139,7 @@ public class MarketDto extends CommonPostDto {
                 .categoryName(dto.getCategoryDto().getName())
                 // market
                 .price(dto.getPrice())
-                .status(dto.getStatus())
+                .status(dto.getStatus() == null ? MarketStatus.SALE : dto.getStatus())
                 // base
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
@@ -159,6 +160,7 @@ public class MarketDto extends CommonPostDto {
     public static class MarketRequest extends CommonPostDto.CommonPostRequest {
         private String type;
         private MarketStatus status = MarketStatus.SALE;
+        @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
         private Integer price = 0;
 
         public static MarketDto.MarketRequest of(Long id, Long categoryId) {

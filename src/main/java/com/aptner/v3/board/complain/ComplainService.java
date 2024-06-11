@@ -14,14 +14,22 @@ import org.springframework.stereotype.Service;
 @Qualifier("complainService")
 public class ComplainService extends CommonPostService<Complain, ComplainDto, ComplainDto.ComplainRequest, ComplainDto.ComplainResponse> {
 
-    private final CommonPostRepository<Complain> commonPostRepository;
+    private final CommonPostRepository<Complain> complainRepository;
 
     public ComplainService(MemberRepository memberRepository,
                            CategoryRepository categoryRepository,
-                           CommonPostRepository<Complain> commonPostRepository,
+                           CommonPostRepository<Complain> complainRepository,
                            ReactionRepository<PostReaction> postReactionRepository
     ) {
-        super(memberRepository, categoryRepository, commonPostRepository, postReactionRepository);
-        this.commonPostRepository = commonPostRepository;
+        super(memberRepository, categoryRepository, complainRepository, postReactionRepository);
+        this.complainRepository = complainRepository;
+    }
+
+    public ComplainDto setStatus(ComplainDto dto) {
+        Complain complain = verifyPost(dto);
+        // update
+        complain.setStatus(dto.getStatus());
+        complainRepository.flush();
+        return complain.toDto();
     }
 }
