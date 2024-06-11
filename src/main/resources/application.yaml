@@ -69,5 +69,9 @@ springdoc:
   api-docs:
     enabled: true
     path: /api-docs
+
+logging:
+  level:
+    com.aptner.v3: DEBUG
 ---
 
