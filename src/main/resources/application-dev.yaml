@@ -4,8 +4,9 @@ frontend:
 server:
   port: 8181
 
-spring:
-
+  sql:
+    init:
+      mode: always
   jpa:
     hibernate:
       ddl-auto: create-drop

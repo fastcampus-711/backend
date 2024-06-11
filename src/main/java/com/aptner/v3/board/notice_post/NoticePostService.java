@@ -48,7 +48,7 @@ public class NoticePostService extends CommonPostService<NoticePost, NoticePostD
                 .where(PostSpecification.<NoticePost>hasBoardGroup(boardGroup))
                 .and(PostSpecification.hasCategoryId(categoryId))
                 .and(PostSpecification.hasKeyword(keyword))
-                .and(PostSpecification.hasStatus(status))
+                .and(PostSpecification.hasStatus(status, boardGroup))
                 .and(PostSpecification.hasAuthor(userId))
                 .and(PostSpecification.isDuty(isDuty))
                 ;
