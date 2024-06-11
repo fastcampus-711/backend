@@ -67,10 +67,10 @@ public class ComplainController extends CommonPostController<
             @RequestBody ComplainStatusDto.ComplainStatusRequest request
             , @AuthenticationPrincipal CustomUserDetails user) {
 
-        ComplainDto dto = ComplainDto.of(
+        ComplainStatusDto dto = ComplainStatusDto.of(
                 getBoardGroup(),
                 user.toDto(),
-                ComplainDto.ComplainRequest.of(request.getPostId(), null)
+                request
         );
 
         return ResponseUtil.ok(complainService.setStatus(dto).toResponse());

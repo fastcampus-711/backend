@@ -6,6 +6,9 @@ import com.aptner.v3.board.common.reaction.domain.PostReaction;
 import com.aptner.v3.board.common_post.CommonPostRepository;
 import com.aptner.v3.board.common_post.service.CommonPostService;
 import com.aptner.v3.board.complain.dto.ComplainDto;
+import com.aptner.v3.board.complain.dto.ComplainStatusDto;
+import com.aptner.v3.global.error.ErrorCode;
+import com.aptner.v3.global.exception.PostException;
 import com.aptner.v3.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -25,8 +28,9 @@ public class ComplainService extends CommonPostService<Complain, ComplainDto, Co
         this.complainRepository = complainRepository;
     }
 
-    public ComplainDto setStatus(ComplainDto dto) {
-        Complain complain = verifyPost(dto);
+    public ComplainDto setStatus(ComplainStatusDto dto) {
+        // check
+        Complain complain = complainRepository.findById(dto.getPostId()).orElseThrow(() -> new PostException(ErrorCode._NOT_FOUND));
         // update
         complain.setStatus(dto.getStatus());
         complainRepository.flush();
