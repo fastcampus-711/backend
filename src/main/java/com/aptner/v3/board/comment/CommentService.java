@@ -12,6 +12,7 @@ import com.aptner.v3.global.exception.UserException;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.aptner.v3.member.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -103,15 +104,24 @@ public class CommentService {
         CommonPost post = commonPostRepository.findById(postId).orElseThrow(() -> new PostException(_NOT_FOUND));
 
         // get
-        Page<Comment> commentsPage = commentRepository.findAllByPostIdAndParentCommentIdIsNull(postId, pageable);
+        Page<CommentDto> commentDtosPage = Page.empty(pageable);
+        try {
+            Page<Comment> commentsPage = commentRepository.findAllByPostIdAndParentCommentIdIsNull(postId, pageable);
 
-        // reaction
-        Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByUserIdAndDtypeAndTargetId(memberDto.getId(), "CommentReaction", postId)
-                .orElse(Collections.emptyList())
-                .stream()
-                .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
+            // reaction
+            Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByDtypeAndTargetId("CommentReaction", postId)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
 
-        Page<CommentDto> commentDtosPage = commentsPage.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+            // Ensure the map contains a default entry
+            mapCommentIdAndReactionType.putIfAbsent(-1L, ReactionType.DEFAULT);
+
+            commentDtosPage = commentsPage.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
+        } catch (EntityNotFoundException e) {
+            // Log the exception (optional)
+            log.warn("Entity not found: {}", e.getMessage());
+        }
         return commentDtosPage;
     }
 
