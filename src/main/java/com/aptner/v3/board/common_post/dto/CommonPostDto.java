@@ -12,16 +12,21 @@ import com.aptner.v3.global.util.MemberUtil;
 import com.aptner.v3.member.Member;
 import com.aptner.v3.member.dto.MemberDto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+import static com.aptner.v3.board.common_post.dto.CommonPostDto.CommonPostResponse.toMiddleSizeImageUrl;
+import static com.aptner.v3.board.common_post.dto.CommonPostDto.CommonPostResponse.toThumbSizeImageUrl;
 
 @Slf4j
 @Getter
@@ -95,7 +100,7 @@ public class CommonPostDto extends BaseTimeDto {
                 // post
                 .title(isSecret ? blindTitle : dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toThumbSizeImageUrl(dto))
                 .visible(dto.isVisible())
                 // post info
                 .hits(dto.getHits())                                            // 조회수
@@ -134,13 +139,13 @@ public class CommonPostDto extends BaseTimeDto {
                 // post
                 .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toMiddleSizeImageUrl(dto))
                 .visible(dto.isVisible())
-                .comments(organizeChildComments(dto.getCommentDto()))
+//                .comments(organizeChildComments(dto.getCommentDto()))
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -241,6 +246,45 @@ public class CommonPostDto extends BaseTimeDto {
             return dto.getCreatedAt().isAfter(fortyEightHoursAgo);
         }
 
-    }
+        public static List<String> toMiddleSizeImageUrl(CommonPostDto dto) {
+            if (dto.getImageUrls() == null) return null;
 
+            List<String> resizedUrls = new ArrayList<>();
+            for (String url : dto.getImageUrls()) {
+                if (containsValidImageExtension(url)) {
+                    String baseUrl = url.substring(0, url.lastIndexOf("."));
+                    String extension = url.substring(url.lastIndexOf("."));
+                    resizedUrls.add(baseUrl + "/600" + extension);
+                } else {
+                    resizedUrls.add(url); // 원본 데이터 반환
+                }
+            }
+            return resizedUrls;
+        }
+
+        public static List<String> toThumbSizeImageUrl(CommonPostDto dto) {
+            if (dto.getImageUrls() == null) return null;
+
+            List<String> resizedUrls = new ArrayList<>();
+            for (String url : dto.getImageUrls()) {
+                if (containsValidImageExtension(url)) {
+                    String baseUrl = url.substring(0, url.lastIndexOf("."));
+                    String extension = url.substring(url.lastIndexOf("."));
+                    resizedUrls.add(baseUrl + "/300" + extension);
+                } else {
+                    resizedUrls.add(url); // 원본 데이터 반환
+                }
+            }
+            return resizedUrls;
+        }
+
+        private static boolean containsValidImageExtension(String url) {
+            String lowerCaseUrl = url.toLowerCase();
+            return lowerCaseUrl.contains(".jpeg")
+                    || lowerCaseUrl.contains(".jpg")
+                    || lowerCaseUrl.contains(".png")
+                    || lowerCaseUrl.contains(".webp")
+                    ;
+        }
+    }
 }

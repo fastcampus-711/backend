@@ -17,7 +17,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+import static com.aptner.v3.board.common_post.dto.CommonPostDto.CommonPostResponse.toMiddleSizeImageUrl;
+import static com.aptner.v3.board.common_post.dto.CommonPostDto.CommonPostResponse.toThumbSizeImageUrl;
 
 @Getter
 @ToString(callSuper = true)
@@ -78,12 +79,12 @@ public class FreePostDto extends CommonPostDto {
                 // post
                 .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toThumbSizeImageUrl(dto))
                 .visible(dto.isVisible())
                 // post info
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -121,13 +122,13 @@ public class FreePostDto extends CommonPostDto {
                 // post
                 .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toMiddleSizeImageUrl(dto))
                 .visible(dto.isVisible())
-                .comments(organizeChildComments(dto.getCommentDto()))
+//                .comments(organizeChildComments(dto.getCommentDto()))
                 // post info
                 .hits(dto.getHits())
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto())
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())
                 // category
                 .boardGroup(dto.getBoardGroup())
