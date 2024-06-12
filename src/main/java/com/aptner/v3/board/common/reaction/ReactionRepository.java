@@ -11,5 +11,5 @@ public interface ReactionRepository<E extends Reaction> extends JpaRepository<E,
     Optional<E> findByUserIdAndTargetIdAndDtype(long userId, long targetId, String postReaction);
 
     // post get
-    List<E> findByUserIdAndDtype(long memberId, String commentReaction);
+    Optional<List<E>> findByUserIdAndDtypeAndTargetId(long memberId, String commentReaction, long targetId);
 }
