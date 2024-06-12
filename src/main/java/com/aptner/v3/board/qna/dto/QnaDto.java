@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import static com.aptner.v3.board.common_post.dto.CommonPostCommentDto.organizeChildComments;
+import static com.aptner.v3.board.common_post.dto.CommonPostDto.CommonPostResponse.toMiddleSizeImageUrl;
 
 @Getter
 @ToString(callSuper = true)
@@ -75,12 +75,12 @@ public class QnaDto extends CommonPostDto {
                 // post
                 .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toMiddleSizeImageUrl(dto))
                 .visible(dto.isVisible())
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
@@ -118,13 +118,13 @@ public class QnaDto extends CommonPostDto {
                 // post
                 .title(dto.getTitle())
                 .content(isSecret ? blindContent : dto.getContent())
-                .imageUrls(isSecret ? null : dto.getImageUrls())
+                .imageUrls(isSecret ? null : toMiddleSizeImageUrl(dto))
                 .visible(dto.isVisible())
-                .comments(organizeChildComments(dto.getCommentDto()))
+//                .comments(organizeChildComments(dto.getCommentDto()))
                 // post info
                 .hits(dto.getHits())                                            // 조회수
                 .reactionColumns(isSecret ? null : dto.getReactionColumnsDto()) // 공감
-                .reactionType(isSecret ? ReactionType.DEFAULT : dto.getReactionType())
+                .reactionType(isSecret || dto.getReactionType() == null ? ReactionType.DEFAULT : dto.getReactionType())
                 .countOfComments(dto.getCountOfComments())                      // 댓글 수
                 // category
                 .boardGroup(dto.getBoardGroup())
