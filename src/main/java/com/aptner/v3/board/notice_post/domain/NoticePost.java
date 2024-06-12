@@ -45,13 +45,21 @@ public class NoticePost extends CommonPost {
     public NoticePost() {
     }
 
-    public NoticePost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime postAt) {
+    public NoticePost(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, boolean isImport, boolean isDuty, LocalDateTime scheduleStartAt, LocalDateTime scheduleEndAt, LocalDateTime postAt) {
         super(member, category, title, content, imageUrls, visible);
+        this.isImport = isImport;
+        this.isDuty = isDuty;
+        this.scheduleStartAt = scheduleStartAt;
+        this.scheduleEndAt = scheduleEndAt;
         this.postAt = postAt;
     }
 
     public static NoticePost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, LocalDateTime postAt) {
-        return new NoticePost(member, category, title, content, imageUrls, visible, postAt);
+        return new NoticePost(member, category, title, content, imageUrls, visible, false, false, null, null, postAt);
+    }
+
+    public static NoticePost of(Member member, Category category, String title, String content, List<String> imageUrls, boolean visible, boolean isImport, boolean isDuty, LocalDateTime scheduleStartAt, LocalDateTime scheduleEndAt, LocalDateTime postAt) {
+        return new NoticePost(member, category, title, content, imageUrls, visible, isImport, isDuty, scheduleStartAt, scheduleEndAt, postAt);
     }
 
     @Override

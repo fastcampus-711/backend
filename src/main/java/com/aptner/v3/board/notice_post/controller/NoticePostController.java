@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Tag(name="공지 사항")
@@ -67,7 +68,8 @@ public class NoticePostController extends CommonPostController<
     ) {
         List<NoticePost> searched = noticePostService.getNoticePostsByScheduleRange(start, end, getBoardGroup());
         // 아파트너사와 동일한 형태 응답값
-        return ResponseEntity.ok(searched);
+        List<NoticePostDto.NoticeResponse> response = searched.stream().map(p -> p.toDto().toResponse()).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 
     public BoardGroup getBoardGroup() {

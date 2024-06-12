@@ -62,6 +62,10 @@ public final class MultipartUtil {
         return String.format("%s/%s.%s", location, uuid, getFormat(contentType));
     }
 
+    public static String createThumbKey(String location, String uuid, String size, String contentType) {
+        return String.format("%s/%s/%s.%s", location, uuid, size, getFormat(contentType));
+    }
+
     /**
      * 검증합니다.
      * @param type 유형
