@@ -1,6 +1,6 @@
 ![header](https://capsule-render.vercel.app/api?type=wave&color=auto&height=300&section=header&text=WELCOME%20readme&fontSize=90)
 
-## :computer: 개발 팀 소개
+## :computer: 개발 팀 소개 
 |이름|Email|설명|
 |------|---|---|
 |유연수|hoban4336@gmail.com|총괄, SpringSecurity, JWT, Docker, S3, Swagger, Qna |
