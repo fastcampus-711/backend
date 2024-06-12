@@ -112,15 +112,20 @@ public class CommentService {
             Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByDtypeAndTargetId("CommentReaction", postId)
                     .orElse(Collections.emptyList())
                     .stream()
-                    .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
+                    .collect(Collectors.toMap(
+                            CommentReaction::getTargetId,
+                            CommentReaction::getReactionType,
+                            (existingValue, newValue) -> newValue // Choose how to handle duplicates
+                    ));
 
             // Ensure the map contains a default entry
             mapCommentIdAndReactionType.putIfAbsent(-1L, ReactionType.DEFAULT);
 
             commentDtosPage = commentsPage.map(comment -> convertToDto(comment, mapCommentIdAndReactionType));
         } catch (EntityNotFoundException e) {
-            // Log the exception (optional)
             log.warn("Entity not found: {}", e.getMessage());
+        } catch (IllegalStateException e) {
+            log.warn("IllegalStateException: {}", e.getMessage());
         }
         return commentDtosPage;
     }
