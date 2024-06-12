@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -105,7 +106,8 @@ public class CommentService {
         Page<Comment> commentsPage = commentRepository.findAllByPostIdAndParentCommentIdIsNull(postId, pageable);
 
         // reaction
-        Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByUserIdAndDtype(memberDto.getId(), "CommentReaction")
+        Map<Long, ReactionType> mapCommentIdAndReactionType = commentReactionRepository.findByUserIdAndDtypeAndTargetId(memberDto.getId(), "CommentReaction", postId)
+                .orElse(Collections.emptyList())
                 .stream()
                 .collect(Collectors.toMap(CommentReaction::getTargetId, CommentReaction::getReactionType));
 
