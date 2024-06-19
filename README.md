@@ -1,14 +1,16 @@
 [![Docker Build 🚀](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml/badge.svg)](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml)
 
 # :office: [입주민 생활 편의 서비스, 아파트너](https://aptner.ha-ving.store)
+[![Watch the video](https://img.youtube.com/vi/Z_qbmEa6xuI/0.jpg)](https://youtu.be/Z_qbmEa6xuI?feature=shared)
 
 ### :bulb: 입주민들 간 자유로운 소통
 * 입주민을 위한 목적에 맞는 소통 공간 ( 자유게시판, Qna, 나눔게시판, 공지사항, 민원게시판 )
 * 비밀글, 대댓글 기능을 통한 1:1 소통
 
-### :bulb: 관리비 통계
-* 우리 아파트의 평균 관리비
-* 우리집 평균 관리비 관리 기능
+### :bulb: 매달 쌓이는 공과금 우편을 한손에!
+* 아파트 관련 정보와 세세한 공과금 항목을 전년,전월,전일로 한 눈에 확인 가능
+* 우리 아파트 평균 관리비 관리 기능
+* 우리 집 평균 관리비 관리 기능
 * 전기,가스,수도를 동일 평수내 비교 기능
 
 ## 주요 페이지
@@ -36,13 +38,7 @@
 - ![docker](https://img.shields.io/badge/docker-%230db7ed.svg)
 - ![aws](https://img.shields.io/badge/Amazon_AWS-FF9900)
 
-## :clipboard: API 및 기술 문서 
-- [API문서](https://docs.google.com/document/d/1LcSW8h3jjbClEtpAeo95xwRoJ2d1nFeL3XP7Qbyfbi4/edit?usp=sharing)
-- [SWAGGER](https://711.ha-ving.store/swagger-ui/index.html)
-- [UI](https://aptner.ha-ving.store)
-- [FIGMA](https://www.figma.com/design/vYdE7q4wdbdNTgpf7w07ep/%ED%8C%8C%EC%9D%B4%EB%84%90_7%EC%A1%B0-%ED%94%BC%EA%B7%B8%EB%A7%88?node-id=37-3&t=B7ypkS7erlHYCbr3-0) 
-
-## 기술 사용 
+## 기술 사용
 | 기술 | 내용 |
 | -- |----|
 | ARGO CI/CD |    |
@@ -50,6 +46,12 @@
 | Swgger |    |
 | Refresh Token |    | 
 | Redis |    |
+
+## :clipboard: API 및 기술 문서 
+- [API문서](https://docs.google.com/document/d/1LcSW8h3jjbClEtpAeo95xwRoJ2d1nFeL3XP7Qbyfbi4/edit?usp=sharing)
+- [SWAGGER](https://711.ha-ving.store/swagger-ui/index.html)
+- [UI](https://aptner.ha-ving.store)
+- [FIGMA](https://www.figma.com/design/vYdE7q4wdbdNTgpf7w07ep/%ED%8C%8C%EC%9D%B4%EB%84%90_7%EC%A1%B0-%ED%94%BC%EA%B7%B8%EB%A7%88?node-id=37-3&t=B7ypkS7erlHYCbr3-0)
 
 ## :earth_asia: ERD
 ![db.png](doc%2Fdb.png)
@@ -59,11 +61,11 @@
 
 ## 👨‍👩‍👧‍👦 팀원 소개 & 팀원 역할
 
-|이름|Email| 역할 | 분담                                                          | 기술                              | 
-|------|---|----|-------------------------------------------------------------|---------------------------------| 
-|유연수|hoban4336@gmail.com| 팀장 | Qna(민원 게시판), Comments(댓글) API 담당, Infra( MYSQL, Swagger ) 담당 | SpringSecurity, JWT, Docker, S3 |
-|민장규|alswkdrb1@gmail.com| 팀원 | BOARD(게시판), 관리비 API 담당                                      | Spring Framework, JPA, Generic  |
-|이진혁|ehfaksdl033@gmail.com| 팀원 | CATEGORY(분류),인증, 신고, 인기글 API 담당                             | Spring Security, JPA            |
+|이름| 역할 | 분담                                                          | 기술                              |  Github
+|------|---------------------|----|-------------------------------------------------------------|---------------------------------| 
+|유연수 | 팀장 | Qna(민원 게시판), Comments(댓글) API 담당, Infra 담당 | SpringSecurity, JWT, Docker, S3 | https://github.com/having-dlrow |
+|민장규| 팀원 | BOARD(게시판), 관리비 API 담당                                      | Spring Framework, JPA, Generic  | https://github.com/MinKevin  |
+|이진혁| 팀원 | CATEGORY(분류),인증, 신고, 인기글 API 담당                             | Spring Security, JPA            | https://github.com/HARIBO033 | 
 
 ## :calendar: 개발 기간
 5월 1일 ~ 6월15일
