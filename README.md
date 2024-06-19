@@ -1,7 +1,6 @@
 [![Docker Build 🚀](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml/badge.svg)](https://github.com/fastcampus-711/backend/actions/workflows/build.yaml)
 
 # :office: [입주민 생활 편의 서비스, 아파트너](https://aptner.ha-ving.store)
-[![Watch the video](https://img.youtube.com/vi/Z_qbmEa6xuI/0.jpg)](https://youtu.be/Z_qbmEa6xuI?feature=shared)
 
 ### :bulb: 입주민들 간 자유로운 소통
 * 입주민을 위한 목적에 맞는 소통 공간 ( 자유게시판, Qna, 나눔게시판, 공지사항, 민원게시판 )
@@ -14,6 +13,10 @@
 * 전기,가스,수도를 동일 평수내 비교 기능
 
 ## 주요 페이지
+### Demo
+[![Watch the video](doc%2Fpage%2Fmain.png)](https://youtu.be/Z_qbmEa6xuI?feature=shared)
+
+### Pages
 ![img.png](doc/module.png)
 ![img.png](doc/page/main.png)
 ![img.png](doc/page/board_free.png)
