@@ -12,11 +12,10 @@
 * 우리 집 평균 관리비 관리 기능
 * 전기,가스,수도를 동일 평수내 비교 기능
 
-## 주요 페이지
-### Demo
-[![Watch the video](doc%2Fpage%2Fmain.png)](https://youtu.be/Z_qbmEa6xuI?feature=shared)
+## Youtube Overview
+[![Watch the video](http://img.youtube.com/vi/rdb52JLeFT8/0.jpg)](https://youtu.be/rdb52JLeFT8?feature=shared)
 
-### Pages
+## 주요 페이지
 ![img.png](doc/module.png)
 ![img.png](doc/page/main.png)
 ![img.png](doc/page/board_free.png)
@@ -42,13 +41,13 @@
 - ![aws](https://img.shields.io/badge/Amazon_AWS-FF9900)
 
 ## 기술 사용
-| 기술 | 내용 |
-| -- |----|
-| ARGO CI/CD |    |
-| QueryDSL |    |
-| Swgger |    |
-| Refresh Token |    | 
-| Redis |    |
+| 기술                          | 내용                  |
+|-----------------------------|---------------------|
+| ARGO CI/CD                  | 지속적 배포 지원           |
+| QueryDSL                    | Menu, Category API 사용 |
+| Spring Doc (Swagger3.0)     | API 문서              |
+| Access Token, Refresh Token | Token 생성            | 
+| Redis                       | Token 저장소 DB로 사용    |
 
 ## :clipboard: API 및 기술 문서 
 - [API문서](https://docs.google.com/document/d/1LcSW8h3jjbClEtpAeo95xwRoJ2d1nFeL3XP7Qbyfbi4/edit?usp=sharing)
@@ -64,11 +63,11 @@
 
 ## 👨‍👩‍👧‍👦 팀원 소개 & 팀원 역할
 
-|이름| 역할 | 분담                                                          | 기술                              |  Github
-|------|---------------------|----|-------------------------------------------------------------|---------------------------------| 
-|유연수 | 팀장 | Qna(민원 게시판), Comments(댓글) API 담당, Infra 담당 | SpringSecurity, JWT, Docker, S3 | https://github.com/having-dlrow |
-|민장규| 팀원 | BOARD(게시판), 관리비 API 담당                                      | Spring Framework, JPA, Generic  | https://github.com/MinKevin  |
-|이진혁| 팀원 | CATEGORY(분류),인증, 신고, 인기글 API 담당                             | Spring Security, JPA            | https://github.com/HARIBO033 | 
+|이름| 역할 | 분담                                                          | 기술                              | Github                                          
+|------|---------------------|----|-------------------------------------------------------------|-------------------------------------------------| 
+|유연수 | 팀장 | Qna(민원 게시판), Comments(댓글) API 담당, Infra 담당 | SpringSecurity, JWT, Docker, S3 | [having-dlrow](https://github.com/having-dlrow) |
+|민장규| 팀원 | BOARD(게시판), 관리비 API 담당                                      | Spring Framework, JPA, Generic  | [MinKevin](https://github.com/MinKevin)         |
+|이진혁| 팀원 | CATEGORY(분류),인증, 신고, 인기글 API 담당                             | Spring Security, JPA            | [HARIBO033](https://github.com/HARIBO033)       | 
 
 ## :calendar: 개발 기간
 5월 1일 ~ 6월15일
