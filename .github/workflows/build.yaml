@@ -19,6 +19,8 @@ jobs:
     environment: dev
     env:
       image_name: ${{ secrets.DOCKER_REPO }}/docker/711-community
+    outputs:
+      image_tag: ${{ steps.set_sha.outputs.image_tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,7 +39,9 @@ jobs:
         
       - name: Set Short SHA
         id: set_sha
-        run: echo "image_tag=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        run: |
+          echo "image_tag=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "::set-output name=image_tag::${GITHUB_SHA::7}"
         
       - name: make application-hidden.yaml
         run: |
@@ -87,14 +91,14 @@ jobs:
     environment: dev
     env:
       branch_name: helm
-      image_tag: ${{ github.sha::7 }}
+      image_tag: ${{ needs.gradle.outputs.image_tag }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.branch_name }}
           submodules: 'recursive'             # Actions -> General -> Workflow permissions (add write)
           token: ${{ secrets.GITHUB_TOKEN }}  # Ensure the token is being used
-
+        
       - name: Change values.yaml
         run: |
           sed -i "s/tag: \".*\"/tag: \"${{ env.image_tag }}\"/g" values.yaml
