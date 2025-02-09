@@ -19,7 +19,6 @@ jobs:
     environment: dev
     env:
       image_name: ${{ secrets.DOCKER_REPO }}/docker/711-community
-      image_tag: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +34,11 @@ jobs:
           sudo ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
           echo "Asia/Seoul" | sudo tee /etc/timezone
         shell: bash
-
+        
+      - name: Set Short SHA
+        id: set_sha
+        run: echo "image_tag=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        
       - name: make application-hidden.yaml
         run: |
           cd ./src/main/resources
