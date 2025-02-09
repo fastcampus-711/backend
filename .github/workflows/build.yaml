@@ -84,7 +84,7 @@ jobs:
     environment: dev
     env:
       branch_name: helm
-      image_tag: ${{ github.sha }}
+      image_tag: ${{ github.sha::7 }}
     steps:
       - uses: actions/checkout@v4
         with:
