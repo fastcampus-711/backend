@@ -1,4 +1,4 @@
-name: Docker Build 🚀
+name: Gradle Test 🚧
 
 on:
   push:
